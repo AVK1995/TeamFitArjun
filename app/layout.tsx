@@ -37,6 +37,13 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  // Renders <meta name="facebook-domain-verification" content="..." />
+  // Required by Meta Business → Brand Safety → Domains to verify ownership of
+  // teamfitarjun.com. Once verified, event_source_url is fully trusted by
+  // Meta and AEM works correctly for iOS visitors.
+  other: {
+    "facebook-domain-verification": clientConfig.analytics.metaDomainVerification,
+  },
 };
 
 export const viewport: Viewport = {
