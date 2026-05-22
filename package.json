@@ -1,0 +1,27 @@
+{
+  "name": "arjun-blueprint-funnel",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "libphonenumber-js": "^1.11.17",
+    "next": "^15.1.0",
+    "razorpay": "^2.9.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "sharp": "^0.34.5",
+    "typescript": "^5.7.2"
+  }
+}

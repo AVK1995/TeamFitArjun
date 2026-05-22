@@ -1,0 +1,125 @@
+import type { Metadata, Viewport } from "next";
+import { Playfair_Display, Inter } from "next/font/google";
+import Script from "next/script";
+import { clientConfig } from "@/client.config";
+import { PixelPageView } from "@/components/PixelPageView";
+import "./globals.css";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--fh",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--fb",
+});
+
+export const metadata: Metadata = {
+  title: `${clientConfig.brand.productName} — ₹${clientConfig.pricing.price} | ${clientConfig.brand.name}`,
+  description:
+    "A 30-minute Custom Execution Blueprint Call with Arjun — diagnose what's actually breaking and walk away with a system that survives your real schedule.",
+  metadataBase: new URL(`https://${clientConfig.brand.domain}`),
+  openGraph: {
+    title: `Book Your ${clientConfig.brand.shortProductName}`,
+    description:
+      "Real Professionals. Real Schedules. Real Results. A no-fluff 30-min call to fix what your past plans never could.",
+    siteName: clientConfig.brand.name,
+    type: "website",
+    locale: "en_IN",
+  },
+  twitter: { card: "summary_large_image" },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0E0C09",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pixelId = clientConfig.analytics.metaPixelId;
+  const gaId = clientConfig.analytics.gaMeasurementId;
+  const prodDomain = clientConfig.brand.domain;
+
+  return (
+    <html
+      lang="en"
+      className={`${playfair.variable} ${inter.variable}`}
+      suppressHydrationWarning
+    >
+      <body suppressHydrationWarning>
+        {children}
+
+        {/* Fires fbq('track', 'PageView') on every SPA route change after the
+            initial mount. Initial PageView is fired by the inline script below. */}
+        {pixelId ? <PixelPageView /> : null}
+
+        {/* Razorpay checkout.js — lazy loaded so it doesn't block FCP */}
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
+
+        {/*
+          Meta Pixel — fires PageView on every page load. The inline script
+          guards itself with a hostname check: it only runs when served from
+          the production domain (clientConfig.brand.domain). Vercel preview
+          deploys (*.vercel.app) and localhost skip the entire block, so test
+          traffic never lands in Events Manager.
+
+          On production it reads the `arjun_mam` cookie (written by
+          /checkout's form-fill useEffect, persisted 30 days) and re-inits
+          the pixel with that hashed identity BEFORE PageView fires — so
+          even cold returns ship PageView with em/ph/fn/ln/ct/country/external_id.
+
+          This is the ONLY browser event the funnel fires. Conversion
+          events (Purchase + sales) come from server CAPI in
+          /api/razorpay/verify-payment and /api/razorpay/webhook.
+        */}
+        {pixelId ? (
+          <>
+            <Script id="meta-pixel-init" strategy="afterInteractive">
+              {`(function(){var h=(window.location.hostname||'').toLowerCase();var d='${prodDomain}';if(h!==d&&!h.endsWith('.'+d))return;!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${pixelId}');try{var m=document.cookie.match(/(?:^|;\\s*)arjun_mam=([^;]+)/);if(m){var mam=JSON.parse(decodeURIComponent(m[1]));if(mam&&typeof mam==='object'&&Object.keys(mam).length){fbq('init','${pixelId}',mam);}}}catch(e){}fbq('track','PageView');})();`}
+            </Script>
+            <noscript>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                height="1"
+                width="1"
+                style={{ display: "none" }}
+                alt=""
+                src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+              />
+            </noscript>
+          </>
+        ) : null}
+
+        {/* GA4 */}
+        {gaId ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${gaId}',{send_page_view:true});`}
+            </Script>
+          </>
+        ) : null}
+      </body>
+    </html>
+  );
+}

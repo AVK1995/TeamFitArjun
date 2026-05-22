@@ -1,0 +1,1618 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+/* ================================================================
+   GLOBAL TOKENS + ELEMENTOR HARDENING
+================================================================ */
+.af-root, .af-root *, .af-root *::before, .af-root *::after { box-sizing: border-box !important; }
+.af-root {
+  --brand:#C9954D; --brand-deep:#D8A45C; --brand-light:#E0B370; --brand-soft:#2A1F11;
+  --ink:#F1E5D0; --ink-soft:#999285; --muted:#66645C;
+  --bg:#0E0C09; --bg-alt:#1A1611; --bg-grid:#1F1A14;
+  --border:#2A241C; --border-strong:#3D3429;
+  --success:#22C55E; --danger:#DC2626; --star:#FBBF24;
+  --fh:'Playfair Display','Georgia',serif;
+  --fb:'Inter','Helvetica Neue',sans-serif;
+  --r-sm:10px; --r:16px; --r-lg:24px; --r-xl:32px;
+  --sh:0 0 0 rgba(0,0,0,0);
+  --sh-lg:0 0 0 rgba(0,0,0,0);
+  --sh-brand:0 0 0 rgba(0,0,0,0);
+
+  font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important; color:var(--ink,#F1E5D0)!important;
+  background:var(--bg,#0E0C09)!important; line-height:1.55!important;
+  font-size:16px!important; -webkit-font-smoothing:antialiased;
+}
+.af-root h1,.af-root h2,.af-root h3,.af-root h4,.af-root h5{
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important; color:var(--ink,#F1E5D0)!important;
+  line-height:1.12!important; letter-spacing:-.02em!important;
+  font-weight:700!important; margin:0 0 .6em!important; padding:0!important;
+}
+.af-root p{ margin:0 0 1em!important; color:var(--ink-soft,#999285)!important; font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important; }
+.af-root a{ color:var(--brand,#C9954D)!important; text-decoration:none!important; }
+.af-root strong,.af-root b{ font-weight:900!important; color:var(--ink,#F1E5D0)!important; }
+.af-root img{ max-width:100%!important; height:auto!important; display:block!important; }
+.af-root ul,.af-root ol{ padding:0!important; margin:0!important; list-style:none!important; }
+
+.af-root .af-accent{ color:var(--brand,#C9954D)!important; white-space:nowrap; }
+.af-root .af-box {
+  display:inline-block;
+  background:var(--brand,#C9954D)!important; color:#fff!important;
+  padding:2px 8px 4px; border-radius:6px; white-space:nowrap;
+  box-shadow:none;
+}
+/* Below ~tablet width, long accented phrases ("The Problem Is Not You.",
+   "Chhod Yaar, Kal Karunga.") can't stay on one line without pushing the
+   viewport wider than the screen. Allow wrapping. */
+@media (max-width:900px){
+  .af-root .af-accent,
+  .af-root .af-box{ white-space:normal!important; }
+}
+.af-root .af-wrap{ max-width:1180px; margin:0 auto!important; padding:0 22px!important; }
+.af-root section{ position:relative; }
+
+/* Reveal on scroll */
+.af-root [data-af-reveal]{ opacity:0; transform:translateY(24px); animation:afRevealIn .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:var(--d,0s); }
+@keyframes afRevealIn{ to{ opacity:1; transform:translateY(0); } }
+.af-root [data-af-reveal].vis{ opacity:1; transform:translateY(0); animation:none; }
+
+/* ================================================================
+   SHARED CTA BUTTON
+================================================================ */
+.af-root .af-cta, .af-root a.af-cta{
+  display:inline-flex!important; flex-direction:column!important;
+  align-items:center!important; justify-content:center!important;
+  gap:5px!important; padding:15px 36px 13px!important;
+  background:linear-gradient(180deg,#D8A45C 0%,#C9954D 50%,#D8A45C 100%)!important;
+  color:#fff!important; border-radius:999px!important;
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important; font-weight:700!important; font-size:17px!important;
+  text-decoration:none!important; line-height:1.2!important; text-align:center!important;
+  text-shadow:none; box-shadow:none;
+  border:0!important; cursor:pointer!important;
+  position:relative; overflow:hidden;
+  transition:transform .2s, filter .2s;
+}
+.af-root .af-cta *{ color:#fff!important; }
+.af-root .af-cta::after{
+  content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.45),transparent);
+  transform:skewX(-20deg); transition:left .9s;
+}
+.af-root .af-cta:hover{ transform:translateY(-2px); filter:brightness(1.05); }
+.af-root .af-cta:hover::after{ left:120%; }
+/* top row: label + arrow */
+.af-root .af-cta .cta-top{
+  display:inline-flex!important; align-items:center!important;
+  gap:12px!important; justify-content:center!important;
+}
+.af-root .af-cta .arrow{ width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.22); display:grid; place-items:center; flex-shrink:0; transition:transform .25s; }
+.af-root .af-cta:hover .arrow{ transform:translateX(4px); }
+.af-root .af-cta .arrow svg{ width:14px; height:14px; stroke:#fff; fill:none; stroke-width:2.5; }
+/* sub-line inside button */
+.af-root .af-cta .cta-sub{
+  display:inline-flex!important; align-items:center!important; gap:4px!important;
+  font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important;
+  font-size:11px!important; font-weight:500!important; letter-spacing:.04em!important;
+  color:rgba(255,255,255,.72)!important; line-height:1.2!important;
+  white-space:nowrap!important;
+}
+.af-root .af-cta .cta-sub svg{ opacity:.8; }
+@media(max-width:480px){
+  .af-root .af-cta{ font-size:14px!important; padding:13px 22px 11px!important; }
+  .af-root .af-cta .cta-sub{ font-size:10px!important; }
+}
+
+.af-root .af-cta-block{ display:block!important; width:100%; text-align:center; margin:0 auto; }
+.af-root .af-cta .cta-d{ display:inline!important; }
+.af-root .af-cta .cta-m{ display:none!important; }
+/* Below tablet, swap to the shorter mobile label so the long desktop copy
+   doesn't wrap inside constrained cards (money-card, opt cards, etc). */
+@media (max-width:900px){
+  .af-root .af-cta .cta-d{ display:none!important; }
+  .af-root .af-cta .cta-m{ display:inline!important; }
+  /* Belt-and-braces: keep CTA text on one line even in narrow card containers */
+  .af-root .af-cta .cta-m,
+  .af-root .af-cta .cta-top{ white-space:nowrap!important; }
+  .af-root .af-cta{ font-size:clamp(13px,1.9vw,15px)!important; }
+}
+.af-root .af-cta-note{
+  display:block!important; margin:13px auto 0!important; max-width:760px;
+  font-style:italic!important; font-size:13.5px!important;
+  color:var(--muted,#66645C)!important; line-height:1.45!important;
+  white-space:nowrap!important;
+}
+
+
+/* ================================================================
+   ■ SECTION 01 — ANNOUNCEMENT BAR
+================================================================ */
+.af-root .af-announce{
+  background:linear-gradient(90deg,#0E0C09,#1F1A14 45%,#0E0C09)!important;
+  color:#fff!important; overflow:hidden!important;
+  border-bottom:1px solid rgba(255,255,255,.06)!important;
+}
+.af-root .af-announce-track{
+  display:flex!important; gap:48px!important; white-space:nowrap!important;
+  padding:11px 0!important; animation:afScroll 28s linear infinite;
+  font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important; font-weight:900!important; font-size:12.5px!important;
+  letter-spacing:.08em!important; text-transform:uppercase!important;
+}
+.af-root .af-announce-track span{ color:#fff!important; display:inline-flex; align-items:center; gap:10px; }
+.af-root .af-announce-track .dot{ width:5px; height:5px; border-radius:50%; background:var(--brand,#C9954D); box-shadow:none; }
+.af-root .af-announce-track b{ color:var(--brand,#C9954D)!important; }
+@keyframes afScroll { from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+
+/* ================================================================
+   ■ SECTION 02 — HERO
+================================================================ */
+.af-root .af-hero{ padding:14px 0 28px!important; background:var(--bg,#0E0C09)!important; overflow:hidden; position:relative; }
+.af-root .af-hero::before{ 
+  content:""; position:absolute; inset:0;
+  background-image:linear-gradient(var(--bg-grid,#1F1A14) 1px,transparent 1px),linear-gradient(90deg,var(--bg-grid,#1F1A14) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse at 50% 40%,#000 40%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 40%,transparent 75%);
+  opacity:.9; pointer-events:none;
+}
+.af-root .af-hero::after{
+  content:""; position:absolute; top:-120px; left:50%; width:620px; height:620px;
+  transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(201,149,77,.14),transparent 65%);
+  filter:blur(10px); pointer-events:none;
+}
+.af-root .af-hero-inner{ position:relative; text-align:center; }
+
+.af-root .af-callout{
+  display:inline-flex!important; align-items:center; gap:10px;
+  background:var(--brand,#C9954D)!important; color:#fff!important;
+  padding:8px 18px!important; border-radius:999px!important;
+  font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important; font-weight:900!important;
+  font-size:11px!important; letter-spacing:.11em!important; text-transform:uppercase!important;
+  box-shadow:none; margin-bottom:14px!important;
+}
+.af-root .af-callout::before{
+  content:""; flex:0 0 8px;
+  width:8px; height:8px;
+  min-width:8px; min-height:8px;
+  border-radius:50%;
+  display:block; align-self:center;
+  background:#fff; box-shadow:0 0 0 0 rgba(255,255,255,.6);
+  animation:afPulse 1.6s infinite;
+}
+@keyframes afPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.55);}50%{box-shadow:0 0 0 5px rgba(255,255,255,0);}}
+
+/* Hero gets a wider wrap than the rest of the page so the h1 can stay big in 2 lines */
+.af-root .af-hero .af-wrap{ max-width:1340px!important; padding:0 16px!important; }
+
+.af-root .af-h1{
+  font-size:clamp(22px, 2.1vw, 32px) !important;
+  max-width:none; margin:0 auto 12px!important;
+  line-height:1.22!important;
+  letter-spacing:-.015em!important;
+  padding:0!important;
+  text-wrap:balance;
+}
+.af-root .af-sub{ font-size:clamp(13.5px,1.05vw,15.5px)!important; color:var(--ink-soft,#999285)!important; max-width:680px; margin:0 auto 14px!important; line-height:1.45!important; }
+
+/* Smaller desktops: shrink the video to free vertical space so first viewport still reaches CTA */
+@media (max-width: 1199px){
+  .af-root .af-h1{ font-size:clamp(20px, 2.5vw, 28px)!important; }
+  .af-root .af-video-frame{ max-width:560px!important; }
+}
+@media (max-width: 767px){
+  .af-root .af-h1{ font-size:clamp(22px, 5.4vw, 28px)!important; text-wrap:initial; }
+  .af-root .af-video-frame{ max-width:100%!important; }
+}
+
+/* Video */
+.af-root .af-video-frame{
+  position:relative; max-width:680px; margin:0 auto 18px;
+  border-radius:var(--r-lg,24px); padding:10px;
+  background:linear-gradient(135deg,rgba(201,149,77,.35),rgba(216,164,92,.1) 60%,transparent),#1A1611;
+  box-shadow:none;
+}
+.af-root .af-video{
+  position:relative; width:100%; aspect-ratio:16/9; border-radius:18px;
+  background:radial-gradient(circle at 50% 50%,#1F1A14 0%,#0E0C09 75%);
+  overflow:hidden; cursor:pointer;
+}
+.af-root .af-video::before{
+  content:""; position:absolute; inset:0; z-index:1;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0 2px,transparent 2px 6px);
+  pointer-events:none;
+}
+/* Once playing, kill all decorative overlays so the iframe receives every click */
+.af-root .af-video.playing{ cursor:default; }
+.af-root .af-video.playing::before,
+.af-root .af-video.playing .af-video-thumb,
+.af-root .af-video.playing .af-video-thumb::after{
+  display:none;
+}
+.af-root .af-video.playing iframe{
+  position:absolute!important; inset:0!important;
+  width:100%!important; height:100%!important;
+  border:0!important; z-index:5!important;
+}
+/* Thumbnail layer — sits above gradient, below play button */
+.af-root .af-video-thumb{
+  position:absolute; inset:0; z-index:2;
+  background-size:cover; background-position:center;
+  opacity:0; transition:opacity .4s ease;
+  pointer-events:none;
+}
+.af-root .af-video-thumb.on{ opacity:1; }
+.af-root .af-video-thumb::after{
+  /* subtle dark vignette so the play button always pops on bright thumbs */
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,0) 35%, rgba(0,0,0,.55) 100%);
+}
+.af-root .af-play{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:88px; height:88px; border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, var(--brand-light,#E0B370) 0%, var(--brand,#C9954D) 60%, var(--brand-deep,#D8A45C) 100%);
+  display:grid; place-items:center;
+  animation:afPlayPulse 2.2s infinite ease-out;
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+  z-index:3;
+  cursor:pointer;
+  will-change:transform, box-shadow;
+}
+.af-root .af-play::before{
+  content:""; position:absolute; inset:-4px;
+  border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(255,255,255,.18), transparent 70%);
+  opacity:0;
+  transition:opacity .25s;
+}
+.af-root .af-play:hover::before{ opacity:1; }
+.af-root .af-play:hover{ transform:translate(-50%,-50%) scale(1.08); }
+.af-root .af-play:active{ transform:translate(-50%,-50%) scale(1.02); transition-duration:.08s; }
+.af-root .af-play svg{ width:30px; height:30px; fill:#fff; margin-left:4px; }
+@keyframes afPlayPulse {
+  0%{   box-shadow:0 0 0 0   rgba(201,149,77,.4);}
+  70%{  box-shadow:0 0 0 30px rgba(201,149,77,0);}
+  100%{ box-shadow:0 0 0 0   rgba(201,149,77,0);}
+}
+
+.af-root .af-rating-row{ display:block; text-align:center; margin:0 0 22px!important; }
+.af-root .af-stars{ display:inline-flex; align-items:center; gap:10px; color:var(--ink-soft,#999285)!important; font-size:14px; font-weight:700; }
+.af-root .af-stars .sbox{ display:inline-flex; gap:2px; color:var(--star,#FBBF24)!important; }
+
+
+/* ■ Credibility strip — stat cards redesign */
+.af-root .af-creds{
+  padding:38px 0 36px!important;
+  border-top:1px solid var(--border,#2A241C)!important;
+  border-bottom:1px solid var(--border,#2A241C)!important;
+  background:var(--bg,#0E0C09)!important;
+}
+.af-root .af-creds-grid{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; max-width:900px; margin:0 auto;
+}
+.af-root .af-cred-item{
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center; padding:10px 20px;
+  position:relative;
+}
+.af-root .af-cred-item+.af-cred-item::before{
+  content:""; position:absolute; left:0; top:15%; bottom:15%;
+  width:1px; background:var(--border,#2A241C);
+}
+.af-root .af-cred-num{
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important;
+  font-size:clamp(28px,4vw,38px)!important; font-weight:700!important;
+  line-height:1.05!important; color:var(--brand,#C9954D)!important;
+  letter-spacing:-.02em!important; margin-bottom:4px!important;
+}
+.af-root .af-cred-label{
+  font-size:12.5px!important; color:var(--ink-soft,#999285)!important;
+  font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important;
+  letter-spacing:.04em!important; line-height:1.4!important;
+  text-transform:uppercase!important;
+}
+.af-root .af-cred-sub{
+  font-size:11px!important; color:var(--muted,#66645C)!important;
+  margin-top:3px!important;
+}
+/* Creds strip — mobile two-line text layout */
+.af-root .af-cred-text .cred-br{ display:inline!important; }
+@media(max-width:640px){
+  .af-root .af-cred-text .cred-br{
+    display:block!important; content:"";
+    height:0!important; margin:0!important;
+  }
+}
+/* creds mobile overrides consolidated into main @media (max-width:640px) block */
+
+/* ================================================================
+   ■ SECTION 04 — DISCOVER
+================================================================ */
+.af-root .af-skim{ padding:86px 0 76px!important; background:var(--bg-alt,#1A1611)!important; overflow:hidden; }
+.af-root .af-skim::before{ 
+  content:""; position:absolute; inset:0;
+  background-image:linear-gradient(var(--bg-grid,#1F1A14) 1px,transparent 1px),linear-gradient(90deg,var(--bg-grid,#1F1A14) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse at 30% 40%,#000 30%,transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse at 30% 40%,#000 30%,transparent 80%);
+  opacity:.7; pointer-events:none;
+}
+.af-root .af-skim .af-wrap{ position:relative; }
+.af-root .af-skim-head{ text-align:center; max-width:880px; margin:0 auto 48px; }
+.af-root .af-skim-head h2{ font-size:clamp(26px,4vw,42px)!important; margin-bottom:18px!important; }
+.af-root .af-skim-head p{ max-width:720px; margin:0 auto!important; font-size:16px!important; color:var(--ink-soft,#999285)!important; }
+.af-root .af-skim-grid{ display:grid; grid-template-columns:1.15fr 0.85fr; gap:50px; align-items:start; max-width:1100px; margin:0 auto; }
+.af-root .af-discover-label{
+  display:inline-flex!important; align-items:center; gap:8px;
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important; font-size:13px!important; font-weight:700!important;
+  letter-spacing:.22em!important; text-transform:uppercase!important;
+  color:var(--ink,#F1E5D0)!important; margin-bottom:24px!important;
+}
+.af-root .af-discover-label::before{ content:""; width:28px; height:2px; background:var(--brand,#C9954D); display:inline-block; }
+.af-root .af-discover-label .acc{ color:var(--brand,#C9954D)!important; }
+.af-root .af-discover-list li{ position:relative; padding:0 0 22px 28px!important; margin:0 0 18px; border-bottom:1px dashed var(--border,#2A241C); }
+.af-root .af-discover-list li:last-child{ border-bottom:0; margin-bottom:0; padding-bottom:0!important; }
+.af-root .af-discover-list li::before{
+  content:""; position:absolute; left:0; top:6px;
+  width:14px; height:14px; border-radius:50%; background:var(--brand,#C9954D);
+  box-shadow:none;
+}
+.af-root .af-discover-list li strong{ font-family:var(--fh,'Playfair Display','Georgia',serif)!important; }
+.af-root .af-discover-list li p{ margin:0!important; display:inline; font-size:15px!important; line-height:1.62!important; color:var(--ink-soft,#999285)!important; }
+
+.af-root .af-skim-photos{ display:flex; flex-direction:column; gap:20px; }
+.af-root .af-photo{
+  aspect-ratio:4/3; border-radius:var(--r-lg,24px);
+  background:linear-gradient(160deg,#1A1611,#0E0C09);
+  position:relative; overflow:hidden; box-shadow:none;
+  border:1px solid rgba(255,255,255,.05);
+  transition:transform .4s, box-shadow .4s;
+}
+.af-root .af-photo:hover{ transform:translateY(-4px); box-shadow:none; }
+.af-root .af-photo::before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 25% 30%,rgba(201,149,77,.25),transparent 45%),radial-gradient(circle at 75% 70%,rgba(224,179,112,.18),transparent 45%);
+}
+.af-root .af-photo::after{ content:""; position:absolute; inset:14px; border:1px solid rgba(255,255,255,.08); border-radius:calc(var(--r-lg,24px) - 10px); }
+.af-root .af-photo .slot{
+  position:absolute; inset:0; display:grid; place-items:center; z-index:2;
+  color:rgba(255,255,255,.4); font-family:var(--fh,'Playfair Display','Georgia',serif);
+  font-size:12px; letter-spacing:.22em; text-transform:uppercase; text-align:center;
+}
+.af-root .af-photo .slot svg{ width:40px; height:40px; margin:0 auto 10px; display:block; opacity:.6; }
+.af-root .af-photo-r1{ transform:rotate(-1.5deg); }
+.af-root .af-photo-r2{ transform:rotate(1.2deg); margin-left:20px; }
+.af-root .af-photo .shim{
+  position:absolute; top:0; bottom:0; left:-60%; width:40%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.08),transparent);
+  transform:skewX(-20deg); animation:afShim 4s ease-in-out infinite;
+}
+@keyframes afShim { 0%,100%{ left:-60%;} 50%{ left:120%;} }
+.af-root .af-skim-cta{ text-align:center; margin-top:52px; }
+
+/* ================================================================
+   ■ SECTION 05 — ACCOUNTABILITY GUARANTEE
+================================================================ */
+.af-root .af-guard{ padding:80px 0!important; background:var(--bg,#0E0C09)!important; }
+.af-root .af-guard-card{
+  max-width:900px; margin:0 auto; text-align:center;
+  background:var(--bg-alt,#1A1611)!important; border:1px solid var(--border,#2A241C)!important;
+  border-radius:var(--r-xl,32px); padding:50px 44px;
+  position:relative; overflow:hidden; box-shadow:none;
+}
+.af-root .af-guard-card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:6px;
+  background:linear-gradient(90deg,var(--brand,#C9954D),var(--brand-light,#E0B370),var(--brand,#C9954D));
+}
+.af-root .af-shield{
+  width:96px; height:96px; margin:0 auto 22px; border-radius:26px;
+  background:linear-gradient(145deg,var(--brand,#C9954D),var(--brand-deep,#D8A45C));
+  display:grid; place-items:center;
+  box-shadow:none;
+  transform:rotate(-4deg); transition:transform .4s;
+}
+.af-root .af-guard-card:hover .af-shield{ transform:rotate(0) scale(1.04); }
+.af-root .af-shield svg{ width:52px; height:52px; fill:#fff; }
+.af-root .af-guard-card h2{ font-size:clamp(24px,3.4vw,34px)!important; margin-bottom:16px!important; }
+.af-root .af-guard-card p{ font-size:16px!important; max-width:680px; margin:0 auto 12px!important; color:var(--ink-soft,#999285)!important; }
+.af-root .af-guard-kicker{
+  display:inline-block; margin-top:16px!important;
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important; font-size:17px!important;
+  background:linear-gradient(90deg,var(--brand,#C9954D),var(--brand-light,#E0B370));
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent!important;
+}
+
+/* ================================================================
+   ■ SECTION 06 — REAL PROFESSIONALS (STATIC GRID, 6 cards)
+   ★ TO ADD/EDIT CARDS: copy any <article class="af-tcard">...</article>
+================================================================ */
+.af-root .af-proof{ padding:80px 0 70px!important; background:var(--bg,#0E0C09)!important; }
+.af-root .af-proof h2{ text-align:center!important; font-size:clamp(26px,4vw,40px)!important; margin-bottom:46px!important; }
+.af-root .af-proof h2 em{ font-style:normal; color:var(--brand,#C9954D)!important; }
+
+.af-root .af-tcards{ display:grid; grid-template-columns:repeat(2,1fr); gap:24px; max-width:860px; margin:0 auto; }
+
+/* Summary card style (+1,295 More Transformations) */
+.af-root .af-tcard-more{
+  background:linear-gradient(160deg,#1A1611,#2A1F11)!important;
+  border:1.5px dashed var(--brand-soft,#2A1F11)!important;
+  display:flex!important; align-items:center; justify-content:center; text-align:center;
+  padding:32px 24px;
+}
+.af-root .af-tcard-more .num{ font-family:var(--fh,'Playfair Display','Georgia',serif); font-size:46px; color:var(--brand,#C9954D)!important; line-height:1; margin-bottom:12px; font-weight:700; }
+.af-root .af-tcard-more .ttl{ font-family:var(--fh,'Playfair Display','Georgia',serif); font-size:16px; color:var(--ink,#F1E5D0)!important; margin-bottom:14px; font-weight:700; }
+.af-root .af-tcard-more p{ font-size:14px!important; color:var(--ink-soft,#999285)!important; margin:0!important; }
+
+.af-root .af-tcard{
+  background:var(--bg-alt,#1A1611)!important; border:1px solid var(--border,#2A241C)!important;
+  border-radius:var(--r,16px); overflow:hidden;
+  display:flex; flex-direction:column;
+  position:relative;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .3s ease;
+  will-change:transform;
+}
+/* Soft golden glow border that fades in on hover */
+.af-root .af-tcard::before{
+  content:""; position:absolute; inset:0;
+  border-radius:inherit; pointer-events:none;
+  background:linear-gradient(135deg,rgba(201,149,77,.18),transparent 45%,rgba(201,149,77,.12));
+  opacity:0; transition:opacity .35s ease;
+  z-index:1;
+}
+.af-root .af-tcard:hover{
+  transform:translateY(-8px);
+  box-shadow:0 24px 48px rgba(0,0,0,.45),0 0 0 1px rgba(201,149,77,.35),0 12px 36px rgba(201,149,77,.18);
+  border-color:var(--brand,#C9954D)!important;
+}
+.af-root .af-tcard:hover::before{ opacity:1; }
+
+/* Image subtle zoom on hover */
+.af-root .af-tcard .af-tphoto .tside img{ transition:transform .6s cubic-bezier(.2,.8,.2,1), filter .35s ease; }
+.af-root .af-tcard:hover .af-tphoto .tside img{ transform:scale(1.06); }
+.af-root .af-tcard:hover .af-tphoto .tside.b img{ filter:brightness(.92); }
+.af-root .af-tcard:hover .af-tphoto .tside.a img{ filter:brightness(1.05) saturate(1.05); }
+
+/* "After" tag pulses gently on hover to draw the eye */
+.af-root .af-tcard .af-tphoto .tag.ta{ transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+.af-root .af-tcard:hover .af-tphoto .tag.ta{
+  transform:scale(1.08);
+  box-shadow:0 6px 18px rgba(201,149,77,.45);
+}
+
+/* Name turns gold on hover */
+.af-root .af-tcard .af-tcard-body h4{ transition:color .3s ease; }
+.af-root .af-tcard:hover .af-tcard-body h4{ color:var(--brand-light,#E0B370)!important; }
+
+/* Body content sits above the glow overlay */
+.af-root .af-tcard .af-tphoto,
+.af-root .af-tcard .af-tcard-body{ position:relative; z-index:2; }
+
+@media (prefers-reduced-motion: reduce){
+  .af-root .af-tcard,
+  .af-root .af-tcard .af-tphoto .tside img,
+  .af-root .af-tcard .af-tphoto .tag.ta{ transition:none; }
+  .af-root .af-tcard:hover{ transform:none; }
+  .af-root .af-tcard:hover .af-tphoto .tside img{ transform:none; }
+}
+
+.af-root .af-tphoto{
+  aspect-ratio:5/3;
+  background:linear-gradient(135deg,#1A1611,#1F1A14);
+  position:relative; display:grid; grid-template-columns:1fr 1fr;
+}
+.af-root .af-tphoto .tside{
+  position:relative; overflow:hidden;
+  display:grid; place-items:center;
+  color:rgba(255,255,255,.35);
+  font-family:var(--fh,'Playfair Display','Georgia',serif); font-size:10px; letter-spacing:.22em; text-align:center;
+}
+.af-root .af-tphoto .tside img{
+  position:absolute; inset:0; width:100%!important; height:100%!important;
+  object-fit:cover; object-position:center top; z-index:1;
+}
+.af-root .af-tphoto .tside.b{ background:linear-gradient(180deg,#1F1A14,#1A1611); }
+.af-root .af-tphoto .tside.a{ background:linear-gradient(180deg,rgba(201,149,77,.35),#1A1611); }
+.af-root .af-tphoto .tside svg{ width:32px; height:32px; opacity:.5; margin:0 auto 6px; display:block; }
+.af-root .af-tphoto .tag{
+  position:absolute; bottom:10px; padding:4px 12px;
+  font-family:var(--fh,'Playfair Display','Georgia',serif); font-size:10px; letter-spacing:.18em;
+  text-transform:uppercase; color:#fff!important; border-radius:3px; z-index:2;
+}
+.af-root .af-tphoto .tag.tb{ left:10px; background:rgba(0,0,0,.8); }
+.af-root .af-tphoto .tag.ta{ right:10px; background:var(--brand,#C9954D); }
+.af-root .af-tphoto .vline{ position:absolute; top:0; bottom:0; left:50%; width:2px; transform:translateX(-50%); background:var(--bg-alt,#1A1611); box-shadow:none; z-index:2; }
+
+.af-root .af-tcard-body{ padding:22px 22px 24px; }
+.af-root .af-tcard-body h4{ font-size:17px!important; margin:0 0 2px!important; }
+.af-root .af-tcard-body .meta{
+  font-size:13px!important; color:var(--brand,#C9954D)!important;
+  font-weight:700!important; letter-spacing:.04em!important;
+  margin-bottom:10px!important; text-transform:uppercase!important;
+}
+.af-root .af-tcard-body .stars{ color:var(--star,#FBBF24)!important; font-size:14px; letter-spacing:1px; margin-bottom:12px; }
+.af-root .af-tcard-body p{ font-size:14px!important; line-height:1.6!important; color:var(--ink-soft,#999285)!important; margin:0!important; }
+
+.af-root .af-proof-cta{ text-align:center; margin-top:48px; }
+
+/* ================================================================
+   ■ SECTION 09 — BEFORE & AFTER CAROUSEL + LIGHTBOX
+   ★ TO ADD SLIDES: paste inside #af-gal-set (only there, JS auto-clones)
+================================================================ */
+.af-root .af-gallery{ padding:80px 0!important; background:var(--bg-alt,#1A1611)!important; overflow:hidden; }
+.af-root .af-gallery h2{ text-align:center!important; font-size:clamp(24px,3.6vw,36px)!important; }
+.af-root .af-gallery h2 span{ color:var(--brand,#C9954D)!important; }
+
+/* Carousel chassis */
+.af-root .af-gal-carousel{
+  position:relative; overflow:hidden;
+  padding:10px 0 40px;
+  mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
+  cursor:grab;
+  user-select:none; -webkit-user-select:none;
+}
+.af-root .af-gal-carousel.dragging{ cursor:grabbing; }
+.af-root .af-gal-track{
+  display:flex; gap:18px; width:max-content;
+  will-change:transform;
+  /* transform is set by JS — no CSS animation */
+}
+.af-root .af-gal-set{ display:flex; gap:18px; flex-shrink:0; }
+
+/* Slide */
+.af-root .af-gal-carousel.dragging .af-gslide{ cursor:grabbing; }
+/* Price row + CTA */
+.af-root .af-gprice{ display:flex; justify-content:center; align-items:baseline; gap:12px; font-family:var(--fh,'Playfair Display','Georgia',serif); margin:0 0 18px; }
+.af-root .af-gprice .old{ color:var(--danger,#DC2626)!important; text-decoration:line-through; font-size:20px; }
+.af-root .af-gprice .new{ color:var(--brand,#C9954D)!important; font-size:30px; }
+
+/* ================================================================
+   ■ SECTION 10 — MEET ARJUN
+================================================================ */
+.af-root .af-about{ padding:90px 0!important; background:var(--bg,#0E0C09)!important; }
+.af-root .af-about-grid{ display:grid; grid-template-columns:.9fr 1.1fr; gap:50px; align-items:center; max-width:1100px; margin:0 auto; }
+.af-root .af-about-photo{
+  aspect-ratio:4/5; border-radius:var(--r-lg,24px);
+  background:linear-gradient(160deg,#1A1611,#0E0C09);
+  position:relative; overflow:hidden; box-shadow:none;
+}
+.af-root .af-about-photo::before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 30% 30%,rgba(201,149,77,.3),transparent 50%),radial-gradient(circle at 70% 70%,rgba(224,179,112,.15),transparent 50%);
+}
+.af-root .af-about-photo .frame{ position:absolute; inset:14px; border:2px solid rgba(255,255,255,.1); border-radius:20px; }
+.af-root .af-about-photo .slot{
+  position:absolute; inset:0; display:grid; place-items:center; z-index:2;
+  color:rgba(255,255,255,.4); font-family:var(--fh,'Playfair Display','Georgia',serif);
+  font-size:11px; letter-spacing:.22em; text-transform:uppercase; text-align:center;
+}
+.af-root .af-about-photo .slot svg{ width:48px; height:48px; margin:0 auto 10px; display:block; opacity:.6; }
+.af-root .af-about-photo .badge{
+  position:absolute; top:24px; left:24px; z-index:3;
+  padding:8px 14px; background:var(--brand,#C9954D); color:#fff!important;
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important; font-size:11px!important;
+  letter-spacing:.15em!important; text-transform:uppercase!important; border-radius:999px;
+}
+.af-root .af-about-photo .count{ position:absolute; bottom:24px; left:24px; right:24px; display:flex; justify-content:space-between; z-index:3; }
+.af-root .af-about-photo .count b{ font-family:var(--fh,'Playfair Display','Georgia',serif); font-size:26px; display:block; line-height:1; color:#fff!important; }
+.af-root .af-about-photo .count span{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; opacity:.7; color:#fff!important; }
+.af-root .af-about-text h2{ font-size:clamp(28px,4vw,42px)!important; margin-bottom:18px!important; }
+.af-root .af-about-text h2 span{ color:var(--brand,#C9954D)!important; }
+.af-root .af-about-text p{ font-size:15.5px!important; color:var(--ink-soft,#999285)!important; }
+
+/* ================================================================
+   ■ SECTION 11 — TWO OPTIONS
+================================================================ */
+.af-root .af-two{ padding:80px 0!important; background:var(--bg,#0E0C09)!important; }
+.af-root .af-two h2{ text-align:center!important; font-size:clamp(24px,3.6vw,36px)!important; max-width:720px; margin:0 auto 36px!important; }
+.af-root .af-two h2 em{ font-style:normal; color:var(--brand,#C9954D)!important; }
+.af-root .af-opt-grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:1000px; margin:0 auto; }
+.af-root .af-opt{ padding:36px 32px; border-radius:var(--r-lg,24px); transition:transform .25s; }
+.af-root .af-opt:hover{ transform:translateY(-4px); }
+.af-root .af-opt-1{ background:#1A1611!important; border:1.5px solid var(--border,#2A241C)!important; }
+.af-root .af-opt-2{ background:var(--bg-alt,#1A1611)!important; border:2px solid var(--brand,#C9954D)!important; box-shadow:none; }
+.af-root .af-opt .opt-num{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important; font-size:13px!important; letter-spacing:.18em!important;
+  text-transform:uppercase!important; padding:7px 14px; border-radius:999px;
+  margin-bottom:16px!important;
+}
+.af-root .af-opt-1 .opt-num{ background:#3D3429; color:var(--muted,#66645C)!important; }
+.af-root .af-opt-2 .opt-num{ background:var(--brand,#C9954D); color:#fff!important; }
+.af-root .af-opt-2 .opt-num svg{ stroke:#fff!important; }
+.af-root .af-opt .opt-num svg{ width:14px; height:14px; }
+.af-root .af-opt p{ font-size:15px!important; color:var(--ink-soft,#999285)!important; margin:0!important; }
+.af-root .af-opt-2 p{ color:var(--ink,#F1E5D0)!important; }
+
+/* ================================================================
+   ■ SECTION 12 — FAQ
+================================================================ */
+.af-root .af-faq{ padding:80px 0!important; background:var(--bg,#0E0C09)!important; }
+.af-root .af-faq h2{ text-align:center!important; font-size:clamp(26px,4vw,38px)!important; margin-bottom:40px!important; }
+.af-root .af-faq h2 span{ color:var(--brand,#C9954D)!important; }
+.af-root .af-faq-list{ max-width:820px; margin:0 auto 40px; }
+.af-root .af-q{
+  background:#1A1611!important; border:1px solid var(--border,#2A241C)!important;
+  border-radius:var(--r,16px); margin-bottom:12px; overflow:hidden;
+  transition:border-color .25s, background .25s, box-shadow .25s;
+}
+.af-root .af-q.open{ border-color:var(--brand,#C9954D)!important; background:var(--bg-alt,#1A1611)!important; box-shadow:none; }
+.af-root .af-q-head{
+  padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:18px;
+  cursor:pointer; user-select:none;
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important; font-size:16px!important; color:var(--ink,#F1E5D0)!important;
+}
+.af-root .af-q-head .ic{
+  flex:0 0 28px; width:28px; height:28px; border-radius:50%;
+  background:var(--brand-soft,#2A1F11); color:var(--brand,#C9954D)!important;
+  display:grid; place-items:center;
+  transition:transform .3s, background .3s, color .3s;
+}
+.af-root .af-q.open .af-q-head .ic{ background:var(--brand,#C9954D); color:#fff!important; transform:rotate(45deg); }
+.af-root .af-q.open .af-q-head .ic svg{ stroke:#fff!important; }
+.af-root .af-q-head .ic svg{ width:14px; height:14px; stroke-width:3; stroke:var(--brand,#C9954D); fill:none; }
+.af-root .af-q-body{ max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.2,.8,.2,1); }
+.af-root .af-q-body-inner{ padding:0 24px 22px; color:var(--ink-soft,#999285)!important; font-size:14.5px!important; line-height:1.65!important; }
+.af-root .af-q.open .af-q-body{ max-height:500px; }
+
+/* ================================================================
+   ■ MONEY-BACK GUARANTEE SECTION
+================================================================ */
+.af-root .af-money{ padding:80px 0!important; background:var(--bg,#0E0C09)!important; }
+.af-root .af-money-card{
+  max-width:900px; margin:0 auto; text-align:center;
+  background:var(--bg-alt,#1A1611)!important;
+  border:1px solid rgba(34,197,94,.22)!important;
+  border-radius:var(--r-xl,32px); padding:52px 44px 48px;
+  position:relative; overflow:hidden;
+}
+/* green top bar (mirrors af-guard-card gold bar) */
+.af-root .af-money-card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:6px;
+  background:linear-gradient(90deg,#16A34A,#22C55E,#86EFAC,#22C55E,#16A34A)!important;
+}
+/* subtle green radial glow */
+.af-root .af-money-card::after{
+  content:""; position:absolute; top:-100px; left:50%;
+  width:500px; height:500px; transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(34,197,94,.07),transparent 65%);
+  pointer-events:none;
+}
+/* top icon box */
+.af-root .af-money-icon{
+  width:88px; height:88px; margin:0 auto 20px; border-radius:24px;
+  background:rgba(34,197,94,.13)!important;
+  border:1.5px solid rgba(34,197,94,.28)!important;
+  display:grid; place-items:center; position:relative;
+  transform:rotate(-4deg); transition:transform .4s;
+}
+.af-root .af-money-card:hover .af-money-icon{ transform:rotate(0) scale(1.04); }
+.af-root .af-money-icon svg{ width:44px; height:44px; stroke:#22C55E!important; fill:none!important; stroke-width:1.8!important; }
+/* badge pill */
+.af-root .af-money-badge{
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.28);
+  border-radius:999px; padding:7px 18px; margin-bottom:22px!important;
+  font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important;
+  font-size:11px!important; font-weight:700!important; letter-spacing:.12em!important;
+  text-transform:uppercase!important; color:#22C55E!important;
+}
+.af-root .af-money-badge svg{ width:13px; height:13px; fill:#22C55E!important; flex-shrink:0; }
+.af-root .af-money-card h2{ font-size:clamp(24px,3.4vw,34px)!important; margin-bottom:16px!important; }
+.af-root .af-money-card h2 em{ font-style:normal; color:var(--brand,#C9954D)!important; }
+.af-root .af-money-card > p{
+  font-size:15.5px!important; max-width:680px; margin:0 auto 36px!important;
+  color:var(--ink-soft,#999285)!important; line-height:1.7!important;
+}
+.af-root .af-money-card > p strong{ color:var(--ink,#F1E5D0)!important; }
+/* 2×2 grid of feature points */
+.af-root .af-money-pts{
+  display:grid!important; grid-template-columns:1fr 1fr!important;
+  gap:12px!important; max-width:640px; margin:0 auto 40px!important;
+  text-align:left;
+}
+.af-root .af-mpt{
+  display:flex!important; align-items:center!important; gap:12px!important;
+  background:rgba(34,197,94,.07)!important; border:1px solid rgba(34,197,94,.15)!important;
+  border-radius:14px!important; padding:14px 16px!important;
+}
+.af-root .af-mpt-ic{
+  flex:0 0 34px; width:34px; height:34px; border-radius:10px;
+  background:rgba(34,197,94,.18)!important; display:grid; place-items:center;
+}
+.af-root .af-mpt-ic svg{
+  width:17px; height:17px; stroke:#22C55E!important;
+  fill:none!important; stroke-width:2.5!important; stroke-linecap:round!important; stroke-linejoin:round!important;
+}
+.af-root .af-mpt strong{
+  display:block!important; font-size:13.5px!important;
+  color:var(--ink,#F1E5D0)!important; font-weight:600!important; line-height:1.3!important;
+}
+.af-root .af-mpt span{
+  display:block!important; font-size:11.5px!important;
+  color:var(--muted,#66645C)!important; margin-top:2px!important; line-height:1.3!important;
+}
+/* gradient kicker line */
+.af-root .af-money-kicker{
+  display:inline-block; margin-top:0; margin-bottom:28px!important;
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important; font-size:16px!important;
+  background:linear-gradient(90deg,#22C55E,#86EFAC);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent!important;
+}
+@media(max-width:640px){
+  .af-root .af-money{ padding:56px 0!important; }
+  .af-root .af-money-card{ padding:36px 20px 32px!important; border-radius:var(--r-lg,24px); }
+  .af-root .af-money-pts{ grid-template-columns:1fr!important; max-width:100%; }
+  .af-root .af-money-icon{ width:72px; height:72px; }
+  .af-root .af-money-icon svg{ width:36px; height:36px; }
+}
+
+/* ================================================================
+   ■ SECTION 13 — FINAL CTA (dark)
+================================================================ */
+.af-root .af-final{
+  padding:80px 0 64px!important;
+  background:radial-gradient(ellipse at 50% -20%,rgba(201,149,77,.07),transparent 65%),linear-gradient(180deg,#1A1611,#0E0C09)!important;
+  color:#fff!important; overflow:hidden; position:relative;
+}
+.af-root .af-final::before{ 
+  content:""; position:absolute; inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse at 50% 40%,#000 40%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 40%,transparent 75%);
+  pointer-events:none;
+}
+.af-root .af-final-inner{ position:relative; text-align:center; max-width:880px; margin:0 auto; }
+.af-root .af-final h2{ color:#fff!important; font-size:clamp(24px,3vw,36px)!important; line-height:1.2!important; margin-bottom:16px!important; }
+.af-root .af-final h2 em{ font-style:normal; color:var(--brand-light,#E0B370)!important; }
+.af-root .af-final p{ color:rgba(255,255,255,.7)!important; font-size:15px!important; max-width:620px; margin:0 auto 8px!important; line-height:1.55!important; }
+.af-root .af-final p + p{ margin-bottom:56px!important; }
+.af-root .af-final .af-cta-block{ margin-top:8px!important; }
+.af-root .af-final .af-cta-note{ color:rgba(255,255,255,.55)!important; margin-top:12px!important; font-size:11.5px!important; }
+
+/* ================================================================
+   ■ SECTION 14 — FOOTER
+================================================================ */
+.af-root .af-foot{
+  background:#0E0C09!important;
+  color:rgba(255,255,255,.55)!important;
+  /* Bottom padding clears the sticky CTA bar (CTA + countdown strip + iOS safe-area) */
+  padding:40px 0 calc(140px + env(safe-area-inset-bottom))!important;
+  font-size:12.5px!important;
+  line-height:1.7!important;
+  border-top:1px solid rgba(255,255,255,.06)!important;
+}
+
+.af-root .af-foot .af-wrap{ text-align:center; }
+
+.af-root .af-foot .copy{
+  color:rgba(255,255,255,.85)!important;
+  font-weight:700!important;
+  margin-bottom:10px!important;
+  font-size:13px!important;
+}
+
+.af-root .af-foot p{
+  color:rgba(255,255,255,.5)!important;
+  font-size:11.5px!important;
+}
+
+.af-root .af-foot .links{ margin-top:16px; }
+
+.af-root .af-foot .links a{
+  color:rgba(255,255,255,.75)!important;
+  margin:0 10px;
+  font-weight:700!important;
+  font-size:12px!important;
+}
+
+.af-root .af-foot .links a:hover{
+  color:var(--brand,#C9954D)!important;
+}
+
+
+/* ================================================================
+   ■ SECTION 15 — STICKY MOBILE CTA
+================================================================ */
+.af-root .af-stuck{
+  display:none;
+  position:fixed!important;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:999;
+
+  background:var(--bg-alt,#1A1611)!important;
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  
+  border-top:1px solid var(--border,#2A241C);
+  box-shadow:none;
+
+  transform:translateY(120%);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1);
+}
+
+/* visible state */
+.af-root .af-stuck.on{
+  transform:translateY(0);
+}
+
+/* CTA button — sticky bar with sub-text */
+.af-root .af-stuck .af-cta{
+  display:flex!important;
+  flex-direction:column!important;
+  width:100%;
+  justify-content:center;
+  font-size:14.5px!important;
+  padding:10px 18px 9px!important;
+  gap:3px!important;
+}
+.af-root .af-stuck .af-cta .cta-top{ font-size:14.5px!important; gap:8px!important; }
+.af-root .af-stuck .af-cta .cta-sub{ font-size:9.5px!important; opacity:.75!important; }
+
+/* 👇 OPTIONAL (better UX): hide when footer is visible */
+.af-root.hide-sticky .af-stuck{
+  transform:translateY(120%);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ■ SECTION 15B — COUNTDOWN TIMER (urgency strip below every CTA)
+   ──────────────────────────────────────────────────────────────
+   • Persists across pages in the same session via sessionStorage
+   • All instances stay in sync (single source of truth)
+   • Auto-resets when it hits 00:00 so urgency stays live
+═══════════════════════════════════════════════════════════════ */
+.af-root .af-timer{
+  display:inline-flex!important;
+  align-items:center!important; justify-content:center!important;
+  gap:8px!important;
+  margin:14px auto 0!important;
+  padding:7px 16px 6px!important;
+  background:rgba(220,38,38,.08)!important;
+  border:1px solid rgba(220,38,38,.28)!important;
+  border-radius:999px!important;
+  font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important;
+  font-size:12px!important; font-weight:700!important;
+  letter-spacing:.06em!important; text-transform:uppercase!important;
+  color:rgba(255,255,255,.82)!important; line-height:1.2!important;
+}
+.af-root .af-timer-dot{
+  width:7px; height:7px; border-radius:50%;
+  background:#DC2626;
+  box-shadow:0 0 0 0 rgba(220,38,38,.5);
+  animation:afTimerPulse 1.4s infinite; flex-shrink:0;
+}
+@keyframes afTimerPulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(220,38,38,.55); }
+  50%    { box-shadow:0 0 0 6px rgba(220,38,38,0); }
+}
+.af-root .af-timer-val{
+  color:#FCA5A5!important;
+  font-variant-numeric:tabular-nums;
+  font-size:13.5px!important; font-weight:800!important;
+  letter-spacing:.04em!important;
+  min-width:46px; text-align:center;
+}
+.af-root .af-timer-label{ white-space:nowrap; }
+.af-root .af-cta-block .af-timer{ display:flex!important; width:fit-content!important; margin:14px auto 0!important; }
+
+/* Mobile sticky — compact variant ABOVE the CTA button */
+.af-root .af-stuck-timer{
+  display:flex!important;
+  align-items:center!important; justify-content:center!important;
+  gap:6px!important;
+  margin:0 auto 6px!important;
+  padding:4px 12px 3px!important;
+  background:rgba(220,38,38,.1)!important;
+  border:1px solid rgba(220,38,38,.32)!important;
+  border-radius:999px!important;
+  font-family:var(--fb,'Inter','Helvetica Neue',sans-serif)!important;
+  font-size:10px!important; font-weight:700!important;
+  letter-spacing:.05em!important; text-transform:uppercase!important;
+  color:rgba(255,255,255,.88)!important; line-height:1.1!important;
+  width:fit-content;
+}
+.af-root .af-stuck-timer .af-timer-dot{ width:5px; height:5px; }
+.af-root .af-stuck-timer .af-timer-val{
+  font-size:11px!important; min-width:36px;
+}
+
+/* ================================================================
+   ■ SECTION 16 — LIGHTBOX MODAL
+================================================================ */
+.af-root .af-lbox{
+  display:none;
+  position:fixed; inset:0; z-index:10000;
+  background:rgba(5,10,20,.94);
+  padding:24px;
+  backdrop-filter:blur(4px);
+}
+.af-root .af-lbox.on{ display:flex; align-items:center; justify-content:center; animation:afLboxIn .3s ease; }
+@keyframes afLboxIn { from{ opacity:0; } to{ opacity:1; } }
+
+/* Fixed-size frame — never resizes per image; image fits inside via object-fit:contain */
+.af-root .af-lbox-content{
+  position:relative;
+  width:min(960px, 92vw);
+  height:min(720px, 82vh);
+  display:flex; align-items:center; justify-content:center;
+  padding:14px;
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(201,149,77,.32),rgba(216,164,92,.08) 60%,transparent),#1A1611;
+  box-shadow:0 20px 60px rgba(0,0,0,.55);
+  border:1px solid rgba(201,149,77,.22);
+}
+.af-root .af-lbox-img{
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  margin:0 auto;
+  border-radius:10px; display:block;
+  background:#0E0C09;
+  box-shadow:0 12px 32px rgba(0,0,0,.4);
+  animation:afLboxZoom .35s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes afLboxZoom { from{ transform:scale(.92); opacity:0; } to{ transform:scale(1); opacity:1; } }
+
+.af-root .af-lbox-close{
+  position:fixed; top:20px; right:20px;
+  width:48px!important; height:48px!important; border-radius:50%!important;
+  background:var(--bg-alt,#1A1611)!important; border:0!important; cursor:pointer!important;
+  display:grid!important; place-items:center!important;
+  padding:0!important;
+  box-shadow:none;
+  transition:background .25s, transform .3s, box-shadow .25s;
+  z-index:10001;
+  -webkit-appearance:none!important; appearance:none!important;
+}
+.af-root .af-lbox-close:hover{
+  background:var(--brand,#C9954D)!important;
+  transform:rotate(90deg) scale(1.08);
+  box-shadow:none;
+}
+.af-root .af-lbox-close svg{
+  width:20px!important; height:20px!important;
+  stroke:var(--brand,#C9954D)!important;
+  fill:none!important;
+  stroke-width:3!important;
+  stroke-linecap:round!important;
+  transition:stroke .25s;
+}
+.af-root .af-lbox-close:hover svg{ stroke:#fff!important; }
+
+/* WordPress admin bar offset — logged-in users see the WP toolbar at top.
+   Push close button below it so it's not visually clipped. */
+body.admin-bar .af-lbox-portal .af-lbox-close,
+body.admin-bar .af-root .af-lbox-close{ top:52px!important; }
+
+.af-root .af-lbox-nav{
+  position:absolute; top:50%;
+  transform:translateY(-50%);
+  width:56px!important; height:56px!important; border-radius:50%!important;
+  background:var(--bg-alt,#1A1611)!important; border:0!important; cursor:pointer!important;
+  display:grid!important; place-items:center!important;
+  padding:0!important;
+  box-shadow:none;
+  transition:background .25s, transform .3s, box-shadow .25s;
+  z-index:5;
+  -webkit-appearance:none!important; appearance:none!important;
+}
+.af-root .af-lbox-nav:hover{
+  background:var(--brand,#C9954D)!important;
+  transform:translateY(-50%) scale(1.1);
+  box-shadow:none;
+}
+.af-root .af-lbox-nav svg{
+  width:24px!important; height:24px!important;
+  stroke:var(--brand,#C9954D)!important;
+  fill:none!important;
+  stroke-width:3!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  transition:stroke .25s;
+}
+.af-root .af-lbox-nav:hover svg{ stroke:#fff!important; }
+.af-root .af-lbox-prev{ left:-74px; }
+.af-root .af-lbox-next{ right:-74px; }
+
+.af-root .af-lbox-counter{
+  position:absolute; bottom:-40px; left:50%; transform:translateX(-50%);
+  color:rgba(255,255,255,.85)!important;
+  font-family:var(--fh,'Playfair Display','Georgia',serif); font-size:13px; letter-spacing:.12em;
+}
+
+/* Portal wrapper — when JS moves the lightbox to <body> to escape
+   Elementor's transformed ancestors, this keeps the wrapper itself
+   invisible and zero-impact (no background, no flow). */
+.af-root.af-lbox-portal{
+  background:transparent!important;
+  padding:0!important;
+  margin:0!important;
+  font-size:0!important;
+}
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+
+/* Lightbox arrows — when content is narrower than viewport, the
+   default left:-74px / right:-74px positions arrows off-screen.
+   Switch to inside-the-image positioning at this breakpoint. */
+@media (max-width:1280px) {
+  .af-root .af-lbox-prev{ left:14px; }
+  .af-root .af-lbox-next{ right:14px; }
+}
+
+@media (max-width:960px) {
+  .af-root .af-skim-grid{ grid-template-columns:1fr; gap:36px; }
+  .af-root .af-skim-photos{ flex-direction:row; }
+  .af-root .af-skim-photos .af-photo{ flex:1; }
+  .af-root .af-photo-r2{ margin-left:0; }
+  .af-root .af-offer-grid{ grid-template-columns:1fr 1fr; }
+  .af-root .af-tcards{ grid-template-columns:repeat(2,1fr); }
+  .af-root .af-about-grid{ grid-template-columns:1fr; }
+  /* When stacked, center everything in the right column so it
+     visually aligns with the centered photo above it. !important
+     is required because the CTA block and note carry inline
+     left-align styles set in the desktop layout. */
+  .af-root .af-about-text{ text-align:center; }
+  .af-root .af-about-text .af-cta-block{ text-align:center!important; }
+  .af-root .af-about-text .af-cta-note{ text-align:center!important; margin-left:auto!important; margin-right:auto!important; }
+  .af-root .af-lbox-prev{ left:10px; }
+  .af-root .af-lbox-next{ right:10px; }
+}
+@media (max-width:640px) {
+.af-root .af-callout{font-size:11px!important;letter-spacing:.07em!important;padding:8px 14px!important;gap:7px!important;}
+  .af-root .af-hero{ padding:40px 0 56px!important; }
+  .af-root .af-announce-track{ animation-duration:22s; }
+  /* ── CREDIBILITY STRIP — mobile card redesign ── */
+  .af-root .af-creds{ padding:28px 0!important; }
+  .af-root .af-creds-grid{
+    grid-template-columns:1fr!important;
+    gap:10px!important; max-width:100%;
+  }
+  /* Remove desktop vertical dividers */
+  .af-root .af-cred-item+.af-cred-item::before{ display:none!important; }
+  /* Each stat = horizontal card laid out via CSS Grid so label + sub stack
+     vertically in the right column (was previously all 3 children as flex
+     siblings, which pushed the sub text into a 3rd column and got it cut off
+     on small phones). */
+  .af-root .af-cred-item{
+    display:grid!important;
+    grid-template-columns:96px 1fr!important;
+    grid-template-areas:
+      "num label"
+      "num sub"!important;
+    align-items:center!important;
+    column-gap:0!important;
+    row-gap:2px!important;
+    padding:0!important;
+    text-align:left!important;
+    background:var(--brand-soft,#2A1F11)!important;
+    border:1px solid var(--border-strong,#3D3429)!important;
+    border-left:4px solid var(--brand,#C9954D)!important;
+    border-radius:14px!important;
+    overflow:hidden!important;
+    position:relative!important;
+  }
+  /* Gold glow decoration top-right */
+  .af-root .af-cred-item::before{
+    content:"" !important; position:absolute!important;
+    right:-20px; top:-20px;
+    width:80px!important; height:80px; border-radius:50%!important;
+    background:radial-gradient(circle,rgba(201,149,77,.18),transparent 65%)!important;
+    pointer-events:none!important;
+    left:auto!important; bottom:auto!important;
+  }
+  /* Number — left column, spans both rows */
+  .af-root .af-cred-num{
+    grid-area:num!important;
+    align-self:stretch!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:26px!important;
+    padding:16px 12px!important;
+    margin:0!important;
+    border-right:1px solid rgba(201,149,77,.18)!important;
+    text-align:center!important;
+    line-height:1!important;
+  }
+  /* Label — top right cell */
+  .af-root .af-cred-label{
+    grid-area:label!important;
+    display:block!important;
+    padding:12px 14px 0!important;
+    font-size:12px!important;
+    text-transform:uppercase!important;
+    letter-spacing:.06em!important;
+    line-height:1.25!important;
+    color:var(--ink,#F1E5D0)!important;
+    font-weight:700!important;
+    white-space:normal!important;
+    overflow-wrap:break-word!important;
+  }
+  /* Sub — bottom right cell, full visible text, no truncation */
+  .af-root .af-cred-sub{
+    grid-area:sub!important;
+    display:block!important;
+    padding:0 14px 12px!important;
+    margin:0!important;
+    font-size:11.5px!important;
+    line-height:1.4!important;
+    color:var(--ink-soft,#999285)!important;
+    white-space:normal!important;
+    overflow-wrap:break-word!important;
+  }
+  /* The "INDIA · UK · CANADA" item has nested cred-text — kill the inline
+     break helper that was forcing weird wrapping on tablet */
+  .af-root .af-cred-text .cred-br{ display:inline!important; }
+  /* Discover label — kill 3-col wrap, hide decorative line on mobile */
+  .af-root .af-discover-label{
+    display:block!important; text-align:center;
+    font-size:12px!important; letter-spacing:.14em!important;
+    margin-bottom:20px!important;
+  }
+  .af-root .af-discover-label::before{ display:none!important; }
+  /* CTA — center text, allow shorter mobile copy via .cta-m / .cta-d */
+  .af-root .af-cta{ text-align:center; }
+  .af-root .af-cta .cta-d{ display:none!important; }
+  .af-root .af-cta .cta-m{ display:inline!important; }
+  .af-root .af-skim-photos{ flex-direction:column; }
+  .af-root .af-photo-r2{ display:none!important; }
+  .af-root .af-tcards{ grid-template-columns:1fr; }
+  .af-root .af-offer-grid{ grid-template-columns:1fr; }
+  .af-root .af-offer-last{ max-width:100%; }
+  .af-root .af-opt-grid{ grid-template-columns:1fr; }
+
+  /* Mobile carousel — one slide per screen with subtle peek at edges */
+  .af-root .af-gal-track,
+  .af-root .af-gal-set{ gap:14px!important; }
+  .af-root .af-guard-card{ padding:36px 22px!important; border-radius:var(--r-lg,24px); }
+  /* CTA — fluid font scales with viewport, never wraps awkwardly */
+  .af-root .af-cta{
+    font-size:clamp(13px,3.8vw,15px)!important;
+    padding:13px clamp(16px,4vw,24px) 11px!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+  .af-root .af-cta .cta-top{
+    gap:8px!important;
+    flex-wrap:nowrap!important;
+    width:100%!important;
+    justify-content:center!important;
+  }
+  .af-root .af-cta .cta-sub{
+    font-size:clamp(8.5px,2.3vw,10.5px)!important;
+    white-space:nowrap!important;
+    text-align:center!important;
+    line-height:1.2!important;
+    letter-spacing:.01em!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    gap:4px!important;
+  }
+  .af-root .af-cta .arrow{
+    width:22px!important; height:22px!important; flex-shrink:0!important;
+  }
+  .af-root .af-cta-note{ font-size:12px!important; white-space:normal!important; max-width:100%!important; }
+  /* Smaller play button on mobile */
+  .af-root .af-play{ width:60px!important; height:60px!important; }
+  .af-root .af-play svg{ width:22px!important; height:22px!important; }
+  /* Mobile section padding — moderate, consistent reduction */
+  .af-root .af-skim{ padding:48px 0 16px!important; }
+  .af-root .af-guard{ padding:48px 0!important; }
+  .af-root .af-proof{ padding:10px 0 36px!important; }
+  .af-root .af-gallery{ padding:48px 0!important; }
+  .af-root .af-money{ padding:44px 0!important; }
+  .af-root .af-about{ padding:48px 0!important; }
+  .af-root .af-two{ padding:48px 0!important; }
+  .af-root .af-faq{ padding:48px 0!important; }
+  .af-root .af-final{ padding:56px 0 48px!important; }
+  /* Footer links — fit all three on one line */
+  .af-root .af-foot .links{ display:flex!important; align-items:center!important; justify-content:center!important; flex-wrap:nowrap!important; gap:0!important; margin-top:12px!important; }
+  .af-root .af-foot .links a{ font-size:10.5px!important; margin:0 6px!important; white-space:nowrap!important; }
+  /* Money section card — tighter on small screens */
+  .af-root .af-money-card{ padding:32px 16px 28px!important; }
+  .af-root .af-mpt{ padding:12px 14px!important; gap:10px!important; }
+  .af-root .af-mpt-ic{ width:30px!important; height:30px!important; flex:0 0 30px!important; }
+  .af-root .af-mpt strong{ font-size:13px!important; }
+  .af-root .af-mpt span{ font-size:11px!important; }
+  .af-root .af-stuck{ display:block; }
+
+  /* Footer extra space because sticky CTA is taller now (timer above button) */
+  .af-root .af-foot{
+    padding:40px 0 calc(132px + env(safe-area-inset-bottom))!important;
+  }
+
+  /* Lightbox — slightly smaller buttons on mobile, but keep the
+     branded ring so they still feel intentional */
+  .af-root .af-lbox-nav{ width:48px!important; height:48px!important; }
+  .af-root .af-lbox-nav svg{ width:20px!important; height:20px!important; }
+  .af-root .af-lbox-close{ width:42px!important; height:42px!important; top:14px; right:14px; }
+  .af-root .af-lbox-close svg{ width:16px!important; height:16px!important; }
+  body.admin-bar .af-lbox-portal .af-lbox-close,
+  body.admin-bar .af-root .af-lbox-close{ top:50px!important; }
+}
+
+/* ── Ultra-small phones (≤380px) ── */
+@media(max-width:380px){
+  .af-root .af-cta{ font-size:12px!important; padding:12px 14px 10px!important; }
+  .af-root .af-cta .cta-sub{ font-size:9px!important; }
+  .af-root .af-mpt{ flex-direction:column!important; align-items:flex-start!important; gap:6px!important; }
+  .af-root .af-timer{
+    font-size:11px!important; padding:6px 12px 5px!important; gap:6px!important;
+  }
+  .af-root .af-timer-val{ font-size:12px!important; min-width:40px; }
+}
+
+/* ================================================================
+   ■ SITE HEADER — LOGO BAR
+================================================================ */
+.af-root .af-header{
+  background:var(--bg,#0E0C09)!important;
+  border-top:1px solid rgba(201,149,77,.08)!important;
+  border-bottom:1px solid rgba(201,149,77,.08)!important;
+  padding:18px 0 16px!important;
+  position:relative; z-index:5;
+}
+.af-root .af-header .af-wrap{
+  display:flex!important; align-items:center!important; justify-content:center!important;
+}
+.af-root .af-logo{
+  display:inline-flex!important; align-items:center!important; gap:10px!important;
+  text-decoration:none!important; outline:none!important;
+  transition:opacity .25s, transform .25s;
+}
+.af-root .af-logo:hover{ opacity:.85; transform:translateY(-1px); }
+/* Text placeholder — gold gradient TFA monogram */
+.af-root .af-logo-mark{
+  font-family:var(--fh,'Playfair Display','Georgia',serif)!important;
+  font-size:22px!important; font-weight:700!important; letter-spacing:.05em!important;
+  background:linear-gradient(135deg,#E0B370 0%,#C9954D 60%,#9A6F32 100%)!important;
+  -webkit-background-clip:text!important; background-clip:text!important;
+  -webkit-text-fill-color:transparent!important; color:transparent!important;
+  display:inline-block!important; line-height:1!important;
+  padding:6px 12px!important;
+  border:1.5px solid rgba(201,149,77,.45)!important;
+  border-radius:8px!important;
+  text-shadow:0 0 24px rgba(201,149,77,.18)!important;
+}
+/* When user swaps in an <img class="af-logo-img" />, these rules apply */
+.af-root .af-logo-img{
+  height:32px!important; width:auto!important; display:block!important;
+  object-fit:contain!important;
+}
+@media (max-width:640px){
+  .af-root .af-header{ padding:14px 0 12px!important; }
+  .af-root .af-logo-mark{ font-size:18px!important; padding:5px 10px!important; }
+  .af-root .af-logo-img{ height:28px!important; }
+}
+
+
+/* ════════════════════════════════════════════════════════════════
+   BRANDED GALLERY FRAME — Before & After Transformations carousel
+   ──────────────────────────────────────────────────────────────
+   Replaces the previous dashed-border style with a premium gold
+   frame: corner brackets, soft gold rim, hover glow.
+   The existing <img src> inside each .af-gslide stays untouched.
+═══════════════════════════════════════════════════════════════ */
+
+/* Hover: lift, brand-bronze glow, brighter border */
+/* Decorative gold corner brackets — top corners */
+/* The image itself */
+/* Hide any leftover placeholder content (.ic / .n / .lbl) used when image missing */
+/* Mobile size */
+@media (max-width:640px){
+  }
+
+/* Two-row marquee — bottom row gets top margin */
+.af-root .af-gal-carousel-row2{ margin-top:18px; }
+@media (max-width:640px){
+  .af-root .af-gal-carousel-row2{ margin-top:14px; }
+}
+/* Slightly tighter padding on each row since we now have two */
+.af-root .af-gal-carousel{ padding:10px 0 14px; }
+
+/* ════════════════════════════════════════════════════════════════
+   BRANDED TRANSFORMATION CARD — premium gallery frame
+   ──────────────────────────────────────────────────────────────
+   - Thick gold border with corner brackets
+   - "TRANSFORMATION" pill at top-left
+   - object-fit:contain so images NEVER crop
+   - Brand-gradient bg fills any letterboxed empty space
+═══════════════════════════════════════════════════════════════ */
+
+.af-root .af-gslide{
+  width:340px;
+  aspect-ratio:5/4;
+  flex-shrink:0;
+  position:relative;
+  display:block;
+  border-radius:14px;
+  /* Brand-gradient background fills any letterbox space around the image */
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(201,149,77,.18) 0%, transparent 60%),
+    linear-gradient(180deg, #1F1A14 0%, #0E0C09 100%) !important;
+  border:1px solid rgba(201,149,77,.42) !important;
+  /* Inner gold ring + soft outer shadow */
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.4),
+    inset 0 0 0 5px rgba(14,12,9,.95),
+    inset 0 0 0 6px rgba(201,149,77,.55),
+    0 8px 24px rgba(0,0,0,.5),
+    0 2px 0 rgba(255,255,255,.02) inset !important;
+  cursor:pointer;
+  overflow:hidden;
+  isolation:isolate;
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .3s,
+    border-color .3s !important;
+}
+
+/* Hover: lift + brighter gold */
+.af-root .af-gslide:hover{
+  transform:translateY(-8px) scale(1.02);
+  border-color:rgba(224,179,112,.85) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.4),
+    inset 0 0 0 5px rgba(14,12,9,.95),
+    inset 0 0 0 6px rgba(224,179,112,.95),
+    0 18px 44px rgba(0,0,0,.6),
+    0 0 38px rgba(201,149,77,.32) !important;
+}
+
+/* The image — CONTAIN, never crop */
+.af-root .af-gslide img{
+  position:absolute !important;
+  inset:14px !important;            /* breathing space inside the gold border */
+  width:calc(100% - 28px) !important;
+  height:calc(100% - 28px) !important;
+  object-fit:contain !important;     /* preserve full image, no cropping */
+  object-position:center !important;
+  border-radius:6px;
+  pointer-events:none;
+  display:block;
+  filter:saturate(1.06) contrast(1.05);
+  transition:filter .4s, transform .6s cubic-bezier(.2,.8,.2,1);
+  z-index:1;
+}
+.af-root .af-gslide:hover img{
+  filter:saturate(1.16) contrast(1.10);
+  transform:scale(1.025);
+}
+
+/* Decorative gold corner brackets — all 4 corners */
+.af-root .af-gslide::before,
+.af-root .af-gslide::after{
+  content:"";
+  position:absolute;
+  width:22px; height:22px;
+  border:2px solid var(--brand,#C9954D);
+  z-index:5;
+  pointer-events:none;
+  transition:opacity .3s, border-color .3s;
+  opacity:.9;
+}
+.af-root .af-gslide::before{
+  top:9px; left:9px;
+  border-right:0; border-bottom:0;
+  border-top-left-radius:5px;
+}
+.af-root .af-gslide::after{
+  bottom:9px; right:9px;
+  border-left:0; border-top:0;
+  border-bottom-right-radius:5px;
+}
+.af-root .af-gslide:hover::before,
+.af-root .af-gslide:hover::after{
+  opacity:1;
+  border-color:var(--brand-light,#E0B370);
+}
+
+/* Hide leftover placeholder content if any */
+.af-root .af-gslide .ic,
+.af-root .af-gslide .n,
+.af-root .af-gslide .lbl{ display:none !important; }
+
+/* Mobile sizing */
+@media (max-width:640px){
+  .af-root .af-gslide{
+    width:calc(100vw - 32px);
+    max-width:340px;
+    border-radius:12px !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(0,0,0,.4),
+      inset 0 0 0 4px rgba(14,12,9,.95),
+      inset 0 0 0 5px rgba(201,149,77,.5),
+      0 6px 18px rgba(0,0,0,.45) !important;
+  }
+  .af-root .af-gslide img{
+    inset:11px !important;
+    width:calc(100% - 22px) !important;
+    height:calc(100% - 22px) !important;
+  }
+  .af-root .af-gslide::before,
+  .af-root .af-gslide::after{ width:18px; height:18px; }
+  .af-root .af-gslide::before{ top:7px; left:7px; }
+  .af-root .af-gslide::after{ bottom:7px; right:7px; }
+}
+
+/* ================================================================
+   ■ RESPONSIVE LAYER — MOBILE-FIRST POLISH PASS
+   Targets: phone ≤480, large phone ≤640, tablet ≤900,
+            small laptop ≤1199. Wide desktop unchanged.
+   Additive — overrides hardcoded section padding / heading margins
+   / inner spacing that the original WordPress CSS left at desktop
+   values for every breakpoint.
+================================================================ */
+
+/* ── Small laptop & large tablet (≤1199px) ── */
+@media (max-width:1199px){
+  .af-root .af-skim{ padding:64px 0 56px!important; }
+  .af-root .af-guard{ padding:60px 0!important; }
+  .af-root .af-proof{ padding:60px 0 56px!important; }
+  .af-root .af-gallery{ padding:60px 0!important; }
+  .af-root .af-about{ padding:64px 0!important; }
+  .af-root .af-two{ padding:60px 0!important; }
+  .af-root .af-faq{ padding:60px 0!important; }
+  .af-root .af-money{ padding:60px 0!important; }
+  .af-root .af-final{ padding:64px 0 56px!important; }
+  .af-root .af-creds{ padding:32px 0 30px!important; }
+}
+
+/* ── Tablet (≤900px) — 2-col grids start collapsing ── */
+@media (max-width:900px){
+  .af-root .af-skim{ padding:48px 0 40px!important; }
+  .af-root .af-skim-head{ margin-bottom:32px!important; }
+  .af-root .af-skim-grid{ gap:36px!important; }
+  .af-root .af-guard{ padding:48px 0!important; }
+  .af-root .af-guard-card{ padding:36px 28px!important; }
+  .af-root .af-proof{ padding:48px 0 44px!important; }
+  .af-root .af-proof h2{ margin-bottom:32px!important; }
+  .af-root .af-gallery{ padding:48px 0!important; }
+  .af-root .af-about{ padding:48px 0!important; }
+  .af-root .af-about-grid{ gap:32px!important; }
+  .af-root .af-two{ padding:48px 0!important; }
+  .af-root .af-opt{ padding:28px 24px!important; }
+  .af-root .af-faq{ padding:48px 0!important; }
+  .af-root .af-faq h2{ margin-bottom:28px!important; }
+  .af-root .af-money{ padding:48px 0!important; }
+  .af-root .af-final{ padding:52px 0 44px!important; }
+}
+
+/* Unconditional overflow guard — decorative pseudo-elements, brand-accent
+   nowrap spans, and embedded iframes must never push the body wider than
+   the viewport. Applies at every screen size. */
+html, body{ max-width:100vw; overflow-x:clip; }
+.af-root, .af-root section, .af-root .af-wrap{ max-width:100vw; overflow-x:clip; }
+
+/* ── Large phone (≤640px) — fills gaps in original block ── */
+@media (max-width:640px){
+  /* Announcement strip */
+  .af-root .af-announce-track{ font-size:11px!important; gap:32px!important; padding:9px 0!important; letter-spacing:.06em!important; }
+
+  /* Discover (Section 04) */
+  .af-root .af-skim{ padding:40px 0 28px!important; }
+  .af-root .af-skim-head{ margin-bottom:24px!important; }
+  .af-root .af-skim-grid{ gap:24px!important; }
+  .af-root .af-skim-head h2{ margin-bottom:14px!important; }
+  .af-root .af-skim-head p{ font-size:14.5px!important; line-height:1.55!important; }
+  .af-root .af-skim-cta{ margin-top:28px!important; }
+  .af-root .af-discover-label{ margin-bottom:18px!important; font-size:11.5px!important; letter-spacing:.18em!important; }
+  .af-root .af-discover-list li p{ font-size:14px!important; line-height:1.6!important; }
+  .af-root .af-discover-list li{ padding:0 0 16px 22px!important; margin-bottom:14px!important; }
+  .af-root .af-discover-list li::before{ width:11px!important; height:11px!important; top:7px!important; }
+
+  /* Accountability guarantee */
+  .af-root .af-guard{ padding:36px 0!important; }
+  .af-root .af-guard-card{ padding:28px 20px!important; border-radius:18px!important; }
+  .af-root .af-guard-card h2{ margin-bottom:14px!important; }
+
+  /* Real Professionals (Section 06) */
+  .af-root .af-proof{ padding:36px 0 32px!important; }
+  .af-root .af-proof h2{ margin-bottom:22px!important; }
+  .af-root .af-tcards{ gap:18px!important; }
+  .af-root .af-tcard-body{ padding:16px 16px 18px!important; }
+  .af-root .af-tcard-body h4{ font-size:16px!important; }
+  .af-root .af-tcard-body p{ font-size:13.5px!important; line-height:1.55!important; }
+  .af-root .af-tcard-body .meta{ font-size:12.5px!important; }
+  .af-root .af-tcard-more{ padding:24px 18px!important; }
+  .af-root .af-tcard-more .num{ font-size:38px!important; }
+  .af-root .af-tcard-more .ttl{ font-size:15px!important; }
+  .af-root .af-tcard-more p{ font-size:13.5px!important; }
+
+  /* Before/After gallery section */
+  .af-root .af-gallery{ padding:32px 0 20px!important; }
+  .af-root .af-gallery h2{ margin-bottom:18px!important; }
+  .af-root .af-gprice .new{ font-size:24px!important; }
+
+  /* Meet Arjun */
+  .af-root .af-about{ padding:36px 0!important; }
+  .af-root .af-about-grid{ gap:24px!important; }
+
+  /* Two options */
+  .af-root .af-two{ padding:36px 0!important; }
+  .af-root .af-two h2{ margin-bottom:22px!important; }
+  .af-root .af-opt{ padding:22px 18px!important; }
+
+  /* FAQ */
+  .af-root .af-faq{ padding:36px 0!important; }
+  .af-root .af-faq h2{ margin-bottom:22px!important; }
+  .af-root .af-q-head{ font-size:14.5px!important; padding:14px 16px!important; line-height:1.4!important; }
+
+  /* Final CTA */
+  .af-root .af-final{ padding:36px 0 30px!important; }
+  .af-root .af-final p{ font-size:14px!important; }
+
+  /* Footer — bottom padding must clear the sticky CTA bar AND its countdown
+     strip on mobile (~110px) plus the iOS safe-area inset. */
+  .af-root .af-foot{ font-size:11.5px!important; padding:28px 0 calc(140px + env(safe-area-inset-bottom))!important; }
+  .af-root .af-foot .copy{ font-size:12.5px!important; }
+  .af-root .af-foot .links a{ margin:0 6px!important; font-size:11.5px!important; }
+
+  /* Video play button — shrink so it doesn't dominate small thumbnails */
+  .af-root .af-play{ width:64px!important; height:64px!important; }
+  .af-root .af-play svg{ width:22px!important; height:22px!important; }
+}
+
+/* ── Small phone (≤480px) ── */
+@media (max-width:480px){
+  /* Compress every section's vertical rhythm further */
+  .af-root .af-skim{ padding:30px 0 22px!important; }
+  .af-root .af-guard{ padding:28px 0!important; }
+  .af-root .af-guard-card{ padding:22px 16px!important; }
+  .af-root .af-proof{ padding:28px 0 24px!important; }
+  .af-root .af-gallery{ padding:24px 0 14px!important; }
+  .af-root .af-about{ padding:28px 0!important; }
+  .af-root .af-two{ padding:28px 0!important; }
+  .af-root .af-faq{ padding:28px 0!important; }
+  .af-root .af-money{ padding:28px 0!important; }
+  .af-root .af-final{ padding:28px 0 24px!important; }
+  .af-root .af-creds{ padding:22px 0 20px!important; }
+
+  /* Callout pill */
+  .af-root .af-callout{ font-size:9.5px!important; padding:6px 12px!important; gap:6px!important; margin-bottom:12px!important; }
+  .af-root .af-callout::before{ width:6px!important; height:6px!important; min-width:6px!important; min-height:6px!important; }
+
+  /* Video play button */
+  .af-root .af-play{ width:56px!important; height:56px!important; }
+  .af-root .af-play svg{ width:18px!important; height:18px!important; }
+
+  /* Body text shrinks slightly */
+  .af-root .af-skim-head p{ font-size:13.5px!important; }
+  .af-root .af-tcard-body h4{ font-size:15.5px!important; }
+  .af-root .af-tcard-body p{ font-size:13px!important; }
+  .af-root .af-q-head{ font-size:14px!important; padding:12px 14px!important; }
+  .af-root .af-opt{ padding:20px 16px!important; }
+  .af-root .af-final p{ font-size:13.5px!important; }
+}
+
+/* ── Tiny phone (≤380px) ── */
+@media (max-width:380px){
+  .af-root .af-announce-track{ font-size:10px!important; gap:24px!important; }
+  .af-root .af-callout{ font-size:9px!important; padding:5px 10px!important; letter-spacing:.08em!important; }
+  .af-root .af-play{ width:52px!important; height:52px!important; }
+  .af-root .af-play svg{ width:16px!important; height:16px!important; }
+
+  /* Cap every section heading so 30-char titles don't break onto 4 lines */
+  .af-root .af-skim-head h2,
+  .af-root .af-proof h2,
+  .af-root .af-gallery h2,
+  .af-root .af-two h2,
+  .af-root .af-faq h2,
+  .af-root .af-about-text h2,
+  .af-root .af-guard-card h2,
+  .af-root .af-money-card h2,
+  .af-root .af-final h2{ font-size:22px!important; line-height:1.22!important; }
+
+  .af-root .af-cred-num{ font-size:24px!important; }
+  .af-root .af-tcard-body h4{ font-size:15px!important; }
+  .af-root .af-tcard-body p{ font-size:12.5px!important; }
+}
