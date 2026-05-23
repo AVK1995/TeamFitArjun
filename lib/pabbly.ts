@@ -76,11 +76,22 @@ export async function firePabblyWebhook(args: {
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
+      const text = await res.text().catch(() => "<no body>");
       console.warn(
-        `[pabbly] webhook returned ${res.status} for order ${args.orderId}`,
+        `[pabbly] webhook returned ${res.status} for order ${args.orderId} — body: ${text.slice(0, 200)} — payload: ${JSON.stringify(payload)}`,
       );
+      return;
     }
+    // Log the full payload on success so every Pabbly fire can be inspected
+    // in Vercel logs. Helpful for reconciling missing rows + debugging
+    // mapping issues in the Pabbly workflow.
+    console.log(
+      `[pabbly] OK order=${args.orderId} payment=${args.paymentId} payload=${JSON.stringify(payload)}`,
+    );
   } catch (err) {
-    console.warn("[pabbly] webhook failed", err);
+    console.warn(
+      `[pabbly] webhook failed for order ${args.orderId} — payload: ${JSON.stringify(payload)}`,
+      err,
+    );
   }
 }

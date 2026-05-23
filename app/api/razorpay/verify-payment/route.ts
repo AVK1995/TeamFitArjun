@@ -90,6 +90,10 @@ export async function POST(
     const shouldReport = onProductionHost && isRealPurchase;
 
     if (shouldReport) {
+      console.log(
+        `[verify-payment] firing Pabbly + CAPI for event_id=${eventId} (orderId=${orderId}, value=${valueRupees}, email=${customer.email})`,
+      );
+
       void firePabblyWebhook({
         customer,
         utm: utm ?? {},
