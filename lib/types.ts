@@ -32,8 +32,14 @@ export interface CreateOrderRequest {
   currency: string;
   /** Optional coupon code applied client-side */
   coupon?: string;
-  /** Forwarded so the order notes carry context */
+  /** Forwarded so the order notes carry the full customer payload */
   customer?: Partial<CustomerPayload>;
+  /**
+   * UTM + click-id + landing_url. Stored in Razorpay order `notes` at order
+   * creation time, so the webhook fallback can rebuild the full Pabbly
+   * payload server-side even when the browser-side verify-payment never lands.
+   */
+  utm?: UtmPayload;
 }
 
 export interface CreateOrderResponse {

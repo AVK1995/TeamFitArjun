@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type Razorpay from "razorpay";
 import { verifyRazorpayWebhookSignature, getRazorpay } from "@/lib/razorpay";
 import { firePabblyWebhook } from "@/lib/pabbly";
 import { fireMetaCapi } from "@/lib/capi";
@@ -6,7 +7,7 @@ import { claimEventId } from "@/lib/dedup";
 import { extractClientIp, extractUserAgent } from "@/lib/request";
 import { isProductionServer, isPaidAmount } from "@/lib/tracking-gate";
 import { clientConfig } from "@/client.config";
-import type { CustomerPayload } from "@/lib/types";
+import type { CustomerPayload, UtmPayload } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,13 +17,23 @@ export const dynamic = "force-dynamic";
  *
  * If the browser dies between Razorpay's checkout.js callback and our
  * /api/razorpay/verify-payment fetch, this picks up the slack and fires
- * the same dual CAPI events (Purchase + sales) with event_id = payment_id.
- * claimEventId() ensures that when verify-payment already fired, this is a no-op.
+ * the same dual CAPI events (Purchase + sales) PLUS the same complete
+ * Pabbly purchase webhook with event_id = payment_id.
+ *
+ * Data parity: create-order packs every field Pabbly needs into Razorpay
+ * order `notes` (first_name, last_name, customer_email, customer_phone,
+ * country_code, city, utm_source/medium/campaign/content/term, fbclid,
+ * gclid, landing_url, referrer). This route reads those notes back via
+ * orders.fetch (with retry) so the Pabbly row from a webhook fallback is
+ * indistinguishable from one fired by verify-payment.
+ *
+ * Dedup: claimEventId(payment_id) ensures we never double-fire when
+ * verify-payment has already processed this payment.
  *
  * Razorpay dashboard setup:
- *   - URL: https://{domain}/api/razorpay/webhook
- *   - Active events: payment.captured (and optionally payment.failed)
- *   - Secret: matches RAZORPAY_WEBHOOK_SECRET
+ *   - URL: https://teamfitarjun.com/api/razorpay/webhook
+ *   - Active events: payment.captured ONLY
+ *   - Secret: matches RAZORPAY_WEBHOOK_SECRET in Vercel env
  */
 export async function POST(request: Request): Promise<NextResponse> {
   const rawBody = await request.text();
@@ -58,37 +69,42 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ ok: true, deduped: true });
   }
 
-  // Pull richer detail from Razorpay so EMQ has more fields than the bare
-  // webhook payload exposes (it doesn't include customer state/zip by default).
-  let customer: CustomerPayload;
-  try {
-    const razorpay = getRazorpay();
-    const order = await razorpay.orders.fetch(orderId);
-    const notes = (order.notes ?? {}) as Record<string, string>;
-    customer = {
-      firstName: notes.first_name ?? "",
-      lastName: notes.last_name ?? "",
-      email: String(payment.email ?? notes.customer_email ?? ""),
-      phone: String(payment.contact ?? notes.customer_phone ?? ""),
-      countryCode: notes.country_code ?? "IN",
-      city: notes.city ?? "",
-      state: notes.state,
-      zipCode: notes.zip_code,
-    };
-  } catch (err) {
-    console.warn("[webhook] could not fetch order details — using bare webhook fields", err);
-    customer = {
-      firstName: "",
-      lastName: "",
-      email: String(payment.email ?? ""),
-      phone: String(payment.contact ?? ""),
-      countryCode: "IN",
-      city: "",
-    };
+  // Pull the full payload from Razorpay order notes (set by create-order).
+  // Retry once with backoff to absorb transient Razorpay API blips.
+  const notes = await fetchOrderNotesWithRetry(orderId);
+
+  const customer: CustomerPayload = {
+    firstName: notes.first_name ?? "",
+    lastName: notes.last_name ?? "",
+    email: String(payment.email ?? notes.customer_email ?? ""),
+    phone: String(payment.contact ?? notes.customer_phone ?? ""),
+    countryCode: notes.country_code || "IN",
+    city: notes.city ?? "",
+  };
+
+  const utm: UtmPayload = {
+    utm_source: notes.utm_source ?? "",
+    utm_medium: notes.utm_medium ?? "",
+    utm_campaign: notes.utm_campaign ?? "",
+    utm_content: notes.utm_content ?? "",
+    utm_term: notes.utm_term ?? "",
+    fbclid: notes.fbclid ?? "",
+    gclid: notes.gclid ?? "",
+    landing_url: notes.landing_url ?? "",
+    referrer: notes.referrer ?? "",
+  };
+
+  // Loud diagnostic if notes were missing — this means create-order didn't
+  // receive the customer/utm payload OR Razorpay returned no notes for the
+  // order. Either is a real bug worth surfacing in Vercel logs.
+  if (!customer.firstName && !customer.lastName) {
+    console.warn(
+      `[webhook] order ${orderId} notes missing identity fields — Pabbly row will be partial. Investigate create-order body or Razorpay orders.fetch behavior.`,
+    );
   }
 
   if (!customer.email && !customer.phone) {
-    console.warn(`[webhook] no contact info for order ${orderId} — skipping CAPI to avoid low-EMQ event`);
+    console.warn(`[webhook] no contact info for order ${orderId} — skipping`);
     return NextResponse.json({ ok: true, skipped: "no contact info" });
   }
 
@@ -98,9 +114,6 @@ export async function POST(request: Request): Promise<NextResponse> {
   const valueRupees = (payment.amount ?? clientConfig.pricing.paise) / 100;
 
   // Same two gates as verify-payment: production host + paid amount > ₹1.
-  // The host check is a safety net only — in practice the user registers the
-  // webhook URL in Razorpay only against the production domain, so a preview
-  // deploy will never receive a webhook from Razorpay at all.
   const onProductionHost = isProductionServer(request);
   const isRealPurchase = isPaidAmount(valueRupees);
 
@@ -113,7 +126,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   void firePabblyWebhook({
     customer,
-    utm: {},
+    utm,
     paymentId,
     orderId,
     amount: String(valueRupees),
@@ -136,7 +149,47 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
   }
 
+  console.log(
+    `[webhook] fired for event_id=${eventId} — Pabbly + CAPI dispatched with full notes payload`,
+  );
   return NextResponse.json({ ok: true, eventId });
+}
+
+/**
+ * orders.fetch with one retry. Razorpay's API occasionally returns a transient
+ * 5xx or rate-limit error; a single retry after 300ms typically resolves it
+ * without delaying the webhook response noticeably.
+ */
+async function fetchOrderNotesWithRetry(orderId: string): Promise<Record<string, string>> {
+  let razorpay: Razorpay;
+  try {
+    razorpay = getRazorpay();
+  } catch (err) {
+    console.error("[webhook] Razorpay SDK init failed", err);
+    return {};
+  }
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const order = await razorpay.orders.fetch(orderId);
+      return (order.notes ?? {}) as Record<string, string>;
+    } catch (err) {
+      if (attempt === 0) {
+        console.warn(
+          `[webhook] orders.fetch(${orderId}) failed on attempt 1 — retrying in 300ms`,
+          err,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        continue;
+      }
+      console.error(
+        `[webhook] orders.fetch(${orderId}) failed twice — returning empty notes`,
+        err,
+      );
+      return {};
+    }
+  }
+  return {};
 }
 
 interface WebhookPayload {

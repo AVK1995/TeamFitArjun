@@ -64,18 +64,44 @@ export async function POST(
     );
   }
 
+  // Pack EVERY field the Pabbly purchase webhook needs into Razorpay's
+  // order `notes`. The webhook fallback (app/api/razorpay/webhook/route.ts)
+  // reads these back via orders.fetch when the browser-side verify-payment
+  // call fails to land — so Pabbly gets identical complete data on either
+  // delivery path.
+  //
+  // Razorpay's documented limit is 15 keys per `notes` object with values up
+  // to 256 chars each. We keep the count at 15 exactly. Empty values are
+  // sent as "" so the webhook can deterministically rebuild the payload.
+  const customer = body.customer ?? {};
+  const utm = body.utm ?? {};
+  const clamp = (v: string | undefined): string => (v ?? "").toString().slice(0, 256);
+
+  const notes: Record<string, string> = {
+    first_name: clamp(customer.firstName),
+    last_name: clamp(customer.lastName),
+    customer_email: clamp(customer.email),
+    customer_phone: clamp(customer.phone),
+    country_code: clamp(customer.countryCode),
+    city: clamp(customer.city),
+    utm_source: clamp(utm.utm_source),
+    utm_medium: clamp(utm.utm_medium),
+    utm_campaign: clamp(utm.utm_campaign),
+    utm_content: clamp(utm.utm_content),
+    utm_term: clamp(utm.utm_term),
+    fbclid: clamp(utm.fbclid),
+    gclid: clamp(utm.gclid),
+    landing_url: clamp(utm.landing_url),
+    referrer: clamp(utm.referrer),
+  };
+
   try {
     const razorpay = getRazorpay();
     const order = await razorpay.orders.create({
       amount: amount * 100,
       currency,
       receipt: `rcpt_${Date.now()}`,
-      notes: {
-        source: clientConfig.funnel.slug,
-        product: clientConfig.brand.productName,
-        ...(body.coupon ? { coupon: body.coupon } : {}),
-        ...(body.customer?.email ? { customer_email: body.customer.email } : {}),
-      },
+      notes,
     });
 
     return NextResponse.json({
@@ -83,8 +109,8 @@ export async function POST(
       amount,
       currency,
       keyId,
-      // event_id = order.id — single deterministic value used by both
-      // server CAPI (in verify-payment) and browser Pixel (in /thank-you).
+      // Placeholder — the real event_id used downstream is the Razorpay
+      // payment_id, which is only known after the payment completes.
       eventId: order.id,
     });
   } catch (err) {
