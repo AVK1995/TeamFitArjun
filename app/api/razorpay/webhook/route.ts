@@ -4,7 +4,7 @@ import { verifyRazorpayWebhookSignature, getRazorpay } from "@/lib/razorpay";
 import { firePabblyWebhook } from "@/lib/pabbly";
 import { fireMetaCapi } from "@/lib/capi";
 import { claimEventId } from "@/lib/dedup";
-import { getPaymentDedupState, markPaymentFired } from "@/lib/payment-dedup";
+import { getPaymentDedupState, markFires } from "@/lib/payment-dedup";
 import { extractClientIp, extractUserAgent } from "@/lib/request";
 import { isProductionServer, isPaidAmount } from "@/lib/tracking-gate";
 import { clientConfig } from "@/client.config";
@@ -83,9 +83,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     getPaymentDedupState(paymentId),
   ]);
 
-  if (dedupState.alreadyFired) {
+  if (dedupState.pabblyFired && dedupState.capiFired) {
     console.log(
-      `[webhook] payment ${paymentId} already marked pabbly_fired by verify-payment — skipping`,
+      `[webhook] payment ${paymentId} already has BOTH fires marked by verify-payment — full skip`,
     );
     return NextResponse.json({ ok: true, deduped: "razorpay" });
   }
@@ -137,35 +137,41 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ ok: true, suppressed: true });
   }
 
+  const willFirePabbly = !dedupState.pabblyFired;
+  const willFireCapi = !dedupState.capiFired && clientConfig.capi.enabled;
+
   console.log(
-    `[webhook] firing Pabbly + CAPI for event_id=${eventId} (value=${valueRupees}, email=${customer.email})`,
+    `[webhook] event_id=${eventId} value=${valueRupees} email=${customer.email} — firing { pabbly:${willFirePabbly}, capi:${willFireCapi} }`,
   );
 
-  const [pabblyResult, capiResult] = await Promise.allSettled([
-    firePabblyWebhook({
-      customer,
-      utm,
-      paymentId,
-      orderId,
-      amount: String(valueRupees),
-      currency: String(payment.currency ?? clientConfig.pricing.currency),
-      timezone: clientConfig.event.timezone,
-    }),
-    clientConfig.capi.enabled
-      ? fireMetaCapi({
-          customer,
-          eventNames: ["Purchase", "sales"],
-          eventId,
-          value: valueRupees,
-          currency: String(payment.currency ?? clientConfig.pricing.currency),
-          paymentId,
-          eventSourceUrl,
-          clientIp,
-          clientUserAgent,
-          testEventCode: process.env.META_CAPI_TEST_EVENT_CODE,
-        })
-      : Promise.resolve(false),
-  ]);
+  const pabblyTask: Promise<boolean> = willFirePabbly
+    ? firePabblyWebhook({
+        customer,
+        utm,
+        paymentId,
+        orderId,
+        amount: String(valueRupees),
+        currency: String(payment.currency ?? clientConfig.pricing.currency),
+        timezone: clientConfig.event.timezone,
+      })
+    : Promise.resolve(false);
+
+  const capiTask: Promise<boolean> = willFireCapi
+    ? fireMetaCapi({
+        customer,
+        eventNames: ["Purchase", "sales"],
+        eventId,
+        value: valueRupees,
+        currency: String(payment.currency ?? clientConfig.pricing.currency),
+        paymentId,
+        eventSourceUrl,
+        clientIp,
+        clientUserAgent,
+        testEventCode: process.env.META_CAPI_TEST_EVENT_CODE,
+      })
+    : Promise.resolve(false);
+
+  const [pabblyResult, capiResult] = await Promise.allSettled([pabblyTask, capiTask]);
 
   if (pabblyResult.status === "rejected") {
     console.error(
@@ -181,18 +187,32 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   const pabblySucceeded =
-    pabblyResult.status === "fulfilled" && pabblyResult.value === true;
+    willFirePabbly &&
+    pabblyResult.status === "fulfilled" &&
+    pabblyResult.value === true;
+  const capiSucceeded =
+    willFireCapi &&
+    capiResult.status === "fulfilled" &&
+    capiResult.value === true;
 
-  if (pabblySucceeded) {
-    await markPaymentFired(paymentId, dedupState.existingNotes);
-  } else {
+  await markFires(paymentId, dedupState.existingNotes, {
+    pabblySucceeded,
+    capiSucceeded,
+  });
+
+  if (willFirePabbly && !pabblySucceeded) {
     console.warn(
       `[webhook] Pabbly fire did NOT succeed for ${paymentId} — leaving pabbly_fired UNSET so the backfill script can retry`,
     );
   }
+  if (willFireCapi && !capiSucceeded) {
+    console.warn(
+      `[webhook] CAPI fire did NOT succeed for ${paymentId} — leaving capi_fired UNSET`,
+    );
+  }
 
   console.log(
-    `[webhook] complete for event_id=${eventId} — pabblySucceeded=${pabblySucceeded}`,
+    `[webhook] complete for event_id=${eventId} — pabblySucceeded=${pabblySucceeded} capiSucceeded=${capiSucceeded}`,
   );
   return NextResponse.json({ ok: true, eventId });
 }

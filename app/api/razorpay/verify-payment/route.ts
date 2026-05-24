@@ -3,7 +3,7 @@ import { verifyRazorpaySignature } from "@/lib/razorpay";
 import { firePabblyWebhook } from "@/lib/pabbly";
 import { fireMetaCapi } from "@/lib/capi";
 import { claimEventId } from "@/lib/dedup";
-import { getPaymentDedupState, markPaymentFired } from "@/lib/payment-dedup";
+import { getPaymentDedupState, markFires } from "@/lib/payment-dedup";
 import {
   extractClientIp,
   extractUserAgent,
@@ -112,11 +112,14 @@ export async function POST(
 
   // Layer 2 dedup — cross-Lambda via Razorpay payment notes. Catches the
   // verify-payment vs webhook race even when each runs on a different
-  // serverless instance.
-  const { alreadyFired, existingNotes } = await getPaymentDedupState(paymentId);
-  if (alreadyFired) {
+  // serverless instance. Pabbly + CAPI are tracked SEPARATELY so a
+  // partial failure (e.g. Pabbly was down for 5 min) can be retried for
+  // just the failed leg, not both.
+  const { pabblyFired, capiFired, existingNotes } = await getPaymentDedupState(paymentId);
+
+  if (pabblyFired && capiFired) {
     console.log(
-      `[verify-payment] payment ${paymentId} already marked pabbly_fired — webhook beat us, skipping`,
+      `[verify-payment] payment ${paymentId} already has BOTH fires marked done — full skip`,
     );
     return NextResponse.json({ success: true, paymentId, eventId });
   }
@@ -127,40 +130,45 @@ export async function POST(
   const clientIp = extractClientIp(request);
   const clientUserAgent = extractUserAgent(request);
 
+  const willFirePabbly = !pabblyFired;
+  const willFireCapi = !capiFired && clientConfig.capi.enabled;
+
   console.log(
-    `[verify-payment] firing Pabbly + CAPI for event_id=${eventId} (value=${valueRupees}, email=${customer.email})`,
+    `[verify-payment] event_id=${eventId} value=${valueRupees} email=${customer.email} — firing { pabbly:${willFirePabbly}, capi:${willFireCapi} }`,
   );
 
-  // AWAIT both fires in parallel so Vercel keeps the Lambda alive until
-  // both complete. Promise.allSettled ensures one failure doesn't take down
-  // the other.
-  const [pabblyResult, capiResult] = await Promise.allSettled([
-    firePabblyWebhook({
-      customer,
-      utm: utm ?? {},
-      paymentId,
-      orderId,
-      amount: clientConfig.pricing.pabblyAmountString,
-      currency: clientConfig.pricing.currency,
-      timezone: clientConfig.event.timezone,
-    }),
-    clientConfig.capi.enabled
-      ? fireMetaCapi({
-          customer,
-          eventNames: ["Purchase", "sales"],
-          eventId,
-          value: valueRupees,
-          currency: clientConfig.pricing.currency,
-          paymentId,
-          eventSourceUrl: resolvedEventSourceUrl,
-          clientIp,
-          clientUserAgent,
-          fbc,
-          fbp,
-          testEventCode: process.env.META_CAPI_TEST_EVENT_CODE,
-        })
-      : Promise.resolve(false),
-  ]);
+  // Fire only what hasn't been done yet. Each gets its own promise so
+  // a successful Pabbly + failed CAPI (or vice versa) is recorded correctly.
+  const pabblyTask: Promise<boolean> = willFirePabbly
+    ? firePabblyWebhook({
+        customer,
+        utm: utm ?? {},
+        paymentId,
+        orderId,
+        amount: clientConfig.pricing.pabblyAmountString,
+        currency: clientConfig.pricing.currency,
+        timezone: clientConfig.event.timezone,
+      })
+    : Promise.resolve(false);
+
+  const capiTask: Promise<boolean> = willFireCapi
+    ? fireMetaCapi({
+        customer,
+        eventNames: ["Purchase", "sales"],
+        eventId,
+        value: valueRupees,
+        currency: clientConfig.pricing.currency,
+        paymentId,
+        eventSourceUrl: resolvedEventSourceUrl,
+        clientIp,
+        clientUserAgent,
+        fbc,
+        fbp,
+        testEventCode: process.env.META_CAPI_TEST_EVENT_CODE,
+      })
+    : Promise.resolve(false);
+
+  const [pabblyResult, capiResult] = await Promise.allSettled([pabblyTask, capiTask]);
 
   if (pabblyResult.status === "rejected") {
     console.error(
@@ -176,13 +184,26 @@ export async function POST(
   }
 
   const pabblySucceeded =
-    pabblyResult.status === "fulfilled" && pabblyResult.value === true;
+    willFirePabbly &&
+    pabblyResult.status === "fulfilled" &&
+    pabblyResult.value === true;
+  const capiSucceeded =
+    willFireCapi &&
+    capiResult.status === "fulfilled" &&
+    capiResult.value === true;
 
-  if (pabblySucceeded) {
-    await markPaymentFired(paymentId, existingNotes);
-  } else {
+  // Write whichever marker(s) succeeded in a single Razorpay edit. Anything
+  // that failed stays unmarked so the fallback path can retry just that leg.
+  await markFires(paymentId, existingNotes, { pabblySucceeded, capiSucceeded });
+
+  if (willFirePabbly && !pabblySucceeded) {
     console.warn(
       `[verify-payment] Pabbly fire did NOT succeed for ${paymentId} — leaving pabbly_fired UNSET so the webhook fallback (or backfill script) can retry`,
+    );
+  }
+  if (willFireCapi && !capiSucceeded) {
+    console.warn(
+      `[verify-payment] CAPI fire did NOT succeed for ${paymentId} — leaving capi_fired UNSET so the webhook fallback can retry`,
     );
   }
 

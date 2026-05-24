@@ -1,56 +1,55 @@
 import { getRazorpay } from "./razorpay";
 
-const MARKER_KEY = "pabbly_fired";
+const PABBLY_MARKER = "pabbly_fired";
+const CAPI_MARKER = "capi_fired";
 
 export interface PaymentDedupState {
   /** True when the `pabbly_fired` marker is set on the payment's notes. */
-  alreadyFired: boolean;
+  pabblyFired: boolean;
+  /** True when the `capi_fired` marker is set on the payment's notes. */
+  capiFired: boolean;
   /**
-   * The payment's current notes, returned so the caller can pass them back
-   * into markPaymentFired without a second fetch (preserves any other
-   * fields written by future code without overwriting them).
+   * The payment's current notes — returned so the caller can pass them
+   * back into markFires() in a single Razorpay edit call without losing
+   * any other fields that may exist (or have been written in parallel).
    */
   existingNotes: Record<string, string>;
 }
 
 /**
- * Cross-Lambda dedup for the Pabbly purchase fire — persistent and shared
- * across both /api/razorpay/verify-payment and /api/razorpay/webhook.
+ * Cross-Lambda dedup for the post-purchase fires (Pabbly + Meta CAPI).
+ * Persistent across Vercel function instances, regions, and restarts,
+ * because the state lives on the Razorpay PAYMENT (not in our memory).
  *
- * Why this exists separately from lib/dedup.ts:
- *   lib/dedup.ts holds an in-memory `Map<string, number>` that ONLY survives
- *   within a single Vercel Lambda instance. verify-payment and webhook run
- *   as separate serverless functions with separate memory — the lock in one
- *   is invisible to the other. For real cross-route dedup we need a shared
- *   persistent store. Razorpay payment notes are that store: free, already
- *   in our dependency graph, atomic-enough for our 7-fires-per-day volume.
+ * Two separate markers, by design:
  *
- * Protocol:
- *   1. Caller calls getPaymentDedupState(paymentId).
- *      - If `alreadyFired` → caller returns early (no Pabbly fire).
- *      - Otherwise → caller proceeds to fire Pabbly + CAPI.
- *   2. After a successful Pabbly fire, caller calls markPaymentFired(
- *      paymentId, existingNotes).
- *      - This sets `notes.pabbly_fired = <ms-timestamp>` on the payment.
- *      - Subsequent getPaymentDedupState calls return alreadyFired=true.
- *   3. If the Pabbly fire FAILS (e.g. Pabbly was down for a few minutes),
- *      caller MUST NOT mark — so the fallback path or backfill script can
- *      retry without being short-circuited by a "fired but actually failed"
- *      marker.
+ *   pabbly_fired — set after firePabblyWebhook() returns true.
+ *   capi_fired   — set after fireMetaCapi() returns true.
+ *
+ * Why two? Because Pabbly and Meta have independent failure modes. If
+ * Pabbly is down for 5 minutes but Meta is fine, we want the next route
+ * (webhook fallback) to RETRY Pabbly but NOT redo CAPI (Meta dedupes
+ * by event_id anyway, but skipping the wasted API call is cleaner). A
+ * single combined marker would force "all or nothing" retries.
  *
  * Race window:
- *   Between getPaymentDedupState() returning false and markPaymentFired()
- *   completing (~500ms during Pabbly POST). If a second caller also runs
- *   getPaymentDedupState() in this window, both will see no marker and both
- *   will fire. In practice the webhook fallback arrives 5–30 s after
- *   verify-payment, so this race rarely materialises. Acceptable trade-off
- *   vs. the only alternative (introducing a Vercel KV / Redis dependency
- *   for an atomic set-if-not-exists).
+ *   Between getPaymentDedupState() returning and markFires() completing
+ *   (~500–800ms during the Pabbly+CAPI POSTs). If a second caller runs
+ *   getPaymentDedupState() in this window, both will fire. In practice
+ *   the webhook fallback arrives 5–30s after verify-payment, so this
+ *   race rarely materialises.
+ *
+ *   Even if it does, Meta CAPI dedupes by event_id (Razorpay payment_id)
+ *   within 48h — so duplicate CAPI fires NEVER produce duplicate events
+ *   in Events Manager. Only Pabbly is theoretically vulnerable, and the
+ *   user can add a payment_id-lookup filter in Pabbly to dedup on that
+ *   side if it ever becomes an issue.
  *
  * Failure policy:
- *   Razorpay API errors on either fetch or edit are logged and the caller
- *   proceeds with the fire. Better to risk a duplicate row in Pabbly than
- *   silently lose a paid lead.
+ *   On any Razorpay API error during the check, we report both markers
+ *   as unset and proceed. Better to risk a duplicate row in Pabbly (which
+ *   the caller's Pabbly workflow can dedup) than silently miss a paid
+ *   lead from our CRM.
  */
 export async function getPaymentDedupState(
   paymentId: string,
@@ -58,39 +57,62 @@ export async function getPaymentDedupState(
   try {
     const payment = await getRazorpay().payments.fetch(paymentId);
     const notes = (payment.notes ?? {}) as Record<string, string>;
-    const fired = Boolean(notes[MARKER_KEY]);
-    if (fired) {
+    const pabblyFired = Boolean(notes[PABBLY_MARKER]);
+    const capiFired = Boolean(notes[CAPI_MARKER]);
+    if (pabblyFired || capiFired) {
       console.log(
-        `[dedup] payment ${paymentId} already marked ${MARKER_KEY}=${notes[MARKER_KEY]}`,
+        `[dedup] payment ${paymentId} state: pabbly_fired=${notes[PABBLY_MARKER] ?? "—"} capi_fired=${notes[CAPI_MARKER] ?? "—"}`,
       );
     }
-    return { alreadyFired: fired, existingNotes: notes };
+    return { pabblyFired, capiFired, existingNotes: notes };
   } catch (err) {
     console.warn(
-      `[dedup] payments.fetch(${paymentId}) failed — proceeding with fire (better duplicate than miss)`,
+      `[dedup] payments.fetch(${paymentId}) failed — proceeding with both fires (better duplicate than miss)`,
       err,
     );
-    return { alreadyFired: false, existingNotes: {} };
+    return { pabblyFired: false, capiFired: false, existingNotes: {} };
   }
 }
 
 /**
- * Set the `pabbly_fired` marker on the payment's notes. Call this only
- * AFTER firePabblyWebhook returned true.
+ * Atomically write whichever of {pabbly_fired, capi_fired} succeeded in
+ * this run. Single Razorpay edit call so both markers land together
+ * (reduces race surface area vs. two sequential edits).
+ *
+ * Call with `pabblySucceeded: true` only when firePabblyWebhook returned
+ * `true` (i.e. Pabbly returned 2xx). Same rule for CAPI. If a fire FAILED
+ * we leave its marker unset so the fallback path or backfill script can
+ * retry without being short-circuited.
  */
-export async function markPaymentFired(
+export async function markFires(
   paymentId: string,
   existingNotes: Record<string, string>,
+  fired: { pabblySucceeded: boolean; capiSucceeded: boolean },
 ): Promise<void> {
-  const marker = String(Date.now());
+  if (!fired.pabblySucceeded && !fired.capiSucceeded) {
+    // Nothing succeeded — nothing to mark. Leave notes untouched so
+    // fallback paths can retry.
+    return;
+  }
+
+  const ts = String(Date.now());
+  const newNotes: Record<string, string> = { ...existingNotes };
+  if (fired.pabblySucceeded) newNotes[PABBLY_MARKER] = ts;
+  if (fired.capiSucceeded) newNotes[CAPI_MARKER] = ts;
+
+  const summary = [
+    fired.pabblySucceeded ? `${PABBLY_MARKER}=${ts}` : null,
+    fired.capiSucceeded ? `${CAPI_MARKER}=${ts}` : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   try {
-    await getRazorpay().payments.edit(paymentId, {
-      notes: { ...existingNotes, [MARKER_KEY]: marker },
-    });
-    console.log(`[dedup] marked payment ${paymentId} as ${MARKER_KEY}=${marker}`);
+    await getRazorpay().payments.edit(paymentId, { notes: newNotes });
+    console.log(`[dedup] marked payment ${paymentId}: ${summary}`);
   } catch (err) {
     console.warn(
-      `[dedup] could not mark payment ${paymentId} as ${MARKER_KEY} — future calls may duplicate`,
+      `[dedup] could not mark payment ${paymentId} (${summary}) — future calls may duplicate`,
       err,
     );
   }
