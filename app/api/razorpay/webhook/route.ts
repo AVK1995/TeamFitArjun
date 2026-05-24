@@ -4,6 +4,7 @@ import { verifyRazorpayWebhookSignature, getRazorpay } from "@/lib/razorpay";
 import { firePabblyWebhook } from "@/lib/pabbly";
 import { fireMetaCapi } from "@/lib/capi";
 import { claimEventId } from "@/lib/dedup";
+import { getPaymentDedupState, markPaymentFired } from "@/lib/payment-dedup";
 import { extractClientIp, extractUserAgent } from "@/lib/request";
 import { isProductionServer, isPaidAmount } from "@/lib/tracking-gate";
 import { clientConfig } from "@/client.config";
@@ -15,25 +16,23 @@ export const dynamic = "force-dynamic";
 /**
  * Razorpay webhook receiver — server-side fallback for payment.captured.
  *
- * If the browser dies between Razorpay's checkout.js callback and our
- * /api/razorpay/verify-payment fetch, this picks up the slack and fires
- * the same dual CAPI events (Purchase + sales) PLUS the same complete
- * Pabbly purchase webhook with event_id = payment_id.
+ * If verify-payment never reaches the server (mobile browser killed mid-
+ * redirect, network drop, ad-blocker on checkout.js, etc.), this route
+ * delivers the same complete Pabbly + CAPI payload using order notes that
+ * create-order persisted at order-creation time.
  *
- * Data parity: create-order packs every field Pabbly needs into Razorpay
- * order `notes` (first_name, last_name, customer_email, customer_phone,
- * country_code, city, utm_source/medium/campaign/content/term, fbclid,
- * gclid, landing_url, referrer). This route reads those notes back via
- * orders.fetch (with retry) so the Pabbly row from a webhook fallback is
- * indistinguishable from one fired by verify-payment.
+ * AWAIT pattern (same as verify-payment): we cannot use `void` because
+ * Vercel kills in-flight promises once the route returns its response.
+ * Razorpay's webhook tolerates a 5-10s response time so the await cost is
+ * fine.
  *
- * Dedup: claimEventId(payment_id) ensures we never double-fire when
- * verify-payment has already processed this payment.
+ * Dedup (two layers, same as verify-payment):
+ *   1. claimEventId(paymentId) — in-memory, per-Lambda-instance.
+ *   2. getPaymentDedupState(paymentId) — persistent via Razorpay payment
+ *      notes, shared with verify-payment so neither side double-fires.
  *
- * Razorpay dashboard setup:
- *   - URL: https://teamfitarjun.com/api/razorpay/webhook
- *   - Active events: payment.captured ONLY
- *   - Secret: matches RAZORPAY_WEBHOOK_SECRET in Vercel env
+ * Mark-after-success: we set `pabbly_fired` only when Pabbly returned 2xx,
+ * so a Pabbly outage doesn't block a future retry by the backfill script.
  */
 export async function POST(request: Request): Promise<NextResponse> {
   const rawBody = await request.text();
@@ -64,39 +63,54 @@ export async function POST(request: Request): Promise<NextResponse> {
   const paymentId = payment.id;
   const eventId = paymentId;
 
+  console.log(
+    `[webhook] received ${payload.event} for paymentId=${paymentId} orderId=${orderId}`,
+  );
+
+  // Layer 1 dedup — in-process.
   if (!claimEventId(eventId)) {
-    console.log(`[webhook] event_id ${eventId} already claimed — verify-payment beat us, no-op`);
-    return NextResponse.json({ ok: true, deduped: true });
+    console.log(
+      `[webhook] event_id ${eventId} already claimed in-memory — skipping`,
+    );
+    return NextResponse.json({ ok: true, deduped: "memory" });
   }
 
-  // Pull the full payload from Razorpay order notes (set by create-order).
-  // Retry once with backoff to absorb transient Razorpay API blips.
-  const notes = await fetchOrderNotesWithRetry(orderId);
+  // Pull both the order notes (for customer + utm data) AND the payment
+  // dedup state (for the pabbly_fired marker) in parallel. Saves ~500ms
+  // vs sequential fetches.
+  const [orderNotes, dedupState] = await Promise.all([
+    fetchOrderNotesWithRetry(orderId),
+    getPaymentDedupState(paymentId),
+  ]);
+
+  if (dedupState.alreadyFired) {
+    console.log(
+      `[webhook] payment ${paymentId} already marked pabbly_fired by verify-payment — skipping`,
+    );
+    return NextResponse.json({ ok: true, deduped: "razorpay" });
+  }
 
   const customer: CustomerPayload = {
-    firstName: notes.first_name ?? "",
-    lastName: notes.last_name ?? "",
-    email: String(payment.email ?? notes.customer_email ?? ""),
-    phone: String(payment.contact ?? notes.customer_phone ?? ""),
-    countryCode: notes.country_code || "IN",
-    city: notes.city ?? "",
+    firstName: orderNotes.first_name ?? "",
+    lastName: orderNotes.last_name ?? "",
+    email: String(payment.email ?? orderNotes.customer_email ?? ""),
+    phone: String(payment.contact ?? orderNotes.customer_phone ?? ""),
+    countryCode: orderNotes.country_code || "IN",
+    city: orderNotes.city ?? "",
   };
 
   const utm: UtmPayload = {
-    utm_source: notes.utm_source ?? "",
-    utm_medium: notes.utm_medium ?? "",
-    utm_campaign: notes.utm_campaign ?? "",
-    utm_content: notes.utm_content ?? "",
-    utm_term: notes.utm_term ?? "",
-    fbclid: notes.fbclid ?? "",
-    gclid: notes.gclid ?? "",
-    landing_url: notes.landing_url ?? "",
-    referrer: notes.referrer ?? "",
+    utm_source: orderNotes.utm_source ?? "",
+    utm_medium: orderNotes.utm_medium ?? "",
+    utm_campaign: orderNotes.utm_campaign ?? "",
+    utm_content: orderNotes.utm_content ?? "",
+    utm_term: orderNotes.utm_term ?? "",
+    fbclid: orderNotes.fbclid ?? "",
+    gclid: orderNotes.gclid ?? "",
+    landing_url: orderNotes.landing_url ?? "",
+    referrer: orderNotes.referrer ?? "",
   };
 
-  // Loud diagnostic if notes were missing — this means create-order didn't
-  // receive the customer/utm payload OR Razorpay returned no notes for the
-  // order. Either is a real bug worth surfacing in Vercel logs.
   if (!customer.firstName && !customer.lastName) {
     console.warn(
       `[webhook] order ${orderId} notes missing identity fields — Pabbly row will be partial. Investigate create-order body or Razorpay orders.fetch behavior.`,
@@ -113,7 +127,6 @@ export async function POST(request: Request): Promise<NextResponse> {
   const eventSourceUrl = `https://${clientConfig.brand.domain}/thank-you`;
   const valueRupees = (payment.amount ?? clientConfig.pricing.paise) / 100;
 
-  // Same two gates as verify-payment: production host + paid amount > ₹1.
   const onProductionHost = isProductionServer(request);
   const isRealPurchase = isPaidAmount(valueRupees);
 
@@ -124,33 +137,62 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ ok: true, suppressed: true });
   }
 
-  void firePabblyWebhook({
-    customer,
-    utm,
-    paymentId,
-    orderId,
-    amount: String(valueRupees),
-    currency: String(payment.currency ?? clientConfig.pricing.currency),
-    timezone: clientConfig.event.timezone,
-  });
+  console.log(
+    `[webhook] firing Pabbly + CAPI for event_id=${eventId} (value=${valueRupees}, email=${customer.email})`,
+  );
 
-  if (clientConfig.capi.enabled) {
-    void fireMetaCapi({
+  const [pabblyResult, capiResult] = await Promise.allSettled([
+    firePabblyWebhook({
       customer,
-      eventNames: ["Purchase", "sales"],
-      eventId,
-      value: valueRupees,
-      currency: String(payment.currency ?? clientConfig.pricing.currency),
+      utm,
       paymentId,
-      eventSourceUrl,
-      clientIp,
-      clientUserAgent,
-      testEventCode: process.env.META_CAPI_TEST_EVENT_CODE,
-    });
+      orderId,
+      amount: String(valueRupees),
+      currency: String(payment.currency ?? clientConfig.pricing.currency),
+      timezone: clientConfig.event.timezone,
+    }),
+    clientConfig.capi.enabled
+      ? fireMetaCapi({
+          customer,
+          eventNames: ["Purchase", "sales"],
+          eventId,
+          value: valueRupees,
+          currency: String(payment.currency ?? clientConfig.pricing.currency),
+          paymentId,
+          eventSourceUrl,
+          clientIp,
+          clientUserAgent,
+          testEventCode: process.env.META_CAPI_TEST_EVENT_CODE,
+        })
+      : Promise.resolve(false),
+  ]);
+
+  if (pabblyResult.status === "rejected") {
+    console.error(
+      `[webhook] Pabbly fire REJECTED for ${paymentId}`,
+      pabblyResult.reason,
+    );
+  }
+  if (capiResult.status === "rejected") {
+    console.error(
+      `[webhook] CAPI fire REJECTED for ${paymentId}`,
+      capiResult.reason,
+    );
+  }
+
+  const pabblySucceeded =
+    pabblyResult.status === "fulfilled" && pabblyResult.value === true;
+
+  if (pabblySucceeded) {
+    await markPaymentFired(paymentId, dedupState.existingNotes);
+  } else {
+    console.warn(
+      `[webhook] Pabbly fire did NOT succeed for ${paymentId} — leaving pabbly_fired UNSET so the backfill script can retry`,
+    );
   }
 
   console.log(
-    `[webhook] fired for event_id=${eventId} — Pabbly + CAPI dispatched with full notes payload`,
+    `[webhook] complete for event_id=${eventId} — pabblySucceeded=${pabblySucceeded}`,
   );
   return NextResponse.json({ ok: true, eventId });
 }

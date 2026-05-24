@@ -41,6 +41,11 @@ interface FireCapiArgs {
 /**
  * POST one or more events to Meta Conversions API in a single HTTPS call.
  *
+ * Returns true when Meta returned a 2xx, false otherwise. The caller uses
+ * this only for structured logging; Meta deduplicates by event_id on its
+ * side so retries from our fallback paths cannot cause Purchase/sales
+ * duplicates in Events Manager.
+ *
  * EMQ payload (target ≥ 9.5):
  *   - Hashed: em, ph, fn, ln, ct, country, external_id (= sha256(email))
  *   - Raw context: fbc, fbp, client_ip_address, client_user_agent
@@ -49,10 +54,8 @@ interface FireCapiArgs {
  * external_id is derived as sha256(normalised email) so it MATCHES the value
  * the browser MAM cookie carries — per Meta's external_id spec, the value
  * must be consistent across channels for the same user.
- *
- * Failures are logged and swallowed — never gate the user response on this.
  */
-export async function fireMetaCapi(args: FireCapiArgs): Promise<void> {
+export async function fireMetaCapi(args: FireCapiArgs): Promise<boolean> {
   const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
   const accessToken = process.env.META_CAPI_ACCESS_TOKEN;
 
@@ -60,9 +63,9 @@ export async function fireMetaCapi(args: FireCapiArgs): Promise<void> {
     console.warn(
       "[capi] NEXT_PUBLIC_META_PIXEL_ID or META_CAPI_ACCESS_TOKEN not set — skipping",
     );
-    return;
+    return false;
   }
-  if (args.eventNames.length === 0) return;
+  if (args.eventNames.length === 0) return false;
 
   const url = `https://graph.facebook.com/${META_GRAPH_VERSION}/${pixelId}/events?access_token=${accessToken}`;
 
@@ -137,12 +140,14 @@ export async function fireMetaCapi(args: FireCapiArgs): Promise<void> {
       console.warn(
         `[capi] Meta returned ${res.status} for event_id ${args.eventId} (${args.eventNames.join(", ")}): ${text}`,
       );
-    } else {
-      console.log(
-        `[capi] OK event_id=${args.eventId} events=[${args.eventNames.join(", ")}]`,
-      );
+      return false;
     }
+    console.log(
+      `[capi] OK event_id=${args.eventId} events=[${args.eventNames.join(", ")}]`,
+    );
+    return true;
   } catch (err) {
     console.warn("[capi] fire failed", err);
+    return false;
   }
 }

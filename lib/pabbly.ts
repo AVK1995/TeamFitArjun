@@ -1,9 +1,12 @@
 import type { CustomerPayload, UtmPayload } from "./types";
 
 /**
- * Fire-and-forget POST to the Pabbly Connect webhook.
- * Failures are logged but never surface to the user — payment verification
- * is the only thing that gates the success redirect.
+ * POST the purchase payload to the Pabbly Connect webhook.
+ *
+ * Returns true when Pabbly returned a 2xx, false otherwise. The caller
+ * (verify-payment / webhook routes) uses this boolean to decide whether
+ * to set the `pabbly_fired` marker on the Razorpay payment — if Pabbly
+ * was down, we leave the marker unset so the fallback path retries.
  */
 export async function firePabblyWebhook(args: {
   customer: CustomerPayload;
@@ -14,11 +17,11 @@ export async function firePabblyWebhook(args: {
   currency: string;
   timezone: string;
   coupon?: string;
-}): Promise<void> {
+}): Promise<boolean> {
   const url = process.env.PABBLY_WEBHOOK_URL;
   if (!url) {
     console.warn("[pabbly] PABBLY_WEBHOOK_URL not set — skipping");
-    return;
+    return false;
   }
 
   const now = new Date();
@@ -80,7 +83,7 @@ export async function firePabblyWebhook(args: {
       console.warn(
         `[pabbly] webhook returned ${res.status} for order ${args.orderId} — body: ${text.slice(0, 200)} — payload: ${JSON.stringify(payload)}`,
       );
-      return;
+      return false;
     }
     // Log the full payload on success so every Pabbly fire can be inspected
     // in Vercel logs. Helpful for reconciling missing rows + debugging
@@ -88,10 +91,12 @@ export async function firePabblyWebhook(args: {
     console.log(
       `[pabbly] OK order=${args.orderId} payment=${args.paymentId} payload=${JSON.stringify(payload)}`,
     );
+    return true;
   } catch (err) {
     console.warn(
       `[pabbly] webhook failed for order ${args.orderId} — payload: ${JSON.stringify(payload)}`,
       err,
     );
+    return false;
   }
 }

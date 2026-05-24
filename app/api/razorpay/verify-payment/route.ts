@@ -3,6 +3,7 @@ import { verifyRazorpaySignature } from "@/lib/razorpay";
 import { firePabblyWebhook } from "@/lib/pabbly";
 import { fireMetaCapi } from "@/lib/capi";
 import { claimEventId } from "@/lib/dedup";
+import { getPaymentDedupState, markPaymentFired } from "@/lib/payment-dedup";
 import {
   extractClientIp,
   extractUserAgent,
@@ -21,14 +22,29 @@ export const dynamic = "force-dynamic";
 
 /**
  * Verifies a Razorpay payment signature and — if the price is non-zero —
- * fires the conversion stack server-side:
- *   - Meta CAPI: BOTH `Purchase` (standard, campaign-optimisation target)
- *     and `sales` (custom, internal source-of-truth count) in a single POST.
- *     Shared event_id = Razorpay payment_id. EMQ payload targets ≥ 9.5.
- *   - Pabbly: CRM webhook for downstream automation (email, sheets).
+ * AWAITS both the Pabbly purchase webhook and the Meta CAPI dual event
+ * (Purchase + sales) to completion before responding.
  *
- * Idempotency: claimEventId(paymentId) guarantees a single fire even when the
- * Razorpay webhook races this route (both use the same event_id).
+ * Why await: in Vercel's Node.js serverless runtime, when a handler returns
+ * a Response, the Lambda instance can be frozen/recycled immediately. Any
+ * in-flight `void` promise (a `fetch` that wasn't awaited) gets killed
+ * mid-request and silently drops on the floor. Awaiting both fires ensures
+ * Vercel keeps the function alive until Pabbly + Meta have both responded.
+ * The browser uses `fetch(..., { keepalive: true })` from CheckoutView and
+ * doesn't wait for our response, so the extra ~500-1000 ms is invisible to
+ * the user.
+ *
+ * Dedup (two layers):
+ *   1. claimEventId(paymentId) — fast in-memory dedup for refresh-retries
+ *      within the same Lambda instance.
+ *   2. getPaymentDedupState(paymentId) — persistent dedup via the
+ *      `pabbly_fired` marker on Razorpay payment notes, shared with the
+ *      webhook fallback so the same payment is never reported twice.
+ *
+ * Mark-after-success: we set `pabbly_fired` only when the Pabbly fire
+ * returned true. If Pabbly was down, we deliberately leave the marker
+ * unset so the webhook fallback (or backfill script) can retry without
+ * being short-circuited.
  */
 export async function POST(
   request: Request,
@@ -68,44 +84,68 @@ export async function POST(
     );
   }
 
-  // event_id = paymentId. Webhook fallback uses the same value so any racing
-  // duplicate is dropped by claimEventId().
+  console.log(
+    `[verify-payment] received POST for paymentId=${paymentId} orderId=${orderId} email=${customer.email}`,
+  );
+
   const eventId = paymentId;
-  const shouldFire = claimEventId(eventId);
 
-  if (shouldFire) {
-    const resolvedEventSourceUrl =
-      eventSourceUrl ||
-      extractEventSourceUrl(request, `https://${clientConfig.brand.domain}/checkout`);
-    const clientIp = extractClientIp(request);
-    const clientUserAgent = extractUserAgent(request);
-    const valueRupees = clientConfig.pricing.price;
+  // Layer 1 dedup — in-process. Catches refresh/retry within same Lambda.
+  if (!claimEventId(eventId)) {
+    console.log(
+      `[verify-payment] event_id ${eventId} already claimed in-memory — skipping`,
+    );
+    return NextResponse.json({ success: true, paymentId, eventId });
+  }
 
-    // Two gates protect Pabbly + Meta from test traffic:
-    //   1. The request must originate from the production domain (blocks
-    //      Vercel preview deploys and localhost).
-    //   2. The order amount must exceed ₹1 (blocks ₹1 test transactions).
-    const onProductionHost = isProductionServer(request);
-    const isRealPurchase = isPaidAmount(valueRupees);
-    const shouldReport = onProductionHost && isRealPurchase;
+  const valueRupees = clientConfig.pricing.price;
+  const onProductionHost = isProductionServer(request);
+  const isRealPurchase = isPaidAmount(valueRupees);
 
-    if (shouldReport) {
-      console.log(
-        `[verify-payment] firing Pabbly + CAPI for event_id=${eventId} (orderId=${orderId}, value=${valueRupees}, email=${customer.email})`,
-      );
+  // Gate: production domain + amount > ₹1.
+  if (!onProductionHost || !isRealPurchase) {
+    console.log(
+      `[verify-payment] tracking suppressed — onProductionHost=${onProductionHost}, isRealPurchase=${isRealPurchase} (value=${valueRupees})`,
+    );
+    return NextResponse.json({ success: true, paymentId, eventId });
+  }
 
-      void firePabblyWebhook({
-        customer,
-        utm: utm ?? {},
-        paymentId,
-        orderId,
-        amount: clientConfig.pricing.pabblyAmountString,
-        currency: clientConfig.pricing.currency,
-        timezone: clientConfig.event.timezone,
-      });
+  // Layer 2 dedup — cross-Lambda via Razorpay payment notes. Catches the
+  // verify-payment vs webhook race even when each runs on a different
+  // serverless instance.
+  const { alreadyFired, existingNotes } = await getPaymentDedupState(paymentId);
+  if (alreadyFired) {
+    console.log(
+      `[verify-payment] payment ${paymentId} already marked pabbly_fired — webhook beat us, skipping`,
+    );
+    return NextResponse.json({ success: true, paymentId, eventId });
+  }
 
-      if (clientConfig.capi.enabled) {
-        void fireMetaCapi({
+  const resolvedEventSourceUrl =
+    eventSourceUrl ||
+    extractEventSourceUrl(request, `https://${clientConfig.brand.domain}/checkout`);
+  const clientIp = extractClientIp(request);
+  const clientUserAgent = extractUserAgent(request);
+
+  console.log(
+    `[verify-payment] firing Pabbly + CAPI for event_id=${eventId} (value=${valueRupees}, email=${customer.email})`,
+  );
+
+  // AWAIT both fires in parallel so Vercel keeps the Lambda alive until
+  // both complete. Promise.allSettled ensures one failure doesn't take down
+  // the other.
+  const [pabblyResult, capiResult] = await Promise.allSettled([
+    firePabblyWebhook({
+      customer,
+      utm: utm ?? {},
+      paymentId,
+      orderId,
+      amount: clientConfig.pricing.pabblyAmountString,
+      currency: clientConfig.pricing.currency,
+      timezone: clientConfig.event.timezone,
+    }),
+    clientConfig.capi.enabled
+      ? fireMetaCapi({
           customer,
           eventNames: ["Purchase", "sales"],
           eventId,
@@ -118,16 +158,31 @@ export async function POST(
           fbc,
           fbp,
           testEventCode: process.env.META_CAPI_TEST_EVENT_CODE,
-        });
-      }
-    } else {
-      console.log(
-        `[verify-payment] tracking suppressed — onProductionHost=${onProductionHost}, isRealPurchase=${isRealPurchase} (value=${valueRupees})`,
-      );
-    }
+        })
+      : Promise.resolve(false),
+  ]);
+
+  if (pabblyResult.status === "rejected") {
+    console.error(
+      `[verify-payment] Pabbly fire REJECTED for ${paymentId}`,
+      pabblyResult.reason,
+    );
+  }
+  if (capiResult.status === "rejected") {
+    console.error(
+      `[verify-payment] CAPI fire REJECTED for ${paymentId}`,
+      capiResult.reason,
+    );
+  }
+
+  const pabblySucceeded =
+    pabblyResult.status === "fulfilled" && pabblyResult.value === true;
+
+  if (pabblySucceeded) {
+    await markPaymentFired(paymentId, existingNotes);
   } else {
-    console.log(
-      `[verify-payment] event_id ${eventId} already claimed — skipping downstream fires (idempotent)`,
+    console.warn(
+      `[verify-payment] Pabbly fire did NOT succeed for ${paymentId} — leaving pabbly_fired UNSET so the webhook fallback (or backfill script) can retry`,
     );
   }
 

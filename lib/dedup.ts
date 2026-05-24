@@ -1,16 +1,17 @@
 /**
- * In-memory idempotency lock for server-side CAPI fires.
+ * IN-PROCESS idempotency lock — useful only WITHIN A SINGLE Vercel Lambda
+ * instance. Catches the same paymentId arriving twice on the same warm
+ * instance (e.g. a browser refresh that re-fires verify-payment on a
+ * recently-used worker).
  *
- * Why this exists:
- * - verify-payment can be called twice (browser retry, refresh, double-click).
- * - razorpay webhook can also fire payment.captured after verify-payment.
- * - Without a lock, server CAPI sends 2+ events. Meta dedupes by event_id, but
- *   only within a window and only if the event_id is identical — we still
- *   want to avoid the unnecessary outbound load.
+ * IMPORTANT: this DOES NOT dedup across routes. /api/razorpay/verify-payment
+ * and /api/razorpay/webhook run as separate Vercel serverless functions
+ * with separate memory — the lock in one is invisible to the other. Even
+ * within a single route, Vercel may spin up multiple concurrent Lambda
+ * instances under load, each with its own `seen` Map.
  *
- * Vercel note: this is per-instance, so on cold spread across regions the
- * lock is best-effort. Meta event_id dedup is the real backstop. For
- * absolute idempotency, switch `seen` to a Vercel KV / Upstash Redis call.
+ * Real cross-route / cross-instance dedup lives in lib/payment-dedup.ts,
+ * which uses Razorpay payment notes as a shared persistent store.
  */
 
 const seen = new Map<string, number>();
