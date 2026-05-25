@@ -40,6 +40,14 @@ export interface CreateOrderRequest {
    * payload server-side even when the browser-side verify-payment never lands.
    */
   utm?: UtmPayload;
+  /**
+   * `_fbp` cookie value (Facebook browser ID), read by CheckoutView from
+   * the user's browser. Packed into Razorpay order `notes` so the webhook
+   * fallback path can ship `fbp` to Meta CAPI for EMQ — without this the
+   * webhook-path CAPI fires lose the ~13% match-quality boost Meta credits
+   * for fbp on every event.
+   */
+  fbp?: string;
 }
 
 export interface CreateOrderResponse {

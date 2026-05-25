@@ -191,20 +191,24 @@ Built by `lib/pabbly.ts` `firePabblyWebhook()`. Identical regardless of which ro
 
 ## Part 5 — Razorpay order notes (the create-order seed)
 
-Razorpay's documented limit is **15 keys per `notes` object, 256 chars per value**. We use all 15 — the first slot is reserved for the funnel-ownership marker (see Part 17), the other 14 carry payload data:
+Razorpay's documented limit is **15 keys per `notes` object, 256 chars per value**. We use all 15 — the first slot is the funnel-ownership marker (Part 17), the rest carry payload data INCLUDING `fbp` for Meta CAPI EMQ (Part 18):
 
 ```
 funnel  ← cross-business pollution guardrail (clientConfig.funnel.slug)
 first_name, last_name, customer_email, customer_phone, country_code, city,
 utm_source, utm_medium, utm_campaign, utm_content, utm_term,
-fbclid, gclid, landing_url
+fbclid, fbp, landing_url
 ```
 
-Set in `/api/razorpay/create-order` at order creation time. Read in `/api/razorpay/webhook` via `razorpay.orders.fetch(orderId)` (with one retry on transient errors) to rebuild the full Pabbly payload AND to verify ownership before doing anything else.
+Set in `/api/razorpay/create-order` at order creation time. Read in `/api/razorpay/webhook` via `razorpay.orders.fetch(orderId)` (with one retry on transient errors) to rebuild the full Pabbly payload, verify funnel ownership, AND recover Meta's `fbc` + `fbp` for the CAPI fire.
 
-This is the **only** way to ensure the webhook fallback fires with identical data to verify-payment — because UTMs and fbclid only exist in the browser's sessionStorage, not in Razorpay's webhook payload.
+This is the **only** way to ensure the webhook fallback fires with identical data to verify-payment — because UTMs, fbclid, and fbp only exist in the browser's sessionStorage/cookies, not in Razorpay's webhook payload.
 
-**Why `referrer` was dropped:** the 15-key limit forces a choice when adding `funnel`. `referrer` is the least load-bearing field (most ad traffic carries `fbclid` + `utm_source`, direct visits have `referrer = ""` anyway, and `landing_url` overlaps in attribution value). The verify-payment primary path still ships `referrer` from browser sessionStorage; only the rare webhook-fallback path now omits it.
+**Two fields had to be dropped to fit `funnel` + `fbp` into the 15-key limit:**
+- `referrer` (least load-bearing — ad traffic carries `fbclid` + `utm_source`; `landing_url` overlaps; most direct visits have empty referrer anyway)
+- `gclid` (only useful for Google Ads CAPI which this Meta-driven funnel doesn't fire)
+
+The verify-payment primary path still ships BOTH `referrer` and `gclid` from browser sessionStorage; only the rare webhook-fallback path omits them, and only for the purposes of Pabbly attribution (Meta CAPI doesn't use either).
 
 ---
 
@@ -691,3 +695,94 @@ If any of these checks fail, the filter is broken and unrelated payments are lea
 ### When you do NOT need this guardrail
 
 The only case where you can safely skip it: the Razorpay account is **dedicated** to this single funnel, with no other websites, products, or integrations sharing it. If you're 100% sure of this AND will remain so forever, the guardrail is unnecessary. In every other case (which is most cases), it's mandatory.
+
+---
+
+## Part 18 — Webhook-path EMQ: recovering `fbc` + `fbp` from order notes
+
+### The problem this solves
+
+Meta CAPI's Event Match Quality scoring weights `fbc` (Facebook click ID, raw) and `fbp` (Facebook browser ID, raw) heavily — Meta's own Events Manager diagnostic credits **~16% EMQ boost for `fbc`** and **~13% for `fbp`** when present on every Purchase event.
+
+Both are browser cookies:
+- `_fbc` is set by `fbevents.js` from the `?fbclid=` URL parameter (or by us synthesising it via `fb.1.{ms}.{fbclid}`)
+- `_fbp` is a random per-browser ID set by `fbevents.js` on first PageView
+
+The verify-payment path (browser-initiated) reads both cookies and passes them in the request body, so its CAPI fire ships both. **The webhook path (Razorpay server-to-server) does NOT** — Razorpay's webhook payload doesn't carry browser cookies. Without recovery, every webhook-fallback CAPI fire loses ~29% EMQ relative to the verify-payment path.
+
+Observed symptom: EMQ on the `Purchase` event drops from ~9.5 (all verify-payment fires) toward ~7.9 as the webhook-fallback proportion grows. Meta Events Manager → Diagnostics shows "Click ID (fbc)" and "Browser ID (fbp)" listed under "Other parameters" with `~16% increase` and `~13% increase` potential outcomes.
+
+### The fix — pack into notes, recover on the webhook
+
+**`fbp` is stored in the Razorpay order `notes`** at create-order time. CheckoutView reads `_fbp` from the browser via `readCookie('_fbp')` and sends it in the create-order request body. The server packs it into notes alongside the other 14 fields (we dropped `gclid` to make room — see Part 5).
+
+**`fbc` is NOT stored.** It's reconstructed from `notes.fbclid` on demand using `buildFbcFromFbclid()` in [lib/utm.ts](lib/utm.ts), which generates Meta's documented format `fb.1.{unix_ms}.{fbclid}`. This is exactly what `fbevents.js` would have written to the browser `_fbc` cookie if the click had come from a Facebook ad. (If the user didn't come from a Facebook ad, `notes.fbclid` is empty and `buildFbcFromFbclid` returns `undefined` — no fbc shipped, same as a real direct visit.)
+
+### Implementation (this codebase)
+
+**`app/checkout/CheckoutView.tsx`** — send fbp to create-order:
+
+```ts
+const orderRes = await fetch("/api/razorpay/create-order", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    amount, currency, coupon, customer, utm,
+    fbp: readCookie("_fbp"),   // ← NEW
+  }),
+});
+```
+
+**`app/api/razorpay/create-order/route.ts`** — pack fbp into notes:
+
+```ts
+const notes: Record<string, string> = {
+  funnel: clientConfig.funnel.slug,
+  // ... 12 other fields ...
+  fbclid: clamp(utm.fbclid),
+  fbp: clamp(body.fbp),        // ← NEW (replaced gclid)
+  landing_url: clamp(utm.landing_url),
+};
+```
+
+**`app/api/razorpay/webhook/route.ts`** — recover fbc + fbp, pass to CAPI:
+
+```ts
+import { buildFbcFromFbclid } from "@/lib/utm";
+
+// ... after fetching orderNotes ...
+
+const fbp = orderNotes.fbp ?? "";
+const fbc = buildFbcFromFbclid(orderNotes.fbclid) ?? "";
+
+await fireMetaCapi({
+  // ... other args ...
+  fbc: fbc || undefined,
+  fbp: fbp || undefined,
+});
+```
+
+### Why we don't also store `fbc` separately
+
+It would waste a notes slot. `fbc` is purely a transformation of `fbclid` — same information content, different format. Razorpay already stores `fbclid`; recomputing `fbc` is one line of code with no information loss.
+
+The only edge case where this differs from the real browser `_fbc` cookie: the millisecond timestamp embedded in our reconstructed value reflects the time of the webhook fire, not the time of the original click. Meta documents both as valid and doesn't appear to use the timestamp in matching — only the `fbclid` portion. EMQ impact: identical.
+
+### Why we don't also store `gclid`
+
+Dropped to make room for `fbp` (15-key limit). `gclid` is only useful for Google Ads CAPI, which this Meta-driven funnel doesn't fire. The verify-payment primary path still ships `gclid` to Pabbly from browser sessionStorage; only the rare webhook-fallback Pabbly row will have an empty `gclid`. Meta CAPI doesn't use `gclid` at all.
+
+### Verification
+
+In Meta Events Manager → your pixel → Overview → Purchase row → click "Manage" → "Other parameters":
+
+- BEFORE the fix: `Click ID (fbc)` and `Browser ID (fbp)` listed under "Send additional parameters" with `~16% increase` / `~13% increase` callouts. EMQ on Purchase event shows ~7.5–8.5.
+- AFTER the fix: `fbc` and `fbp` show as already-sending under "Customer information" with high `% of total events` (the percentage equals 1 − fraction of users whose browser didn't have a `_fbp` cookie yet — typically >95%). EMQ on Purchase event recovers to ~9.0–9.5.
+
+Both verify-payment-path AND webhook-path fires now ship fbc + fbp. Symptom is gone.
+
+### Important: this only helps the WEBHOOK path
+
+The verify-payment path was already shipping fbc + fbp correctly from browser cookies. If your EMQ was already at 9.5 before, this fix doesn't change the verify-payment path's contribution. What it does change is the webhook-fallback path's contribution — that's where the EMQ drag was coming from.
+
+The greater the proportion of webhook-fallback fires (i.e. the more mobile-heavy your traffic, since mobile tabs are the main reason verify-payment doesn't land), the bigger the EMQ recovery from this fix.

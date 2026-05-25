@@ -6,6 +6,7 @@ import { fireMetaCapi } from "@/lib/capi";
 import { claimEventId } from "@/lib/dedup";
 import { getPaymentDedupState, markFires } from "@/lib/payment-dedup";
 import { extractClientIp, extractUserAgent } from "@/lib/request";
+import { buildFbcFromFbclid } from "@/lib/utm";
 import { isProductionServer, isPaidAmount } from "@/lib/tracking-gate";
 import { clientConfig } from "@/client.config";
 import type { CustomerPayload, UtmPayload } from "@/lib/types";
@@ -149,6 +150,18 @@ export async function POST(request: Request): Promise<NextResponse> {
   const eventSourceUrl = `https://${clientConfig.brand.domain}/thank-you`;
   const valueRupees = (payment.amount ?? clientConfig.pricing.paise) / 100;
 
+  // Recover fbc + fbp for Meta CAPI from order notes (set at create-order
+  // time by CheckoutView). Razorpay's webhook payload itself carries
+  // neither — fbc/fbp are browser cookies and the webhook is server-to-
+  // server, so without this recovery step the webhook-path CAPI fire
+  // would lose Meta's ~13% (fbp) + ~16% (fbc) EMQ boost.
+  //
+  // fbc is reconstructed from fbclid using Meta's documented format:
+  // `fb.1.{unix_ms}.{fbclid}`. This is exactly what the browser-side
+  // _fbc cookie would contain.
+  const fbp = orderNotes.fbp ?? "";
+  const fbc = buildFbcFromFbclid(orderNotes.fbclid) ?? "";
+
   const onProductionHost = isProductionServer(request);
   const isRealPurchase = isPaidAmount(valueRupees);
 
@@ -189,6 +202,8 @@ export async function POST(request: Request): Promise<NextResponse> {
         eventSourceUrl,
         clientIp,
         clientUserAgent,
+        fbc: fbc || undefined,
+        fbp: fbp || undefined,
         testEventCode: process.env.META_CAPI_TEST_EVENT_CODE,
       })
     : Promise.resolve(false);

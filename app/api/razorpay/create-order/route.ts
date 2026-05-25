@@ -87,6 +87,16 @@ export async function POST(
   // `referrer` was dropped to make room for `funnel`. Verify-payment still
   // ships `referrer` from browser sessionStorage on its primary path; only
   // the webhook fallback loses it (and that's a rare path).
+  //
+  // `gclid` was dropped to make room for `fbp` (the Facebook browser-id
+  // cookie). fbp is critical for Meta CAPI EMQ — Meta credits a ~13%
+  // match-quality boost for sending it on every event. Without storing it
+  // in order notes, the webhook fallback path would have no way to recover
+  // it (it's a random per-browser cookie, not derivable from anything else).
+  // gclid was only useful for Google Ads CAPI, which this Meta-driven
+  // funnel doesn't fire. The verify-payment path still ships gclid from
+  // browser sessionStorage on its primary path; only the webhook fallback
+  // loses it.
   const customer = body.customer ?? {};
   const utm = body.utm ?? {};
   const clamp = (v: string | undefined): string => (v ?? "").toString().slice(0, 256);
@@ -105,7 +115,7 @@ export async function POST(
     utm_content: clamp(utm.utm_content),
     utm_term: clamp(utm.utm_term),
     fbclid: clamp(utm.fbclid),
-    gclid: clamp(utm.gclid),
+    fbp: clamp(body.fbp),
     landing_url: clamp(utm.landing_url),
   };
 

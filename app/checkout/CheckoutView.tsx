@@ -274,11 +274,15 @@ export function CheckoutView() {
           currency: clientConfig.pricing.currency,
           coupon: coupon?.code,
           customer,
-          // utm goes into Razorpay order notes server-side. The webhook
+          // utm + fbp go into Razorpay order notes server-side. The webhook
           // fallback reads notes back so it can fire Pabbly with the same
-          // complete payload as verify-payment, even if the browser dies
-          // before the verify-payment fetch lands.
+          // complete payload as verify-payment AND ship fbc+fbp to Meta
+          // CAPI for EMQ — even if the browser dies before verify-payment
+          // lands. fbc is derived from utm.fbclid on the server side; fbp
+          // must be passed explicitly because it's a separate cookie
+          // (random ID, not derivable from URL params).
           utm,
+          fbp: readCookie("_fbp"),
         }),
       });
       if (!orderRes.ok) throw new Error(`create-order failed: ${orderRes.status}`);
