@@ -191,17 +191,20 @@ Built by `lib/pabbly.ts` `firePabblyWebhook()`. Identical regardless of which ro
 
 ## Part 5 — Razorpay order notes (the create-order seed)
 
-Razorpay's documented limit is **15 keys per `notes` object, 256 chars per value**. We use all 15 to give the webhook fallback complete data:
+Razorpay's documented limit is **15 keys per `notes` object, 256 chars per value**. We use all 15 — the first slot is reserved for the funnel-ownership marker (see Part 17), the other 14 carry payload data:
 
 ```
+funnel  ← cross-business pollution guardrail (clientConfig.funnel.slug)
 first_name, last_name, customer_email, customer_phone, country_code, city,
 utm_source, utm_medium, utm_campaign, utm_content, utm_term,
-fbclid, gclid, landing_url, referrer
+fbclid, gclid, landing_url
 ```
 
-Set in `/api/razorpay/create-order` at order creation time. Read in `/api/razorpay/webhook` via `razorpay.orders.fetch(orderId)` (with one retry on transient errors) to rebuild the full Pabbly payload.
+Set in `/api/razorpay/create-order` at order creation time. Read in `/api/razorpay/webhook` via `razorpay.orders.fetch(orderId)` (with one retry on transient errors) to rebuild the full Pabbly payload AND to verify ownership before doing anything else.
 
 This is the **only** way to ensure the webhook fallback fires with identical data to verify-payment — because UTMs and fbclid only exist in the browser's sessionStorage, not in Razorpay's webhook payload.
+
+**Why `referrer` was dropped:** the 15-key limit forces a choice when adding `funnel`. `referrer` is the least load-bearing field (most ad traffic carries `fbclid` + `utm_source`, direct visits have `referrer = ""` anyway, and `landing_url` overlaps in attribution value). The verify-payment primary path still ships `referrer` from browser sessionStorage; only the rare webhook-fallback path now omits it.
 
 ---
 
@@ -418,6 +421,7 @@ The backfill script (`scripts/backfill-pabbly.mjs`) is the safety net for ANY co
 | Mark "fired" BEFORE the actual fire returns 2xx | If Pabbly returns 5xx, the marker is set anyway → no retry possible. Mark only on success. |
 | Firing browser `Purchase` from /thank-you | Double-counts in Events Manager. Conversion is server-only. |
 | Razorpay `notes` with only customer fields (no UTMs) | Webhook fallback can't rebuild attribution. Pack all 15 fields. |
+| Webhook with no funnel-source check on a shared Razorpay account | Razorpay sends `payment.captured` to ALL account-level webhook URLs — including ours — for **every** business that shares the account (WooCommerce, other coaching funnels, etc.). Without filtering, the webhook fires Pabbly + CAPI for unrelated business payments. ALWAYS check `order.notes.funnel === clientConfig.funnel.slug` early in the webhook handler. See Part 17. |
 | Reading `payment.notes` from the webhook payload directly | Webhook payload is frozen at Razorpay's queue time — won't include our `pabbly_fired` edit. Always `payments.fetch()` for current state. |
 | Pixel ID hardcoded in code | Use `NEXT_PUBLIC_META_PIXEL_ID` env var so swap is one-line. |
 | `META_CAPI_ACCESS_TOKEN` with `NEXT_PUBLIC_` prefix | Server-only secret. Prefix leaks it to the browser bundle. |
@@ -514,6 +518,9 @@ The upgrade is to layer the **reliability + dedup architecture** on top, without
 10. **Is there a backfill / reconciliation tool?**
     For the once-in-a-blue-moon failure case. Pure ESM script using Razorpay SDK is enough.
 
+11. **Is the Razorpay account shared with ANY other business / funnel / WooCommerce site?**
+    If yes — and this is more common than people realise, especially for agencies + multi-brand operators — the webhook MUST filter by a funnel-source marker on `order.notes` (see Part 17). Without it, the webhook will fire Pabbly + CAPI for every unrelated payment captured on the same Razorpay account. Symptom: phantom Pabbly rows with garbage amounts (₹40,000, ₹2,500, etc.) and inflated Meta Purchase counts that don't match the funnel's actual revenue. Add the `funnel` field to `notes`, drop a low-value field (we dropped `referrer`) to stay within Razorpay's 15-key limit, and check `notes.funnel === expectedSlug` before any fire in the webhook AND in the backfill script.
+
 ### Order of upgrades (small, atomic, each ship-able)
 
 1. **Add `await` + `Promise.allSettled` to verify-payment Pabbly + CAPI fires.** Highest-impact single change. Eliminates 30-70% of silent drops immediately.
@@ -531,6 +538,8 @@ The upgrade is to layer the **reliability + dedup architecture** on top, without
 7. **Add the same-pathname token guard** for PageView dedup.
 
 8. **Add the backfill script.** Run after first real production traffic to catch any gaps.
+
+9. **Add the funnel-source filter** (see Part 17). Mandatory if the Razorpay account ever processes payments for anything other than this single funnel.
 
 ### Don't blindly copy this codebase
 
@@ -550,11 +559,135 @@ The architecture (the dedup model, the await pattern, the data flow) is portable
 
 - Fire from BOTH `/api/verify-payment` AND `/api/webhook`, dedup'd. Each AWAITS the Pabbly + CAPI calls before responding.
 - Browser uses `fetch(..., { keepalive: true })` and doesn't await before redirect.
-- Pack 15 fields into Razorpay order `notes` at create-order time. The webhook fallback rebuilds full payload from there.
+- Pack 15 fields into Razorpay order `notes` at create-order time. **First slot is the `funnel` marker** (Part 17). The webhook fallback rebuilds full payload from there.
+- Webhook MUST check `order.notes.funnel === clientConfig.funnel.slug` BEFORE any dedup work, fires, or marker writes.
 - Dedup with TWO separate markers on Razorpay payment notes: `pabbly_fired`, `capi_fired`. Mark each only after its fire returned 2xx.
 - Browser fires ONLY `PageView`. No `Purchase` or `InitiateCheckout` from the client.
 - Server CAPI fires `Purchase` + `sales` (dual event, single POST). `event_id = payment_id`.
 - Gate all event firing by hostname + amount > ₹1.
-- Have a backfill script ready for the bad-day-at-Pabbly recovery case.
+- Have a backfill script ready for the bad-day-at-Pabbly recovery case. The backfill script applies the same funnel-source filter.
 
-**End state:** every paid lead lands in Pabbly exactly once with all 25 fields, every paid lead lands in Meta as exactly one Purchase + one sales event with 11 matching signals, browser PageView fires exactly once per real page view. Zero misses, zero duplicates, regardless of mobile tab kill or Vercel Lambda quirks.
+**End state:** every paid lead lands in Pabbly exactly once with all 25 fields, every paid lead lands in Meta as exactly one Purchase + one sales event with 11 matching signals, browser PageView fires exactly once per real page view, and unrelated payments from other businesses sharing the same Razorpay account never touch our Pabbly + CAPI pipelines. Zero misses, zero duplicates, zero pollution, regardless of mobile tab kill or Vercel Lambda quirks.
+
+---
+
+## Part 17 — Multi-funnel Razorpay accounts: the cross-pollution guardrail
+
+### The problem this solves
+
+Razorpay webhook subscriptions are configured at the **account level**, not per-product or per-website. A single Razorpay account can have multiple webhook URLs registered (one per integration), and **every** `payment.captured` event on the account fires **every** webhook URL — regardless of which integration created the order.
+
+In real-world setups this is the norm, not the edge case: agencies running multiple client funnels on one account, multi-brand operators (e.g. an Indian fitness coach + their personal training app + their WooCommerce supplement store all on the same Razorpay), product teams testing in production. The author of this funnel observed it the hard way: a customer paid **₹40,000** to a sibling WooCommerce site sharing the same Razorpay account, the webhook event hit `teamfitarjun.com/api/razorpay/webhook`, our route ran the same flow it always does, and Pabbly received a phantom row for someone who never visited the funnel. Meta CAPI fired a ₹40,000 Purchase event too, inflating the conversion count + value.
+
+This affects:
+- **Pabbly:** phantom rows polluting the CRM, breaking row counts, triggering downstream emails to people who never opted in
+- **Meta CAPI:** inflated Purchase counts that don't reconcile against Razorpay revenue for THIS funnel, EMQ tanking on low-quality phantom events
+- **Razorpay payment notes:** our `pabbly_fired` / `capi_fired` markers written onto someone else's payment (harmless but noisy)
+- **Vercel logs:** noise that masks real issues
+
+### The fix in one sentence
+
+Stamp every order WE create with a unique funnel identifier in `notes`. The webhook reads it back and aborts early if it doesn't match.
+
+### Implementation (this codebase)
+
+**`app/api/razorpay/create-order/route.ts`** — the order-creation notes object's FIRST key is the funnel identifier:
+
+```ts
+const notes: Record<string, string> = {
+  funnel: clientConfig.funnel.slug,    // ← cross-business guardrail
+  first_name: ...,
+  last_name: ...,
+  // ... 13 more payload fields ...
+  landing_url: ...,
+};
+```
+
+`clientConfig.funnel.slug` for this project is `"arjun-blueprint"`. For a sibling funnel, use a slug that's unique across all integrations on the same Razorpay account.
+
+**`app/api/razorpay/webhook/route.ts`** — after fetching order notes, but BEFORE claiming the eventId or running any dedup / gate / fire logic:
+
+```ts
+const orderNotes = await fetchOrderNotesWithRetry(orderId);
+const expectedFunnel = clientConfig.funnel.slug;
+
+if (orderNotes.funnel !== expectedFunnel) {
+  console.log(
+    `[webhook] ignoring payment ${paymentId} — order ${orderId} is NOT from our funnel ` +
+      `(notes.funnel=${orderNotes.funnel ?? "<unset>"}, expected=${expectedFunnel})`,
+  );
+  return NextResponse.json({ ok: true, ignored: "not_our_funnel" });
+}
+
+// ... only NOW do we claim eventId, check dedup markers, fire Pabbly + CAPI ...
+```
+
+Returns 200 (not 4xx) so Razorpay marks the webhook as delivered and doesn't retry for 24h. The log line is easy to grep — `[webhook] ignoring payment` — so you can confirm cross-business traffic is being correctly filtered.
+
+**`scripts/backfill-pabbly.mjs`** — same filter applied to every captured payment the script pulls from Razorpay's payments API. Skipped payments are counted separately:
+
+```
+Done. OK=12  FAIL=0  SKIPPED-NOT-OURS=47  OUR-FUNNEL=12
+```
+
+The script hardcodes the `FUNNEL_SLUG` constant at the top — keep it in sync with `clientConfig.funnel.slug`.
+
+### Why early-exit (before dedup/claim)
+
+If the funnel check ran AFTER `claimEventId(paymentId)`, every cross-business payment would pollute our in-memory dedup Map and consume one Razorpay `payments.fetch` call (the dedup-state lookup) for no reason. By exiting BEFORE those steps, an unrelated payment costs us exactly **one Razorpay API call** (the order-notes fetch we'd have made anyway) and nothing else.
+
+### Why NOT just check the amount
+
+A naive alternative is `if (payment.amount !== clientConfig.pricing.paise) skip`. Three reasons not to do this:
+
+1. **Fragile to price changes.** Update `NEXT_PUBLIC_PRICE` from 97 to 197 → every in-flight ₹97 payment captured after the change but before the deploy is silently rejected.
+2. **False positives.** Another business on the same account might charge the same amount, would still be processed.
+3. **No defense if the unrelated business also charges 97.** Symptom: phantom Pabbly row that LOOKS like a real one.
+
+The notes-marker approach is robust to all three.
+
+### Why NOT use `order.receipt`
+
+`receipt` is freely settable by any integration on the account. Other systems can and do use receipts like `rcpt_…` or `order_…`. Using receipt as the discriminator would catch most cases but leak the rare ones. The notes-marker is uniquely scoped to OUR code.
+
+### Migration concern — orders created BEFORE this deploy
+
+Orders created BEFORE this guardrail rolled out don't have `notes.funnel` set. If any of them later trigger a webhook (e.g. captured today but order was created last week before deploy), the webhook will treat them as not-our-funnel and skip.
+
+In practice this affects ~zero leads because:
+- `create-order` and `verify-payment` happen seconds apart
+- Orders that haven't been paid yet won't trigger webhook deliveries
+- Orders already paid have already been processed by either path
+
+No backfill of historical orders needed. If you DO want to retroactively process pre-deploy paid orders, run the backfill script with the old `FUNNEL_SLUG` value set to `"<unset>"` temporarily — but this defeats the guardrail and risks the same cross-business pollution, so prefer manual reconciliation if it ever matters.
+
+### How to verify the guardrail is working
+
+1. **Make one real ₹97 test purchase on `teamfitarjun.com`.** Vercel logs should show:
+   ```
+   [verify-payment] received POST for paymentId=pay_X …
+   [pabbly] OK …
+   [webhook] received payment.captured for paymentId=pay_X …
+   [webhook] payment pay_X already has BOTH fires marked by verify-payment — full skip
+   ```
+   (or the webhook-only path if the browser died — either is fine, both result in exactly one Pabbly row.)
+
+2. **Have someone make a payment to one of your OTHER Razorpay-account businesses** (or trigger one yourself). Within ~30s, Vercel logs should show:
+   ```
+   [webhook] received payment.captured for paymentId=pay_Y orderId=order_Z
+   [webhook] ignoring payment pay_Y — order order_Z is NOT from our funnel (notes.funnel=<unset>, expected=arjun-blueprint)
+   ```
+   And **zero** `[pabbly] OK` or `[capi] OK` lines for `pay_Y`. **Zero Pabbly task** for that payment. **Zero Meta CAPI** event for that payment.
+
+3. **Run the backfill script in dry-run mode for a date range that includes cross-business payments.** Output should clearly distinguish:
+   ```
+   SKIP-NOT-OURS pay_Y  notes.funnel=<unset>  email=…  amount=40000
+   [DRY-RUN] pay_X  (test.lead@…): { …our funnel payload… }
+   Done (dry run). 1 OUR-FUNNEL payments would have been sent, 6 skipped as not-ours.
+   ```
+
+If any of these checks fail, the filter is broken and unrelated payments are leaking into the funnel's data.
+
+### When you do NOT need this guardrail
+
+The only case where you can safely skip it: the Razorpay account is **dedicated** to this single funnel, with no other websites, products, or integrations sharing it. If you're 100% sure of this AND will remain so forever, the guardrail is unnecessary. In every other case (which is most cases), it's mandatory.

@@ -31,7 +31,18 @@
  * Pabbly row — those values are gone (they only ever lived in the browser).
  * first_name, last_name, customer_email, customer_phone, country_code,
  * city, utm_source, utm_campaign are recoverable for any deploy version.
+ *
+ * MULTI-FUNNEL GUARDRAIL: The Razorpay account this script queries also
+ * processes payments for unrelated businesses (WooCommerce, other coaching
+ * funnels, etc.). This script ONLY backfills payments stamped with
+ * notes.funnel === FUNNEL_SLUG below — any other captured payment in the
+ * date range is logged as SKIP-NOT-OURS and never sent to Pabbly. Make
+ * sure FUNNEL_SLUG matches what app/api/razorpay/create-order/route.ts
+ * stamps (which is clientConfig.funnel.slug in TypeScript).
  */
+
+// Must match clientConfig.funnel.slug in client.config.ts
+const FUNNEL_SLUG = "arjun-blueprint";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -127,6 +138,7 @@ console.log(`Fetched ${payments.length} payments (${captured.length} captured).`
 // --- For each, build the same payload lib/pabbly.ts sends ---
 let ok = 0;
 let fail = 0;
+let skippedNotOurs = 0;
 for (const p of captured) {
   if (skipIds.has(p.id)) {
     console.log(`SKIP ${p.id} (in --skip list)`);
@@ -134,11 +146,35 @@ for (const p of captured) {
   }
 
   let notes = {};
+  let fetchedNotes = false;
   try {
     const order = await razorpay.orders.fetch(p.order_id);
     notes = order.notes ?? {};
+    fetchedNotes = true;
   } catch (err) {
     console.warn(`  orders.fetch(${p.order_id}) failed — building payload from bare payment fields`, err.message);
+  }
+
+  // Multi-funnel guardrail — skip payments that didn't originate from our
+  // funnel. Without this check, payments from other businesses sharing the
+  // same Razorpay account would be replayed into our Pabbly workflow.
+  if (fetchedNotes && notes.funnel !== FUNNEL_SLUG) {
+    console.log(
+      `SKIP-NOT-OURS ${p.id}  notes.funnel=${notes.funnel ?? "<unset>"}  ` +
+        `email=${String(p.email ?? "")}  amount=${(p.amount ?? 0) / 100}`,
+    );
+    skippedNotOurs++;
+    continue;
+  }
+  // If orders.fetch failed entirely (transient Razorpay error), we err on
+  // the side of skipping rather than firing — protects against pollution
+  // when we can't verify ownership. Re-run the script later if needed.
+  if (!fetchedNotes) {
+    console.warn(
+      `SKIP-NO-NOTES ${p.id}  orders.fetch failed — can't verify funnel ownership, skipping`,
+    );
+    skippedNotOurs++;
+    continue;
   }
 
   const firstName = notes.first_name ?? "";
@@ -204,9 +240,14 @@ for (const p of captured) {
   }
 }
 
+const ourFunnelCount = captured.length - skipIds.size - skippedNotOurs;
 if (send) {
-  console.log(`\nDone. OK=${ok}  FAIL=${fail}  TOTAL=${captured.length - skipIds.size}`);
+  console.log(
+    `\nDone. OK=${ok}  FAIL=${fail}  SKIPPED-NOT-OURS=${skippedNotOurs}  OUR-FUNNEL=${ourFunnelCount}`,
+  );
 } else {
-  console.log(`\nDone (dry run). ${captured.length - skipIds.size} payments would have been sent.`);
+  console.log(
+    `\nDone (dry run). ${ourFunnelCount} OUR-FUNNEL payments would have been sent, ${skippedNotOurs} skipped as not-ours.`,
+  );
   console.log("Re-run with --send to actually fire to Pabbly.");
 }

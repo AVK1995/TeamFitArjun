@@ -73,11 +73,26 @@ export async function POST(
   // Razorpay's documented limit is 15 keys per `notes` object with values up
   // to 256 chars each. We keep the count at 15 exactly. Empty values are
   // sent as "" so the webhook can deterministically rebuild the payload.
+  //
+  // CRITICAL: The first key is `funnel: clientConfig.funnel.slug`. This is
+  // the cross-business pollution guardrail. The Razorpay account that
+  // processes this funnel ALSO processes payments for unrelated businesses
+  // (WooCommerce sites, other coaching brands, etc.). All those payments
+  // trigger OUR webhook URL because Razorpay webhook subscriptions are
+  // account-level, not per-funnel. Without this marker, the webhook would
+  // fire Pabbly + CAPI for every unrelated payment too, polluting CRM rows
+  // and inflating Meta conversion counts. The webhook reads orders.fetch
+  // notes and skips silently when notes.funnel !== clientConfig.funnel.slug.
+  //
+  // `referrer` was dropped to make room for `funnel`. Verify-payment still
+  // ships `referrer` from browser sessionStorage on its primary path; only
+  // the webhook fallback loses it (and that's a rare path).
   const customer = body.customer ?? {};
   const utm = body.utm ?? {};
   const clamp = (v: string | undefined): string => (v ?? "").toString().slice(0, 256);
 
   const notes: Record<string, string> = {
+    funnel: clientConfig.funnel.slug,
     first_name: clamp(customer.firstName),
     last_name: clamp(customer.lastName),
     customer_email: clamp(customer.email),
@@ -92,7 +107,6 @@ export async function POST(
     fbclid: clamp(utm.fbclid),
     gclid: clamp(utm.gclid),
     landing_url: clamp(utm.landing_url),
-    referrer: clamp(utm.referrer),
   };
 
   try {

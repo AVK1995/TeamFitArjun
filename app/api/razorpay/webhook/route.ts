@@ -67,7 +67,30 @@ export async function POST(request: Request): Promise<NextResponse> {
     `[webhook] received ${payload.event} for paymentId=${paymentId} orderId=${orderId}`,
   );
 
-  // Layer 1 dedup — in-process.
+  // FIRST: confirm this payment belongs to OUR funnel. Razorpay webhook
+  // subscriptions are account-level, so the same webhook URL receives
+  // payment.captured events for every business that shares this account
+  // (WooCommerce, other funnels, etc). We stamp `notes.funnel = slug` in
+  // create-order; if it's not set or doesn't match, this is some other
+  // business's payment and we MUST NOT fire Pabbly + CAPI for it.
+  //
+  // We fetch order notes BEFORE claiming the eventId or doing any dedup
+  // work, so unrelated payments cost us exactly one Razorpay API call
+  // and zero outbound Pabbly/CAPI traffic.
+  const orderNotes = await fetchOrderNotesWithRetry(orderId);
+  const expectedFunnel = clientConfig.funnel.slug;
+
+  if (orderNotes.funnel !== expectedFunnel) {
+    console.log(
+      `[webhook] ignoring payment ${paymentId} — order ${orderId} is NOT from our funnel ` +
+        `(notes.funnel=${orderNotes.funnel ?? "<unset>"}, expected=${expectedFunnel})`,
+    );
+    return NextResponse.json({ ok: true, ignored: "not_our_funnel" });
+  }
+
+  // Layer 1 dedup — in-process. Only claim after we know it's our funnel,
+  // otherwise the in-memory Map would fill up with payment_ids we never
+  // intended to process.
   if (!claimEventId(eventId)) {
     console.log(
       `[webhook] event_id ${eventId} already claimed in-memory — skipping`,
@@ -75,13 +98,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ ok: true, deduped: "memory" });
   }
 
-  // Pull both the order notes (for customer + utm data) AND the payment
-  // dedup state (for the pabbly_fired marker) in parallel. Saves ~500ms
-  // vs sequential fetches.
-  const [orderNotes, dedupState] = await Promise.all([
-    fetchOrderNotesWithRetry(orderId),
-    getPaymentDedupState(paymentId),
-  ]);
+  // Layer 2 dedup — persistent via Razorpay payment notes.
+  const dedupState = await getPaymentDedupState(paymentId);
 
   if (dedupState.pabblyFired && dedupState.capiFired) {
     console.log(
@@ -108,7 +126,11 @@ export async function POST(request: Request): Promise<NextResponse> {
     fbclid: orderNotes.fbclid ?? "",
     gclid: orderNotes.gclid ?? "",
     landing_url: orderNotes.landing_url ?? "",
-    referrer: orderNotes.referrer ?? "",
+    // `referrer` was dropped from Razorpay notes to make room for the
+    // `funnel` guardrail (15-key limit). Webhook-fallback fires therefore
+    // ship referrer="". The primary verify-payment path still includes
+    // referrer from the browser's sessionStorage.
+    referrer: "",
   };
 
   if (!customer.firstName && !customer.lastName) {
