@@ -1,3 +1,4 @@
+import { sha256Lower } from "./hash";
 import type { CustomerPayload, UtmPayload } from "./types";
 
 /**
@@ -17,6 +18,20 @@ export async function firePabblyWebhook(args: {
   currency: string;
   timezone: string;
   coupon?: string;
+  /**
+   * Meta matching identifiers, forwarded into the CRM Sheet so the
+   * downstream Apps Script can fire CallBooked / CallDone /
+   * HighTicketPurchase at high EMQ. These are the SAME values the route
+   * already passes to fireMetaCapi — no new data capture, just threaded
+   * into the Pabbly body too. All optional; sent as "" when absent.
+   */
+  fbc?: string;
+  fbp?: string;
+  clientIp?: string;
+  clientUserAgent?: string;
+  eventSourceUrl?: string;
+  /** Whether this was a test / bypass order (derived from amount <= 1). */
+  isTest?: boolean;
 }): Promise<boolean> {
   const url = process.env.PABBLY_WEBHOOK_URL;
   if (!url) {
@@ -43,31 +58,49 @@ export async function firePabblyWebhook(args: {
     .filter(Boolean)
     .join(" ");
 
+  // external_id MUST be computed identically to the CAPI side
+  // (sha256 of lowercase+trimmed email) so Meta links browser PageView,
+  // server Purchase/sales, and the downstream Apps Script events into one
+  // user. lib/capi.ts uses the same sha256Lower(email).
+  const externalId = args.customer.email ? sha256Lower(args.customer.email) : "";
+
   const payload = {
+    // --- SOP canonical columns A–W (the downstream CRM/Apps-Script reads these) ---
+    lead_id: args.paymentId,
+    created_at: now.toISOString(),
     first_name: args.customer.firstName,
     last_name: args.customer.lastName,
-    full_name: fullName,
     email: args.customer.email,
     phone: args.customer.phone,
     city: args.customer.city,
-    state: args.customer.state ?? "",
-    zip_code: args.customer.zipCode ?? "",
     country_code: args.customer.countryCode,
-    payment_id: args.paymentId,
-    order_id: args.orderId,
+    fbc: args.fbc ?? "",
+    fbp: args.fbp ?? "",
+    client_ip_address: args.clientIp ?? "",
+    client_user_agent: args.clientUserAgent ?? "",
+    external_id: externalId,
+    event_source_url: args.eventSourceUrl ?? "",
     amount: args.amount,
-    currency: args.currency,
-    coupon: args.coupon ?? "",
-    payment_date: dateFormatter.format(now),
-    payment_time: timeFormatter.format(now),
-    payment_timestamp: now.toISOString(),
+    is_test: String(Boolean(args.isTest)),
+    purchase_event_id: args.paymentId,
     utm_source: args.utm.utm_source ?? "",
     utm_medium: args.utm.utm_medium ?? "",
     utm_campaign: args.utm.utm_campaign ?? "",
     utm_content: args.utm.utm_content ?? "",
     utm_term: args.utm.utm_term ?? "",
-    gclid: args.utm.gclid ?? "",
     fbclid: args.utm.fbclid ?? "",
+
+    // --- Extra fields the funnel already sent (kept; Pabbly ignores unmapped) ---
+    full_name: fullName,
+    state: args.customer.state ?? "",
+    zip_code: args.customer.zipCode ?? "",
+    order_id: args.orderId,
+    currency: args.currency,
+    coupon: args.coupon ?? "",
+    payment_date: dateFormatter.format(now),
+    payment_time: timeFormatter.format(now),
+    payment_timestamp: now.toISOString(),
+    gclid: args.utm.gclid ?? "",
     referrer: args.utm.referrer ?? "",
     landing_url: args.utm.landing_url ?? "",
   };

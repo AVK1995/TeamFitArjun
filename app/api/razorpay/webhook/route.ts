@@ -188,6 +188,17 @@ export async function POST(request: Request): Promise<NextResponse> {
         amount: String(valueRupees),
         currency: String(payment.currency ?? clientConfig.pricing.currency),
         timezone: clientConfig.event.timezone,
+        // Same Meta matching identifiers as the verify-payment path — fbc/fbp
+        // are recovered from order notes above, ip/ua from the request. This
+        // keeps webhook-fallback CRM rows identical to primary-path rows so
+        // the downstream Apps Script fires CallBooked/CallDone/HighTicket at
+        // full EMQ regardless of which route created the row.
+        fbc: fbc || undefined,
+        fbp: fbp || undefined,
+        clientIp,
+        clientUserAgent,
+        eventSourceUrl,
+        isTest: valueRupees <= 1,
       })
     : Promise.resolve(false);
 

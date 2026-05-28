@@ -148,6 +148,16 @@ export async function POST(
         amount: clientConfig.pricing.pabblyAmountString,
         currency: clientConfig.pricing.currency,
         timezone: clientConfig.event.timezone,
+        // Meta matching identifiers for the downstream CRM/CAPI feedback
+        // system (Apps Script reads these from the CRM Sheet to fire
+        // CallBooked / CallDone / HighTicketPurchase at high EMQ). Same
+        // values already passed to fireMetaCapi below — no new capture.
+        fbc,
+        fbp,
+        clientIp,
+        clientUserAgent,
+        eventSourceUrl: resolvedEventSourceUrl,
+        isTest: valueRupees <= 1,
       })
     : Promise.resolve(false);
 
