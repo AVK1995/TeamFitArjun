@@ -6,7 +6,7 @@ import { clientConfig } from "@/client.config";
 import { readUtmFromStorage, utmToQueryString } from "@/lib/utm";
 
 const HERO_VIDEO_URL = "https://player.vimeo.com/video/1192217582";
-const HERO_THUMB_URL = "/Landing%20Thumbnail.png";
+const HERO_THUMB_URL = "/Landing%20Thumbnail.webp";
 
 interface Slide {
   src: string;
@@ -319,14 +319,14 @@ export function LandingView() {
                 <div className="af-tphoto">
                   <div className="tside b">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={t.before} alt={`${t.name.split(" ")[0]} before`} />
+                    <img src={t.before} alt={`${t.name.split(" ")[0]} before`} loading="lazy" decoding="async" />
                     <div>
                       <BeforeAfterSvg /><br />Before
                     </div>
                   </div>
                   <div className="tside a">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={t.after} alt={`${t.name.split(" ")[0]} after`} />
+                    <img src={t.after} alt={`${t.name.split(" ")[0]} after`} loading="lazy" decoding="async" />
                     <div>
                       <BeforeAfterSvg /><br />After
                     </div>
@@ -478,6 +478,8 @@ export function LandingView() {
                 <img
                   src="/What%20discover%201.jpg"
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                   style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>
@@ -487,6 +489,8 @@ export function LandingView() {
                 <img
                   src="/What%20discover%202.jpeg"
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                   style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>
@@ -528,6 +532,8 @@ export function LandingView() {
               <img
                 src="/Meet%20Your%20Coach%20Arjun.png"
                 alt="Arjun Shah"
+                loading="lazy"
+                decoding="async"
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
               />
               <div className="count">
