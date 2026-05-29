@@ -1,5 +1,6 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+/* Fonts are self-hosted via next/font (see app/layout.tsx) — no remote
+   @import here, which would be render-blocking and load the fonts twice. */
 /* ================================================================
    GLOBAL TOKENS + ELEMENTOR HARDENING
 ================================================================ */
@@ -53,6 +54,10 @@
 .af-root [data-af-reveal]{ opacity:0; transform:translateY(24px); animation:afRevealIn .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:var(--d,0s); }
 @keyframes afRevealIn{ to{ opacity:1; transform:translateY(0); } }
 .af-root [data-af-reveal].vis{ opacity:1; transform:translateY(0); animation:none; }
+/* The hero is above the fold and contains the LCP element. Render it immediately
+   (no opacity/transform reveal) so the fade-in never delays Largest Contentful
+   Paint. Below-the-fold sections keep their reveal animation. */
+.af-root .af-hero [data-af-reveal]{ opacity:1 !important; transform:none !important; animation:none !important; }
 
 /* ================================================================
    SHARED CTA BUTTON
@@ -784,7 +789,7 @@
   border-top:1px solid rgba(255,255,255,.06)!important;
 }
 
-.af-root .af-foot .af-wrap{ text-align:center; }
+.af-root .af-foot .af-wrap{ text-align:center; max-width:1180px!important; margin:0 auto!important; }
 
 .af-root .af-foot .copy{
   color:rgba(255,255,255,.85)!important;

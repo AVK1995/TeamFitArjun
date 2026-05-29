@@ -5,6 +5,9 @@ import { clientConfig } from "@/client.config";
 import { PixelPageView } from "@/components/PixelPageView";
 import "./globals.css";
 
+// Fonts are self-hosted by next/font (same-origin, preloaded, non-render-blocking).
+// Weights cover every weight actually used in the CSS so we can drop the old
+// render-blocking Google Fonts @import in landing.css with no visual change.
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
@@ -14,7 +17,7 @@ const playfair = Playfair_Display({
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--fb",
 });
