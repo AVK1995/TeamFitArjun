@@ -88,6 +88,7 @@ export const clientConfig = {
     /** Set via env so dev builds don't pollute */
     metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "",
     gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "",
+    clarityProjectId: process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID ?? "",
     /**
      * Meta Business Settings → Brand Safety → Domains → teamfitarjun.com → "Add a meta-tag".
      * Rendered into <head> from app/layout.tsx so Meta's crawler can verify the domain.

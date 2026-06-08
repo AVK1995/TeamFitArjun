@@ -62,6 +62,7 @@ export default function RootLayout({
 }) {
   const pixelId = clientConfig.analytics.metaPixelId;
   const gaId = clientConfig.analytics.gaMeasurementId;
+  const clarityId = clientConfig.analytics.clarityProjectId;
   const prodDomain = clientConfig.brand.domain;
 
   return (
@@ -128,6 +129,14 @@ export default function RootLayout({
               {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${gaId}',{send_page_view:true});`}
             </Script>
           </>
+        ) : null}
+
+        {/* Microsoft Clarity — session recordings + heatmaps. Self-injects its
+            own <script> tag, so a single inline init is all that's needed. */}
+        {clarityId ? (
+          <Script id="clarity-init" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${clarityId}");`}
+          </Script>
         ) : null}
       </body>
     </html>
