@@ -14,6 +14,7 @@ import { QUIZ_QUESTIONS } from "./quizQuestions";
 
 const HERO_VIDEO_URL = "https://player.vimeo.com/video/1189990912";
 const HERO_THUMB_URL = "/Thank%20you%20page%20video%20thumbnail.png";
+const INSTAGRAM_URL = "https://www.instagram.com/thefitarjun/";
 
 type AnswerMap = Record<string, string | string[]>;
 
@@ -244,7 +245,7 @@ export function ThankYouView() {
                 Congrats — your <span className="af-accent">Blueprint Call</span> is booked.
               </h1>
               <p className="ty-sub" data-af-reveal style={{ "--d": ".18s" } as React.CSSProperties}>
-                Watch the video below — then fill the form to get started.
+                Watch the video below — then message Arjun on Instagram to get started.
               </p>
             </div>
           </div>
@@ -291,15 +292,9 @@ export function ThankYouView() {
           </div>
 
           <div className="ty-form-cta" data-af-reveal style={{ "--d": ".3s" } as React.CSSProperties}>
-            <QuizTriggerButton
-              id="ty-quiz-open"
-              locked={alreadySubmitted}
-              onClick={openQuiz}
-            />
+            <InstagramCta id="ty-ig-open" />
             <p className="af-cta-note">
-              {alreadySubmitted
-                ? "Arjun has your answers — see you on the call."
-                : "Takes 2–3 minutes. Helps Arjun walk into your call already prepared."}
+              Send Arjun a quick message on Instagram — he&apos;ll personally guide your next steps before the call.
             </p>
           </div>
         </div>
@@ -481,15 +476,11 @@ export function ThankYouView() {
 
       {/* Sticky CTA */}
       <div
-        className={`ty-sticky-cta ${stickyOn ? "on" : ""}`}
+        className={`ty-sticky-cta ${stickyOn ? "is-visible" : ""}`}
         id="ty-sticky-cta"
         aria-hidden={!stickyOn}
       >
-        <QuizTriggerButton
-          id="ty-sticky-trigger"
-          locked={alreadySubmitted}
-          onClick={openQuiz}
-        />
+        <InstagramCta id="ty-sticky-trigger" />
       </div>
 
       {/* Quiz Modal — source CSS shows it via .qz-overlay.is-open */}
@@ -675,6 +666,36 @@ function Pillar({
       <div className="ic">{icon}</div>
       <h5>{children}</h5>
     </div>
+  );
+}
+
+/**
+ * Post-booking CTA — links straight to Arjun's Instagram so the user can
+ * message him directly. Replaces the old "Chhod Yaar" diagnostic quiz form.
+ */
+function InstagramCta({ id }: { id: string }) {
+  return (
+    <a
+      href={INSTAGRAM_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="af-cta ty-quiz-trigger"
+      id={id}
+    >
+      <span>Message Arjun on Instagram</span>
+      <span className="arrow">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#fff"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M5 12h14M13 5l7 7-7 7" />
+        </svg>
+      </span>
+    </a>
   );
 }
 
