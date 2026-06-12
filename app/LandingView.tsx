@@ -5,7 +5,7 @@ import Link from "next/link";
 import { clientConfig } from "@/client.config";
 import { readUtmFromStorage, utmToQueryString } from "@/lib/utm";
 
-const HERO_VIDEO_URL = "https://player.vimeo.com/video/1192217582";
+const HERO_VIDEO_URL = "https://player.vimeo.com/video/1200720150";
 const HERO_THUMB_URL = "/Landing%20Thumbnail.webp";
 
 interface Slide {
@@ -282,7 +282,7 @@ export function LandingView() {
                 </div>
               ) : (
                 <iframe
-                  src={`${HERO_VIDEO_URL}?autoplay=1&title=0&byline=0&portrait=0&playsinline=1`}
+                  src={`${HERO_VIDEO_URL}?autoplay=1&title=0&byline=0&portrait=0&playsinline=1&color=C9954D`}
                   allow="autoplay; fullscreen; picture-in-picture"
                   allowFullScreen
                   style={{
