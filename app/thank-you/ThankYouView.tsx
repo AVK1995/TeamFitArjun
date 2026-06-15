@@ -12,7 +12,7 @@ import { clientConfig } from "@/client.config";
 import { reapplyMamFromCookie } from "@/lib/analytics";
 import { QUIZ_QUESTIONS } from "./quizQuestions";
 
-const HERO_VIDEO_URL = "https://player.vimeo.com/video/1189990912";
+const HERO_VIDEO_URL = "https://tgox-production-bucket.nyc3.cdn.digitaloceanspaces.com/client_funnel_videos/Arjun/arjun_thankyou_video_v1%20(1080p).mp4";
 const HERO_THUMB_URL = "/Thank%20you%20page%20video%20thumbnail.png";
 const INSTAGRAM_URL = "https://www.instagram.com/thefitarjun/";
 
@@ -274,10 +274,12 @@ export function ThankYouView() {
                   <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                 </div>
               ) : (
-                <iframe
-                  src={`${HERO_VIDEO_URL}?autoplay=1&title=0&byline=0&portrait=0&playsinline=1&color=C9954D`}
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
+                <video
+                  src={HERO_VIDEO_URL}
+                  autoPlay
+                  controls
+                  playsInline
+                  preload="metadata"
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -285,6 +287,8 @@ export function ThankYouView() {
                     height: "100%",
                     border: 0,
                     zIndex: 5,
+                    objectFit: "cover",
+                    background: "#000",
                   }}
                 />
               )}

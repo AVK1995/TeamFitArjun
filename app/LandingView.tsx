@@ -5,7 +5,7 @@ import Link from "next/link";
 import { clientConfig } from "@/client.config";
 import { readUtmFromStorage, utmToQueryString } from "@/lib/utm";
 
-const HERO_VIDEO_URL = "https://player.vimeo.com/video/1200720150";
+const HERO_VIDEO_URL = "https://tgox-production-bucket.nyc3.cdn.digitaloceanspaces.com/client_funnel_videos/Arjun/arjun_final_vsl.mp4_v1%20(1080p).mp4";
 const HERO_THUMB_URL = "/Landing%20Thumbnail.webp";
 
 interface Slide {
@@ -281,10 +281,12 @@ export function LandingView() {
                   <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                 </div>
               ) : (
-                <iframe
-                  src={`${HERO_VIDEO_URL}?autoplay=1&title=0&byline=0&portrait=0&playsinline=1&color=C9954D`}
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
+                <video
+                  src={HERO_VIDEO_URL}
+                  autoPlay
+                  controls
+                  playsInline
+                  preload="metadata"
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -292,6 +294,8 @@ export function LandingView() {
                     height: "100%",
                     border: 0,
                     zIndex: 5,
+                    objectFit: "cover",
+                    background: "#000",
                   }}
                 />
               )}
