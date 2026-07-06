@@ -2,6 +2,7 @@ import { UtmCapture } from "@/components/UtmCapture";
 import { buildMetadata } from "@/lib/seo";
 import { LandingView } from "./LandingView";
 import "./landing.css";
+import "./landing-premium.css";
 
 export const dynamic = "force-static";
 export const metadata = buildMetadata("home");

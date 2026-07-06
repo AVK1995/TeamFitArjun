@@ -84,7 +84,6 @@ export function CheckoutView() {
   const [couponMsg, setCouponMsg] = useState<{ text: string; tone: "error" | "success" } | null>(null);
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
-  const [stickyOn, setStickyOn] = useState(false);
   const [sdkReady, setSdkReady] = useState(false);
   const flagBoxRef = useRef<HTMLDivElement>(null);
 
@@ -137,15 +136,8 @@ export function CheckoutView() {
     return () => io.disconnect();
   }, []);
 
-  // Sticky pay bar visibility on scroll (mirror of the source JS behavior)
-  useEffect(() => {
-    const hero = document.querySelector<HTMLElement>(".co-hero");
-    if (!hero) return;
-    const onScroll = () => setStickyOn(hero.getBoundingClientRect().bottom < 0);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  // Sticky pay bar is always visible on mobile (shown from first paint — not
+  // gated on scroll) so the CTA is reachable the moment the page loads.
 
   // Close flag dropdown on outside click
   useEffect(() => {
@@ -460,11 +452,45 @@ export function CheckoutView() {
             You&apos;re One Step Away
           </div>
           <h1 data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
-            Complete Your <span>Booking</span>
+            Your 1-on-1 <span>Blueprint Call</span> With Arjun
           </h1>
           <p data-af-reveal style={{ "--d": ".14s" } as React.CSSProperties}>
+            Confirming this fee secures a private 30-minute strategy session with Arjun Shah himself.
             Fill in your details below — we&apos;ll send the call link and a reminder to your email.
           </p>
+        </div>
+      </section>
+
+      {/* SECTION 02.5 — Pre-payment expectation blocks */}
+      <section className="co-expect">
+        <div className="af-wrap">
+          <div className="co-expect-grid">
+            <div className="co-expect-card">
+              <h3 className="co-expect-h">On This Call, Arjun Will</h3>
+              <ul className="co-expect-list co-list-do">
+                <li>Diagnose why your previous attempts broke — in your specific life, not in general.</li>
+                <li>Name the exact moment your plans have been failing at.</li>
+                <li>Outline your Custom Execution Blueprint around your travel, work hours, and food environment.</li>
+              </ul>
+            </div>
+            <div className="co-expect-card">
+              <h3 className="co-expect-h">Who This Is For</h3>
+              <ul className="co-expect-list co-list-yes">
+                <li>Senior professionals and business owners ready to invest time, effort, and money into this.</li>
+                <li>Men who want a long-term fix, not another 8-week cycle.</li>
+                <li>People who value direct, expert, science-based coaching.</li>
+              </ul>
+            </div>
+            <div className="co-expect-card">
+              <h3 className="co-expect-h">Who This Is Not For</h3>
+              <ul className="co-expect-list co-list-no">
+                <li>Anyone earning less than ₹25 lakhs per annum.</li>
+                <li>Anyone not financially ready to invest beyond this consultation.</li>
+                <li>People looking for a ₹4,000 to ₹5,000 plan to solve a 10-year problem.</li>
+                <li>Anyone unwilling to follow a structured plan consistently.</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1018,7 +1044,7 @@ export function CheckoutView() {
                 >
                   <span className="spinner" />
                   <span className="pay-lbl">
-                    Pay Now — <span id="co-btn-amt">{formattedTotal}</span>
+                    Pay <span id="co-btn-amt">{formattedTotal}</span> &amp; Book Your Slot
                   </span>
                   <span className="arrow">
                     <svg
@@ -1053,6 +1079,25 @@ export function CheckoutView() {
                 </p>
 
                 <div
+                  className="co-prepay"
+                  style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--border)" }}
+                >
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)", margin: "0 0 8px" }}>
+                    Please read before paying
+                  </p>
+                  <p style={{ fontSize: 12.5, lineHeight: 1.55, color: "var(--ink-soft)", margin: "0 0 8px" }}>
+                    This payment covers your <strong>consultation only</strong> — it is not the coaching
+                    program fee. The coaching investment is discussed on the call based on your goals and
+                    starting point. Don&rsquo;t expect the call to hand you a diet and workout plan.
+                  </p>
+                  <p style={{ fontSize: 12.5, lineHeight: 1.55, color: "var(--ink-soft)", margin: 0 }}>
+                    <strong>Refund:</strong> attend the call and if it wasn&rsquo;t useful, full refund on
+                    the spot, no questions. A no-show forfeits the fee. To reschedule, WhatsApp us at least
+                    4 hours before your slot.
+                  </p>
+                </div>
+
+                <div
                   className={`co-redirect ${redirecting ? "on" : ""}`}
                   id="co-redirect"
                 >
@@ -1070,7 +1115,7 @@ export function CheckoutView() {
       </section>
 
       {/* SECTION 04 — Sticky Mobile Pay CTA */}
-      <div className={`co-sticky ${stickyOn ? "on" : ""}`} id="co-sticky">
+      <div className="co-sticky on" id="co-sticky">
         <p className="co-sticky-guarantee">
           <svg
             viewBox="0 0 24 24"
@@ -1094,7 +1139,7 @@ export function CheckoutView() {
           >
             <span className="spinner" />
             <span className="pay-lbl">
-              Pay Now — <span id="co-sticky-amt">{formattedTotal}</span>
+              Pay <span id="co-sticky-amt">{formattedTotal}</span> &amp; Book Your Slot
             </span>
             <span className="arrow">
               <svg

@@ -242,10 +242,12 @@ export function ThankYouView() {
                 Booking Confirmed
               </div>
               <h1 className="ty-h1" data-af-reveal style={{ "--d": ".12s" } as React.CSSProperties}>
-                Congrats — your <span className="af-accent">Blueprint Call</span> is booked.
+                Your Call With Arjun Is <span className="af-accent">Locked In.</span>
               </h1>
               <p className="ty-sub" data-af-reveal style={{ "--d": ".18s" } as React.CSSProperties}>
-                Watch the video below — then message Arjun on Instagram to get started.
+                Check your email for the confirmation and your prep checklist. We&rsquo;ll also WhatsApp
+                you the meeting link before the call — save the number when it arrives, that&rsquo;s how we
+                reach you.
               </p>
             </div>
           </div>
@@ -296,10 +298,30 @@ export function ThankYouView() {
           </div>
 
           <div className="ty-form-cta" data-af-reveal style={{ "--d": ".3s" } as React.CSSProperties}>
-            <InstagramCta id="ty-ig-open" />
-            <p className="af-cta-note">
-              Send Arjun a quick message on Instagram — he&apos;ll personally guide your next steps before the call.
-            </p>
+            <div className="ty-donow">
+              <div className="ty-donow-eyebrow">Do One Thing Right Now · Takes 30 Seconds</div>
+              <p className="ty-donow-title">
+                Message Arjun on Instagram and tell him one line: what made you book this call.
+              </p>
+              <p className="ty-donow-sub">
+                He reads these personally before your session, so he walks in already knowing your
+                situation instead of starting cold.
+              </p>
+              <InstagramCta id="ty-ig-open" />
+            </div>
+
+            <ol className="ty-steps">
+              {[
+                "Reply to the WhatsApp message when it arrives so we know we’ve reached you.",
+                "Before the call, note down your last 2 or 3 attempts: what you tried, how long it lasted, where it broke.",
+                "Take the call from a quiet place, camera on if possible. 30 focused minutes beats 45 distracted ones.",
+              ].map((stepText, i) => (
+                <li key={i}>
+                  <span className="ty-step-num">{i + 1}</span>
+                  {stepText}
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
