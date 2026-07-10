@@ -279,18 +279,17 @@ export function LandingView() {
       <section className="af-hero" style={{ background: "#0E0C09" }}>
         <div className="af-wrap af-hero-inner">
           <div className="af-callout" data-af-reveal>
-            For Senior Professionals &amp; Business Owners, 30 to 45
+            For Men Earning ₹25L+ a Year Who&rsquo;ve Tried Diets, &amp; Random Workouts
           </div>
 
           <h1 className="af-h1" data-af-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-            You Perform At A High Level In Every Room You Walk Into.{" "}
-            <span className="af-accent">Your Body Is The One Thing That Doesn&rsquo;t Show It.</span>
+            Lose the Belly Fat You&rsquo;ve Fought for Years, achieve a healthy body with a{" "}
+            <span className="af-accent">camera confident look</span>
           </h1>
 
           <p className="af-sub" data-af-reveal style={{ "--d": ".14s" } as React.CSSProperties}>
-            If you earn <strong>₹25+ lakhs a year</strong> but still hesitate before taking your shirt
-            off at the pool, the next 7 minutes will explain why. Effort was never your problem &mdash;
-            Arjun shows you the one pattern that has quietly broken every attempt you&rsquo;ve made.
+            You&rsquo;ve tried before, but work always gets in the way. Watch the video to discover the
+            shift that finally makes lasting fat loss fit your lifestyle.
           </p>
 
           <div className="af-video-frame" data-af-reveal style={{ "--d": ".22s" } as React.CSSProperties}>
