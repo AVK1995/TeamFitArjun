@@ -6,8 +6,10 @@ import { clientConfig } from "@/client.config";
 import { readUtmFromStorage, utmToQueryString } from "@/lib/utm";
 
 // Same VSL (cold v3) + thumbnail as the current landing page.
-const HERO_VIDEO_URL =
-  "https://tgox-production-bucket.nyc3.cdn.digitaloceanspaces.com/client_funnel_videos/Arjun/arjun_final_vsl.mp4_v1%20(1080p).mp4";
+// Vimeo player embed (NOT a self-hosted mp4) — plays are only recorded in Vimeo
+// Analytics when the video is served by Vimeo's own player.
+// Do NOT add `dnt=1` to the query string: it turns Vimeo's tracking off.
+const HERO_VIDEO_URL = "https://player.vimeo.com/video/1209849931";
 const HERO_THUMB_URL = "/Landing%20Thumbnail.webp";
 
 interface Slide {
@@ -315,12 +317,11 @@ export function LandingView() {
                   <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                 </div>
               ) : (
-                <video
-                  src={HERO_VIDEO_URL}
-                  autoPlay
-                  controls
-                  playsInline
-                  preload="metadata"
+                <iframe
+                  src={`${HERO_VIDEO_URL}?autoplay=1&title=0&byline=0&portrait=0&playsinline=1&color=C9954D`}
+                  title="Custom Execution Blueprint Call — Arjun Shah"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                  allowFullScreen
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -328,7 +329,6 @@ export function LandingView() {
                     height: "100%",
                     border: 0,
                     zIndex: 5,
-                    objectFit: "cover",
                     background: "#000",
                   }}
                 />
