@@ -18,6 +18,7 @@ import {
   buildFbcFromFbclid,
 } from "@/lib/utm";
 import { setMetaAdvancedMatching } from "@/lib/analytics";
+import { trackGa4EventOnce } from "@/lib/ga4";
 import type {
   CreateOrderResponse,
   CustomerPayload,
@@ -32,6 +33,15 @@ import type {
 import { COUNTRIES, type Country } from "./countries";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/** Web Crypto SHA-256 (hex) — used to dedup Meta CAPI InitiateCheckout by email. */
+async function sha256Hex(value: string): Promise<string> {
+  if (typeof crypto === "undefined" || !crypto.subtle) return value;
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 interface FormState {
   fname: string;
@@ -237,6 +247,10 @@ export function CheckoutView() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // GA4 fires FIRST — before validation. Per GA4 brief v2.0, the signal
+    // is "user attempted to pay", not "user submitted a valid form".
+    // A half-filled bounce still counts. Deduped once-per-browser.
+    trackGa4EventOnce("initiate_checkout");
     if (!validateAll()) {
       const firstBad = (Object.keys(form) as FieldKey[]).find(
         (k) => !validateField(k, form[k]),
@@ -257,6 +271,39 @@ export function CheckoutView() {
     }
     setLoading(true);
     const customer = collectCustomer();
+    // Meta CAPI InitiateCheckout — fires ONCE per email per browser, right
+    // before create-order + Razorpay open. Deduped by localStorage keyed on
+    // sha256(email) so a different email in the same browser re-fires.
+    // Failures never block payment; every step is best-effort.
+    void (async () => {
+      try {
+        const emailNorm = customer.email.trim().toLowerCase();
+        const emailHash = await sha256Hex(emailNorm);
+        if (typeof window !== "undefined") {
+          if (window.localStorage.getItem("arjun_ic_fired") === emailHash) {
+            return;
+          }
+          const res = await fetch("/api/meta/initiate-checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              customer,
+              eventSourceUrl: window.location.href,
+            }),
+            keepalive: true,
+          });
+          if (res.ok) {
+            try {
+              window.localStorage.setItem("arjun_ic_fired", emailHash);
+            } catch {
+              // private mode — non-fatal
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("[ic] client-side fire failed", err);
+      }
+    })();
     try {
       const orderRes = await fetch("/api/razorpay/create-order", {
         method: "POST",

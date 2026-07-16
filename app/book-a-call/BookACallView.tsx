@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { clientConfig } from "@/client.config";
 import { readUtmFromStorage, utmToQueryString } from "@/lib/utm";
+import { trackGa4EventOnce } from "@/lib/ga4";
 
 interface Slide {
   src: string;
@@ -90,6 +91,11 @@ export function BookACallView() {
     function onMessage(e: MessageEvent) {
       if (!isCalendlyEvent(e)) return;
       if (e.data.event === "calendly.event_scheduled") {
+        // GA4 `book_call` — fires exactly once per browser when the visitor
+        // actually schedules a slot in the embedded Calendly iframe. This
+        // is the real "call booked" signal (the page CTAs above are
+        // scroll-to-calendar, not booking actions).
+        trackGa4EventOnce("book_call");
         // Persist the Calendly booking refs so the thank-you quiz submit
         // can include them in the webhook payload. The Pabbly workflow can
         // resolve these URIs through Calendly's API to fetch booking time +
