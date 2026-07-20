@@ -59,27 +59,6 @@ export interface CreateOrderResponse {
   eventId: string;
 }
 
-export interface VerifyPaymentRequest {
-  orderId: string;
-  paymentId: string;
-  signature: string;
-  customer: CustomerPayload;
-  utm: UtmPayload;
-  /** Facebook click-id and browser-id cookies (forwarded for CAPI) */
-  fbc?: string;
-  fbp?: string;
-  /** URL the client was on when the purchase fired — `window.location.href` */
-  eventSourceUrl?: string;
-}
-
-export interface VerifyPaymentResponse {
-  success: boolean;
-  paymentId?: string;
-  /** Echo back the event_id (Razorpay payment_id) for the client's records */
-  eventId?: string;
-  message?: string;
-}
-
 export interface ApiErrorResponse {
   success: false;
   error: string;

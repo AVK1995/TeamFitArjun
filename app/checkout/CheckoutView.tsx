@@ -15,7 +15,6 @@ import {
   readUtmFromSearch,
   utmToQueryString,
   readCookie,
-  buildFbcFromFbclid,
 } from "@/lib/utm";
 import { setMetaAdvancedMatching } from "@/lib/analytics";
 import { trackGa4EventOnce } from "@/lib/ga4";
@@ -23,8 +22,6 @@ import type {
   CreateOrderResponse,
   CustomerPayload,
   UtmPayload,
-  VerifyPaymentRequest,
-  VerifyPaymentResponse,
 } from "@/lib/types";
 import type {
   RazorpayOptions,
@@ -368,43 +365,12 @@ export function CheckoutView() {
             country: customer.countryCode,
           });
 
-          const fbc = readCookie("_fbc") || buildFbcFromFbclid(utm.fbclid);
-          const fbp = readCookie("_fbp");
-          const verifyBody: VerifyPaymentRequest = {
-            orderId: response.razorpay_order_id,
-            paymentId: response.razorpay_payment_id,
-            signature: response.razorpay_signature,
-            customer,
-            utm,
-            fbc,
-            fbp,
-            eventSourceUrl:
-              typeof window !== "undefined" ? window.location.href : undefined,
-          };
-
-          // Fire verify-payment with `keepalive: true` so the request commits
-          // to the network stack before the page unload, and Vercel keeps
-          // executing the function even if the mobile browser kills the tab
-          // mid-redirect. This is what brings reliability from ~30% on mobile
-          // to ~99%+. The webhook fallback (with full Razorpay-notes payload)
-          // covers the last ~1%.
-          //
-          // We intentionally do NOT await — the redirect must happen
-          // immediately so iOS/Android don't background-kill us first.
-          try {
-            void fetch("/api/razorpay/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(verifyBody),
-              keepalive: true,
-            }).catch((err) => {
-              // Sync network errors only — server-side completion still
-              // happens via the Razorpay webhook fallback path.
-              console.warn("[checkout] verify-payment dispatch failed", err);
-            });
-          } catch (err) {
-            console.warn("[checkout] verify-payment fetch threw synchronously", err);
-          }
+          // The Razorpay-signed webhook (app/api/razorpay/webhook/route.ts)
+          // is the SOLE tracking authority — it fires Pabbly + Meta CAPI
+          // server-to-server on payment.captured and covers UPI-app payers
+          // who never return to this tab. The browser no longer POSTs to a
+          // verify-payment route; we just persist the customer/order for
+          // /thank-you and redirect.
 
           try {
             window.sessionStorage.setItem(
