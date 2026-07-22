@@ -373,10 +373,12 @@ export function LandingView() {
             </div>
             <div className="af-proofrow-text">
               <span className="af-stars"><span className="sbox">★★★★★</span></span>
-              <span className="af-proofrow-div" />
               <span><b>5.0</b> Review</span>
               <span className="af-proofrow-div" />
-              <span>100% Guaranteed Results</span>
+              <span className="af-proof-claim">
+                <span className="af-proof-ic"><IconTrophy /></span>
+                100% Guaranteed Results
+              </span>
             </div>
           </div>
 
@@ -385,21 +387,21 @@ export function LandingView() {
           </div>
 
           <h1 className="af-h1" data-af-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-            Lose 10&ndash;15 Kilos,<br />
+            Lose <span className="af-hl-block">10&ndash;15 Kilos</span>,<br />
             Build <span className="af-accent">Visible Muscle</span>,<br />
             &amp; Never Start Over Again
           </h1>
 
           <p className="af-sub af-sub-strong" data-af-reveal style={{ "--d": ".12s" } as React.CSSProperties}>
-            Using a Custom Execution Blueprint, a personalised roadmap designed for demanding careers,
+            Using the Custom Execution Blueprint, a personalised roadmap designed for demanding careers,
             frequent travel and unpredictable schedules.
           </p>
 
           <p className="af-sub af-sub-markers" data-af-reveal style={{ "--d": ".16s" } as React.CSSProperties}>
-            <b>1400+ Corporate Professionals</b> Across{" "}
-            <span className="af-hl">India, UK, Canada, Australia &amp; UAE</span> Have{" "}
-            <span className="af-hl-pill">Lost 10+ Kilos</span>, Built Visible Muscle and Improved Key
-            Health Markers Linked To:
+            <b>1400+ Corporate Professionals</b> across{" "}
+            <span className="af-hl">India, UK, Canada, Australia &amp; UAE</span> have{" "}
+            <span className="af-hl-pill">lost 10+ kilos</span>, built visible muscle and improved key
+            health markers linked to:
           </p>
 
           <ul className="af-markers" data-af-reveal style={{ "--d": ".2s" } as React.CSSProperties}>
@@ -474,7 +476,7 @@ export function LandingView() {
           <div className="af-creds-grid" data-af-reveal>
             {[
               { num: "1400+", label: "Success Stories", sub: "Globally" },
-              { num: "On Air", label: "Aaj Tak · Zee News", sub: "HealthXP Featured", wide: true },
+              { num: "Featured On", label: "Aaj Tak · Zee News", sub: "HealthXP Featured", wide: true },
               { num: "5.0 ★", label: "Client Rating", sub: "Verified Reviews" },
               { num: `₹${price}`, label: "To Start", sub: "Fully Refundable" },
             ].map((c) => (
@@ -496,7 +498,7 @@ export function LandingView() {
             For Corporate Professionals Across India &amp; Abroad
           </p>
           <h2 data-af-reveal style={{ "--d": ".04s" } as React.CSSProperties}>
-            This Is <span className="af-accent">For You If</span>
+            This Is For You <span className="af-accent af-underline">If</span>
           </h2>
           <ul className="af-foryou-list" data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
             {FOR_YOU.map((item, i) => (
@@ -614,7 +616,7 @@ export function LandingView() {
                 style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
               />
               <div className="count">
-                <div><b>104→65</b><span>His Own Kg</span></div>
+                <div><b>104kg → 65kg</b><span>His Own Journey</span></div>
                 <div><b>1,400+</b><span>Clients</span></div>
               </div>
             </div>
@@ -626,7 +628,7 @@ export function LandingView() {
               </h2>
               <p>
                 Arjun Shah spent years at <span className="af-hl-pill">104 kg</span> before engineering
-                himself down to <span className="af-hl-pill">65</span>. Not with motivation, with{" "}
+                himself down to <span className="af-hl-pill">65kg</span>. Not with motivation, with{" "}
                 <span className="af-hl">a system that survived his own bad weeks</span>.
               </p>
               <p>
@@ -644,15 +646,13 @@ export function LandingView() {
       {/* E · What's included in the 90-day programme */}
       <section className="af-incl" style={{ background: "var(--bg)" }}>
         <div className="af-wrap">
-          <p className="af-eyebrow" data-af-reveal>
-            Everything You Get. Nothing You Don&rsquo;t Need.
-          </p>
-          <h2 data-af-reveal style={{ textAlign: "center", "--d": ".04s" } as React.CSSProperties}>
+          <h2 data-af-reveal style={{ textAlign: "center" } as React.CSSProperties}>
             What&rsquo;s Included In Your<br className="af-br-mob" />{" "}
             <span className="af-accent">90-Day Programme</span>
           </h2>
           <p className="af-section-lede" data-af-reveal style={{ "--d": ".05s" } as React.CSSProperties}>
-            Everything working together to make this the last fitness programme you ever need.
+            Everything working together to make this the{" "}
+            <span className="af-underline-ink">last fitness programme</span> you ever need.
           </p>
           <div className="af-incl-grid" data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
             {INCLUDED.map((item) => (
@@ -792,17 +792,26 @@ export function LandingView() {
         {/* Animated gold sweep along the top edge */}
         <span className="af-stuck-beam" aria-hidden="true" />
         <div className="af-stuck-inner">
-        <Countdown time={timeLeft} compact />
-        <Link href={checkoutHref} className="af-cta" onClick={handleLandingCtaClick}>
-          <span className="cta-top">
-            <CtaLabel />
-            <span className="arrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
+          <Link href={checkoutHref} className="af-cta" onClick={handleLandingCtaClick}>
+            <span className="cta-top">
+              <CtaLabel />
+              <span className="arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </span>
             </span>
-          </span>
-        </Link>
+          </Link>
+          <ul className="af-stuck-trust">
+            <li>
+              <span className="af-trust-ic"><IconGuarantee /></span>
+              100% Results Guarantee
+            </li>
+            <li>
+              <span className="af-trust-ic"><IconMedal /></span>
+              1400+ Success Stories Globally
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -873,7 +882,7 @@ function CtaBlock({
       <ul className="af-trustrow">
         <li>
           <span className="af-trust-ic"><IconGuarantee /></span>
-          100% Money-Back Guarantee
+          100% Results Guarantee
         </li>
         <li>
           <span className="af-trust-ic"><IconMedal /></span>
@@ -954,6 +963,17 @@ function IconMedal() {
       <circle cx="12" cy="14.5" r="6" />
       <path d="M12 11.8l.9 1.9 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2L9 14l2-.3.9-1.9z" />
       <path d="M8.4 8.2L6.2 2.8h11.6l-2.2 5.4" />
+    </svg>
+  );
+}
+
+/** Trophy — replaces the 🏆 emoji so the mark is themed, not platform-drawn. */
+function IconTrophy() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7.4 3.4h9.2v5.1a4.6 4.6 0 01-9.2 0V3.4z" />
+      <path d="M7.4 5.1H4.9a2 2 0 000 4h.9M16.6 5.1h2.5a2 2 0 010 4h-.9" />
+      <path d="M12 13.1v3.3M8.9 20.6h6.2l-.7-4.2H9.6l-.7 4.2z" />
     </svg>
   );
 }

@@ -1724,3 +1724,608 @@
   .af-root .af-incl-ic svg{ width:19px; height:19px; }
 }
 
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PASS 7 â€” proof row, headline block, underlines, sticky trust, tighter creds
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€ Hero proof row: stars sit beside the avatars â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-proofrow{ gap:10px; }
+.af-root .af-proofrow-text{ gap:8px; }
+/* Stars now butt up against the avatars â€” no divider between them and "5.0". */
+.af-root .af-proofrow-text .af-stars{ margin-right:2px; }
+.af-root .af-proof-emoji{ font-size:1.05em; line-height:1; margin-right:1px; }
+
+/* â”€â”€ Headline: gold block around "Lose 10â€“15 Kilos" â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-hl-block{
+  display:inline-block;
+  padding:.04em .3em .1em;
+  border-radius:.22em;
+  background:rgba(201,149,77,.20);
+  box-shadow:
+    inset 0 0 0 1px rgba(154,102,20,.26),
+    0 2px 8px rgba(154,102,20,.14);
+  color:var(--ink)!important;
+}
+
+/* â”€â”€ Subtle underline accents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Gold word (e.g. "If") â€” thick soft rule beneath, matching the reference. */
+.af-root .af-underline{
+  position:relative;
+  background:linear-gradient(180deg,transparent 76%,rgba(201,149,77,.42) 76%);
+  padding:0 .06em .04em;
+}
+/* Ink phrase inside body copy (e.g. "last fitness programme"). */
+.af-root .af-underline-ink{
+  color:var(--ink)!important; font-weight:600;
+  background:linear-gradient(180deg,transparent 78%,rgba(201,149,77,.40) 78%);
+  padding:0 .04em;
+}
+
+/* â”€â”€ Sticky bar: trust text replaces the countdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-stuck-trust{
+  list-style:none; margin:0!important; padding:0!important;
+  display:flex; flex-direction:column; gap:5px; flex:0 0 auto;
+}
+.af-root .af-stuck-trust li{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12px; font-weight:700; color:var(--ink-soft);
+  white-space:nowrap;
+}
+.af-root .af-stuck-trust .af-trust-ic{
+  flex:0 0 22px; width:22px; height:22px;
+}
+.af-root .af-stuck-trust .af-trust-ic svg{ width:12px!important; height:12px!important; flex:0 0 12px; }
+
+@media (max-width:900px){
+  /* Phones: one row, centred above the button. */
+  .af-root .af-stuck-trust{
+    flex-direction:row; flex-wrap:wrap; justify-content:center;
+    gap:4px 14px; width:100%;
+  }
+  .af-root .af-stuck-trust li{ font-size:10.5px; gap:6px; }
+  .af-root .af-stuck-trust .af-trust-ic{ flex:0 0 18px; width:18px; height:18px; }
+  .af-root .af-stuck-trust .af-trust-ic svg{ width:10px!important; height:10px!important; flex:0 0 10px; }
+}
+@media (max-width:380px){
+  .af-root .af-stuck-trust li{ font-size:9.5px; }
+}
+
+/* â”€â”€ Credibility strip: smaller boxes, less surrounding space â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-creds{ padding:22px 0 24px!important; }
+.af-root .af-creds-grid{ gap:12px!important; max-width:940px!important; }
+.af-root .af-cred-item{ padding:16px 12px 14px!important; }
+.af-root .af-cred-num{ font-size:clamp(22px,2.6vw,28px)!important; margin-bottom:3px!important; }
+.af-root .af-cred-label{ font-size:11px!important; }
+.af-root .af-cred-sub{ font-size:10px!important; }
+
+/* "Featured On" is a phrase, not a stat â€” don't let it render at stat size. */
+.af-root .af-cred-item:nth-child(2) .af-cred-num{
+  font-size:clamp(18px,2vw,22px)!important;
+}
+
+/* Trim the gap between the hero CTA block and the strip above it. */
+.af-root .af-hero{ padding-bottom:14px!important; }
+.af-root .af-cta-block .af-timer{ margin-top:14px!important; }
+
+@media (max-width:640px){
+  .af-root .af-creds{ padding:16px 0 18px!important; }
+  .af-root .af-creds-grid{ gap:9px!important; }
+  .af-root .af-cred-item{ padding:12px 8px 11px!important; }
+  .af-root .af-cred-num{ font-size:20px!important; }
+  .af-root .af-cred-item:nth-child(2) .af-cred-num{ font-size:16px!important; }
+  .af-root .af-cred-label{ font-size:9.5px!important; }
+  .af-root .af-cred-sub{ font-size:8.5px!important; }
+  .af-root .af-hero{ padding-bottom:10px!important; }
+}
+
+/* â”€â”€ About: the stat overlay now carries longer labels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-about-photo .count b{ font-size:22px!important; white-space:nowrap; }
+@media (max-width:640px){
+  .af-root .af-about-photo .count b{ font-size:17px!important; }
+  .af-root .af-about-photo .count span{ font-size:9.5px!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   Sticky bar â€” trust line moves BELOW the CTA
+   Was a horizontal row (trust beside button). Now a centred column at every
+   width: button first, trust claims underneath in a single row.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.af-root .af-stuck-inner{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  width:100%; max-width:1180px; margin:0 auto; padding:0 22px;
+}
+
+/* Trust claims: always one horizontal row, centred under the button. */
+.af-root .af-stuck-trust{
+  flex-direction:row!important;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  gap:6px 22px!important;
+  width:100%;
+}
+
+@media (min-width:901px){
+  .af-root .af-stuck{ padding:12px 0 calc(11px + env(safe-area-inset-bottom))!important; }
+  .af-root .af-stuck .af-cta{
+    width:auto!important; min-width:420px; max-width:620px; flex:0 0 auto;
+  }
+  .af-root .af-stuck-trust li{ font-size:12px; }
+}
+
+@media (max-width:900px){
+  .af-root .af-stuck-inner{ gap:7px!important; padding:0 12px; }
+  .af-root .af-stuck .af-cta{ width:100%!important; }
+  .af-root .af-stuck-trust{ gap:5px 16px!important; }
+}
+
+@media (max-width:380px){
+  .af-root .af-stuck-trust{ gap:4px 10px!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PASS 9 â€” reference-style heading underline, compact stat cards,
+            explicit desktop sticky order
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€ Heading underline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   Was a background highlight sitting behind the word (read as a filled box).
+   The reference uses a thin rule *under* the word, offset below the baseline
+   and inset slightly from the edges. Rebuilt as a pseudo-element bar so it
+   never tints the text background. */
+.af-root .af-underline{
+  background:none!important;
+  position:relative;
+  padding:0!important;
+  display:inline-block;
+}
+.af-root .af-underline::after{
+  content:"";
+  position:absolute;
+  /* Full width — the gradient's transparent stops do the edge softening,
+     which reads far better than a hard-ended bar inset from the sides. */
+  left:0; right:0;
+  bottom:-.16em;
+  height:.09em; min-height:3px;
+  border-radius:999px;
+  /* Fast fade at the very edges, full strength across the middle —
+     matches the reference, where the taper is much narrower than the body. */
+  background:linear-gradient(90deg,
+    rgba(154,102,20,0)     0%,
+    rgba(154,102,20,.92)   9%,
+    rgba(201,149,77,1)    50%,
+    rgba(154,102,20,.92)  91%,
+    rgba(154,102,20,0)   100%);
+}
+
+/* Same treatment on every section title's accent word. Uses :where() so it
+   adds no specificity and existing colour rules keep winning. */
+.af-root :where(.af-two, .af-proof, .af-gallery, .af-incl, .af-guar, .af-faq, .af-about-text)
+  h2 :where(span, em){
+  position:relative;
+  display:inline-block;
+}
+.af-root :where(.af-two, .af-proof, .af-gallery, .af-incl, .af-guar, .af-faq, .af-about-text)
+  h2 :where(span, em)::after{
+  content:"";
+  position:absolute;
+  left:0; right:0;
+  bottom:-.16em;
+  height:.09em; min-height:3px;
+  border-radius:999px;
+  /* Fast fade at the very edges, full strength across the middle —
+     matches the reference, where the taper is much narrower than the body. */
+  background:linear-gradient(90deg,
+    rgba(154,102,20,0)     0%,
+    rgba(154,102,20,.92)   9%,
+    rgba(201,149,77,1)    50%,
+    rgba(154,102,20,.92)  91%,
+    rgba(154,102,20,0)   100%);
+}
+/* The <br> inside the About heading is a span-less element â€” guard against
+   any stray bar on non-accent children. */
+.af-root h2 br::after{ display:none!important; }
+
+/* Headings need a little more room now the rule sits below the baseline. */
+.af-root :where(.af-two, .af-proof, .af-gallery, .af-incl, .af-guar, .af-faq) h2{
+  padding-bottom:.12em;
+}
+
+/* â”€â”€ Stat cards: kill the dead space inside â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   Grid rows stretch to the tallest card ("Featured On" carries a two-line
+   label), so the shorter cards were padding out with empty space. Tightening
+   type and padding shrinks the tallest card, which shrinks them all. */
+.af-root .af-cred-item{
+  padding:12px 10px 11px!important;
+  justify-content:center!important;
+}
+.af-root .af-cred-num{
+  font-size:clamp(19px,2.1vw,24px)!important;
+  line-height:1!important;
+  margin-bottom:3px!important;
+}
+.af-root .af-cred-item:nth-child(2) .af-cred-num{
+  font-size:clamp(15px,1.6vw,19px)!important;
+}
+.af-root .af-cred-label{
+  font-size:10px!important; line-height:1.25!important;
+  letter-spacing:.05em!important; margin-bottom:1px!important;
+}
+.af-root .af-cred-sub{ font-size:9px!important; line-height:1.2!important; margin-top:1px!important; }
+.af-root .af-creds{ padding:18px 0 20px!important; }
+.af-root .af-creds-grid{ gap:10px!important; }
+
+@media (max-width:640px){
+  .af-root .af-cred-item{ padding:10px 7px 9px!important; }
+  .af-root .af-cred-num{ font-size:18px!important; }
+  .af-root .af-cred-item:nth-child(2) .af-cred-num{ font-size:14px!important; }
+  .af-root .af-cred-label{ font-size:8.5px!important; letter-spacing:.04em!important; }
+  .af-root .af-cred-sub{ font-size:7.5px!important; }
+  .af-root .af-creds{ padding:14px 0 16px!important; }
+  .af-root .af-creds-grid{ gap:8px!important; }
+}
+
+/* â”€â”€ Desktop sticky: CTA on top, trust claims in one row beneath â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (min-width:901px){
+  .af-root .af-stuck{
+    display:block!important;
+    padding:11px 0 calc(10px + env(safe-area-inset-bottom))!important;
+  }
+  .af-root .af-stuck-inner{
+    flex-direction:column!important;
+    align-items:center!important;
+    gap:7px!important;
+  }
+  .af-root .af-stuck-trust{
+    flex-direction:row!important;
+    justify-content:center!important;
+    gap:0 26px!important;
+  }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   STAT CARDS â€” MOBILE ONLY (â‰¤640px). Desktop is untouched.
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   landing.css:1104+ rebuilds these as HORIZONTAL cards for mobile:
+     Â· grid-template-columns:96px 1fr   (number in its own left column)
+     Â· border-left:4px solid var(--brand)   â† the second border
+     Â· .af-cred-num  padding:16px 12px + border-right   â† most of the height
+     Â· .af-cred-label padding:12px 14px 0
+     Â· .af-cred-sub   padding:0 14px 12px
+   Earlier passes only flipped `display` to flex, so all of the above kept
+   applying â€” hence the double border and the dead vertical space.
+   This block dismantles that layout properly and restores a compact,
+   centred, vertical card with a single top accent.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+@media (max-width:640px){
+
+  .af-root .af-cred-item{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    /* Neutralise the horizontal grid definition. */
+    grid-template-columns:none!important;
+    grid-template-areas:none!important;
+    row-gap:0!important; column-gap:0!important;
+
+    padding:11px 8px 10px!important;
+    text-align:center!important;
+    border:1px solid var(--border,#EBE2D0)!important;
+    border-left-width:1px!important;          /* was 4px gold */
+    border-radius:12px!important;
+    background:#fff!important;
+    overflow:hidden!important;
+    position:relative!important;
+  }
+
+  /* Decorative corner glow â€” extra noise at this size. */
+  .af-root .af-cred-item::before{ display:none!important; }
+
+  /* Keep exactly one accent: the top bar. */
+  .af-root .af-cred-item::after{
+    content:""!important;
+    position:absolute!important;
+    top:0!important; left:0!important; right:0!important; bottom:auto!important;
+    width:auto!important; height:3px!important;
+    border-radius:0!important;
+    background:linear-gradient(90deg,var(--brand),var(--brand-light),var(--brand))!important;
+    opacity:1!important;
+  }
+
+  .af-root .af-cred-num{
+    display:block!important;
+    grid-area:auto!important;
+    align-self:auto!important;
+    padding:0!important;
+    margin:0 0 3px!important;
+    border-right:0!important;
+    font-size:19px!important;
+    line-height:1.05!important;
+    text-align:center!important;
+  }
+  /* "Featured On" is a phrase, not a figure. */
+  .af-root .af-cred-item:nth-child(2) .af-cred-num{ font-size:15px!important; }
+
+  .af-root .af-cred-label{
+    display:block!important;
+    grid-area:auto!important;
+    padding:0!important; margin:0!important;
+    font-size:9.5px!important; line-height:1.25!important;
+    letter-spacing:.04em!important;
+    text-align:center!important;
+  }
+
+  .af-root .af-cred-sub{
+    display:block!important;
+    grid-area:auto!important;
+    padding:0!important; margin:2px 0 0!important;
+    font-size:8.5px!important; line-height:1.2!important;
+    text-align:center!important;
+  }
+
+  .af-root .af-creds{ padding:14px 0 16px!important; }
+  .af-root .af-creds-grid{
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:8px!important;
+    max-width:420px!important;
+    margin:0 auto!important;
+  }
+}
+
+@media (max-width:380px){
+  .af-root .af-cred-item{ padding:10px 6px 9px!important; }
+  .af-root .af-cred-num{ font-size:17px!important; }
+  .af-root .af-cred-item:nth-child(2) .af-cred-num{ font-size:13.5px!important; }
+  .af-root .af-cred-label{ font-size:9px!important; }
+  .af-root .af-cred-sub{ font-size:8px!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   "MEET YOUR COACH" eyebrow â€” match every other section eyebrow
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   It renders as a <p> inside .af-about-text, and landing.css:637 styles
+   `.af-root .af-about-text p` at specificity (0,2,1) with !important. That
+   outranks `.af-root .af-eyebrow` (0,2,0), so the eyebrow was inheriting
+   15.5px / --ink-soft instead of 11px / --brand. Qualifying the selector with
+   the element (p.af-eyebrow â†’ 0,3,1) restores the shared eyebrow style.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.af-root .af-about-text p.af-eyebrow{
+  font-family:var(--fb)!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  letter-spacing:.18em!important;
+  text-transform:uppercase!important;
+  color:var(--brand)!important;
+  line-height:1.4!important;
+  margin:0 0 10px!important;
+}
+
+@media (max-width:900px){
+  /* About stacks and centres at this width â€” so does its eyebrow. */
+  .af-root .af-about-text p.af-eyebrow{
+    text-align:center!important;
+    margin:0 auto 8px!important;
+  }
+}
+
+@media (max-width:640px){
+  .af-root .af-about-text p.af-eyebrow{
+    font-size:10px!important;
+    letter-spacing:.14em!important;
+  }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HERO PROOF ROW â€” MOBILE ONLY (â‰¤640px). Desktop unchanged.
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   The rating lives in its own flex box (.af-proofrow-text), so on a phone the
+   whole box wrapped beneath the avatars. `display:contents` promotes its
+   children into .af-proofrow itself, letting the stars + "5.0 Review" sit
+   directly to the right of the photos while the guarantee claim takes the
+   next line. The reveal animation is on .af-proofrow (not the text box), so
+   collapsing this box can't hide anything.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+@media (max-width:640px){
+
+  .af-root .af-proofrow{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:5px 7px!important;
+  }
+
+  .af-root .af-proofrow-text{ display:contents!important; }
+
+  /* Divider between the rating and the guarantee claim. */
+  .af-root .af-proofrow-div{ display:none!important; }
+
+  /* Stars hug the avatars. */
+  .af-root .af-avatars{ margin-right:2px; }
+  .af-root .af-proofrow-text .af-stars{ margin:0!important; font-size:12px!important; }
+
+  /* "5.0 Review" stays on the avatar line. */
+  .af-root .af-proofrow-text > span{
+    display:inline-flex!important;
+    align-items:center!important;
+    white-space:nowrap!important;
+  }
+
+  /* Guarantee claim drops to its own centred line underneath. */
+  .af-root .af-proofrow-text > span:last-child{
+    flex:0 0 100%!important;
+    justify-content:center!important;
+    margin-top:1px!important;
+  }
+}
+
+@media (max-width:380px){
+  .af-root .af-proofrow{ gap:4px 5px!important; }
+  .af-root .af-proofrow-text .af-stars{ font-size:11px!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   STICKY TRUST ROW â€” MOBILE ONLY (â‰¤900px). Desktop unchanged.
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   The two claims run ~52 characters plus two icon chips. At the previous
+   10.5px they overflowed and wrapped one-per-line. Sized down so they hold a
+   single row: fluid type via clamp() so it tracks the viewport, nowrap on the
+   list and each item, and smaller chips/glyphs to buy back horizontal space.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+@media (max-width:900px){
+
+  .af-root .af-stuck-inner{ padding:0 8px!important; }
+
+  .af-root .af-stuck-trust{
+    flex-direction:row!important;
+    flex-wrap:nowrap!important;
+    justify-content:center!important;
+    align-items:center!important;
+    gap:0 10px!important;
+    width:100%;
+  }
+
+  .af-root .af-stuck-trust li{
+    flex:0 1 auto!important;
+    gap:4px!important;
+    font-size:clamp(8px, 2.45vw, 10.5px)!important;
+    font-weight:700!important;
+    line-height:1.2!important;
+    white-space:nowrap!important;
+    letter-spacing:0!important;
+  }
+
+  .af-root .af-stuck-trust .af-trust-ic{
+    flex:0 0 15px!important;
+    width:15px!important; height:15px!important;
+    /* Flatten the 3D chip a touch â€” at this size the inset highlight and
+       shadow just muddy the glyph. */
+    box-shadow:
+      0 1px 3px rgba(154,102,20,.20),
+      inset 0 1px 0 rgba(255,255,255,.9)!important;
+  }
+  .af-root .af-stuck-trust .af-trust-ic svg{
+    width:8.5px!important; height:8.5px!important; flex:0 0 8.5px!important;
+    stroke-width:2.2!important;
+  }
+}
+
+@media (max-width:340px){
+  .af-root .af-stuck-trust{ gap:0 7px!important; }
+  .af-root .af-stuck-trust li{ gap:3px!important; }
+  .af-root .af-stuck-trust .af-trust-ic{
+    flex:0 0 13px!important; width:13px!important; height:13px!important;
+  }
+  .af-root .af-stuck-trust .af-trust-ic svg{
+    width:7.5px!important; height:7.5px!important; flex:0 0 7.5px!important;
+  }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HERO PROOF ROW â€” divider, "5.0 Review" spacing, themed guarantee icon
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   "5.0Review" was self-inflicted: an earlier pass set the rating spans to
+   `display:inline-flex`, which turns <b>5.0</b> and the text node "Review"
+   into separate flex items â€” and flex layout DISCARDS whitespace-only text
+   nodes, so the space between them disappeared. Restoring it with an explicit
+   `gap` is more predictable than reverting to inline flow, since these spans
+   also need to align an icon.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* Themed trophy chip replacing the ðŸ† emoji (emoji render differently per OS
+   and ignore the palette entirely). */
+.af-root .af-proof-ic{
+  flex:0 0 20px; width:20px; height:20px;
+  border-radius:50%; display:inline-grid; place-items:center;
+  color:var(--brand);
+  background:linear-gradient(180deg,#FFF9EC 0%,#F3E2C4 100%);
+  border:1px solid rgba(154,102,20,.30);
+  box-shadow:
+    0 2px 6px rgba(154,102,20,.20),
+    inset 0 1px 0 rgba(255,255,255,.95);
+}
+.af-root .af-proof-ic svg{ width:11px; height:11px; flex:0 0 11px; }
+
+.af-root .af-proof-claim{
+  display:inline-flex; align-items:center; gap:7px;
+}
+
+/* Divider after "5.0 Review" â€” gone on every phone/tablet width, not just
+   â‰¤640px (an earlier rule stopped short and it reappeared in between). */
+@media (max-width:900px){
+  .af-root .af-proofrow-div{ display:none!important; }
+}
+
+@media (max-width:640px){
+
+  /* Put the lost space back between "5.0" and "Review". */
+  .af-root .af-proofrow-text > span{
+    display:inline-flex!important;
+    align-items:center!important;
+    gap:.32em!important;
+    white-space:nowrap!important;
+  }
+
+  /* Guarantee claim: own line, larger than the rating line as requested. */
+  .af-root .af-proofrow-text > span.af-proof-claim{
+    flex:0 0 100%!important;
+    justify-content:center!important;
+    gap:7px!important;
+    margin-top:3px!important;
+    font-size:13px!important;
+    font-weight:700!important;
+    color:var(--ink)!important;
+  }
+  .af-root .af-proof-ic{
+    flex:0 0 19px!important; width:19px!important; height:19px!important;
+  }
+  .af-root .af-proof-ic svg{ width:10.5px!important; height:10.5px!important; flex:0 0 10.5px!important; }
+}
+
+@media (max-width:380px){
+  .af-root .af-proofrow-text > span.af-proof-claim{ font-size:12px!important; }
+  .af-root .af-proof-ic{ flex:0 0 17px!important; width:17px!important; height:17px!important; }
+  .af-root .af-proof-ic svg{ width:9.5px!important; height:9.5px!important; flex:0 0 9.5px!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HERO PROOF ROW â€” kill the "|" divider on mobile (specificity fix)
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   The divider is a <span> inside .af-proofrow-text, so it was being caught by
+   `.af-root .af-proofrow-text > span { display:inline-flex !important }`
+   â€” specificity (0,2,1). My hide rule was `.af-root .af-proofrow-div`, only
+   (0,2,0), so it lost every time despite also carrying !important.
+   !important only breaks ties AT EQUAL specificity.
+
+   Qualifying the selector with both the parent and the element takes this to
+   (0,3,1), which wins outright. width/height are zeroed too so the element
+   can't reserve space even if some later rule resurrects its display.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+@media (max-width:900px){
+  .af-root .af-proofrow-text > span.af-proofrow-div,
+  .af-root .af-proofrow > .af-proofrow-text > span.af-proofrow-div{
+    display:none!important;
+    width:0!important;
+    height:0!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    background:none!important;
+    flex:0 0 0!important;
+  }
+}
+

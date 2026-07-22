@@ -1,7 +1,14 @@
 /**
- * SEO metadata for every funnel route — sourced verbatim from
- * https://teamfitarjun.com on 2026-05-20 to match what's live in production
- * via the WordPress build. Update here as the live site's SEO evolves.
+ * SEO metadata for every funnel route.
+ *
+ * Originally mirrored the WordPress build (2026-05-20). Rewritten for the
+ * landing revamp: the old copy sold "Indian working men / roti + rice /
+ * 40-50% belly fat / 1500+ clients", none of which the page claims any more.
+ * Current positioning is corporate professionals 30+, lose 10-15 kilos and
+ * build visible muscle via the Custom Execution Blueprint, 1400+ clients.
+ *
+ * Keep this in step with app/LandingView.tsx — a share preview that
+ * contradicts the page costs trust at the worst possible moment.
  */
 
 interface PageSeo {
@@ -15,16 +22,18 @@ interface PageSeo {
 }
 
 const SHARED_DESCRIPTION =
-  "Custom coaching for Indian working men. Lose stubborn belly fat with home-cooked food. Built around your real life.";
+  "Personalised coaching for corporate professionals. Lose belly fat, build visible muscle, and never start over, with a plan built around your real schedule.";
 
 export const seoMetadata: Record<string, PageSeo> = {
   home: {
-    title: "Lose Belly Fat in 90 Days With Indian Food | Arjun Fitness",
+    // Search result: leads with the promise, keeps the brand suffix (~55 chars).
+    title: "Lose 10-15 Kilos, Build Visible Muscle | Arjun Fitness",
     description:
-      "Indian working men: lose 40-50% of stubborn belly fat in 90 days using regular roti, rice & home-cooked food. 1500+ clients transformed. Book ₹97 diagnostic call.",
-    ogTitle: "Lose Belly Fat in 90 Days With Indian Food | Arjun Fitness",
+      "Corporate professionals 30+: lose 10-15 kilos and build visible muscle in 90 days with a Custom Execution Blueprint built around your schedule. ₹97 to start.",
+    // Share preview: mirrors the H1 verbatim so the card matches the page.
+    ogTitle: "Lose 10-15 Kilos, Build Visible Muscle, & Never Start Over Again",
     ogDescription:
-      "Indian working men: lose 40-50% of stubborn belly fat in 90 days using regular roti, rice & home-cooked food. 1500+ clients transformed. Book ₹97 diagnostic call.",
+      "A Custom Execution Blueprint for demanding careers, frequent travel and unpredictable schedules. 1400+ corporate professionals transformed. ₹97, fully refundable.",
     ogImage: "/OG Images/Home OG.png",
     ogType: "website",
   },
@@ -101,6 +110,7 @@ export type PageKey =
   | "refund";
 
 import type { Metadata } from "next";
+import { clientConfig } from "@/client.config";
 
 export function buildMetadata(key: PageKey): Metadata {
   const seo = seoMetadata[key];
@@ -111,6 +121,11 @@ export function buildMetadata(key: PageKey): Metadata {
       title: seo.ogTitle,
       description: seo.ogDescription,
       type: seo.ogType ?? "website",
+      // Next merges metadata shallowly, so a page-level `openGraph` replaces
+      // the layout's wholesale. Without these two lines every route silently
+      // loses the siteName and locale set in app/layout.tsx.
+      siteName: clientConfig.brand.name,
+      locale: "en_IN",
       ...(seo.ogImage ? { images: [seo.ogImage] } : {}),
     },
     twitter: {
