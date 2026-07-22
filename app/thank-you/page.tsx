@@ -1,17 +1,26 @@
 import { UtmCapture } from "@/components/UtmCapture";
 import { buildMetadata } from "@/lib/seo";
+import { getVimeoPoster } from "@/lib/vimeo";
 import { ThankYouView } from "./ThankYouView";
 import "./thankyou.css";
 
 export const dynamic = "force-static";
 export const metadata = buildMetadata("thankYou");
 
-export default function ThankYouPage() {
+/** Vimeo id for the thank-you video — keep in step with HERO_VIDEO_URL in ThankYouView. */
+const HERO_VIDEO_ID = "1210109832";
+/** Used only if Vimeo is unreachable at build time. */
+const POSTER_FALLBACK = "/Thank%20you%20page%20video%20thumbnail.png";
+
+export default async function ThankYouPage() {
+  // Resolved at build time and inlined into the static HTML.
+  const posterUrl = await getVimeoPoster(HERO_VIDEO_ID, POSTER_FALLBACK);
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: PAGE_OVERRIDES }} />
       <UtmCapture />
-      <ThankYouView />
+      <ThankYouView posterUrl={posterUrl} />
     </>
   );
 }

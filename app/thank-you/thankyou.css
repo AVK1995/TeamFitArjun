@@ -1544,3 +1544,133 @@
   border-top:1px solid var(--border,#EBE2D0)!important;
   box-shadow:0 -8px 28px rgba(28,23,16,.10)!important;
 }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   VSL â€” "Watch The Short Video Below" button + fullscreen playback
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* .af-watch-box is a <button> now (it has to be, to open fullscreen from a
+   real user gesture and to be keyboard-reachable). Buttons don't inherit font
+   properties, so pull them back from .af-watch and strip the UA chrome. */
+.af-root .af-watch-box{
+  font:inherit!important;
+  font-family:var(--fb)!important;
+  font-size:inherit!important;
+  font-weight:inherit!important;
+  letter-spacing:inherit!important;
+  text-transform:inherit!important;
+  -webkit-appearance:none; appearance:none;
+  cursor:pointer;
+  text-align:center;
+}
+.af-root .af-watch-box:focus-visible{
+  outline:3px solid rgba(154,102,20,.55);
+  outline-offset:3px;
+}
+
+/* â”€â”€ Fullscreen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   In fullscreen the wrapper becomes the whole viewport, so the 16:9 box and
+   the rounded/gold framing have to stand down or the player letterboxes
+   inside its own decoration. Both the standard and -webkit- selectors are
+   needed; they cannot be combined into one rule because a browser drops the
+   entire selector list if it doesn't recognise one entry. */
+.af-root .af-video:fullscreen,
+.af-root .ty-vid:fullscreen{
+  width:100vw!important; height:100vh!important;
+  max-width:none!important; aspect-ratio:auto!important;
+  border-radius:0!important; border:0!important;
+  box-shadow:none!important; background:#000!important;
+  animation:none!important;
+}
+.af-root .af-video:-webkit-full-screen,
+.af-root .ty-vid:-webkit-full-screen{
+  width:100vw!important; height:100vh!important;
+  max-width:none!important; aspect-ratio:auto!important;
+  border-radius:0!important; border:0!important;
+  box-shadow:none!important; background:#000!important;
+  animation:none!important;
+}
+
+/* The iframe already sits at inset:0; make sure nothing clips it and that the
+   decorative overlays (texture, corner brackets) don't paint over the video. */
+.af-root .af-video:fullscreen iframe,
+.af-root .ty-vid:fullscreen iframe{
+  border-radius:0!important;
+}
+.af-root .af-video:-webkit-full-screen iframe,
+.af-root .ty-vid:-webkit-full-screen iframe{
+  border-radius:0!important;
+}
+.af-root .af-video:fullscreen::before,
+.af-root .af-video:fullscreen::after,
+.af-root .ty-vid:fullscreen::before,
+.af-root .ty-vid:fullscreen::after{
+  display:none!important;
+}
+.af-root .af-video:-webkit-full-screen::before,
+.af-root .af-video:-webkit-full-screen::after,
+.af-root .ty-vid:-webkit-full-screen::before,
+.af-root .ty-vid:-webkit-full-screen::after{
+  display:none!important;
+}
+
+/* Chrome paints a black backdrop behind the fullscreen element by default;
+   make it explicit so there's no flash of page background on entry. */
+.af-root .af-video::backdrop,
+.af-root .ty-vid::backdrop{ background:#000; }
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   THANK-YOU â€” dark plaques for the two icons that blended into the page
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   The site-wide 3D pass gave these the light-gold "chip" treatment, which
+   works on white cards but disappears on the cream hero and the near-white
+   appointment card. Both get the dark plaque used by the header logo instead,
+   so the glyph reads at a glance.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* Confirmation check (hero) */
+.af-root .ty-check{
+  background:linear-gradient(150deg,#33291D 0%,#1A140D 55%,#100C07 100%)!important;
+  border:1.5px solid rgba(201,149,77,.42)!important;
+  box-shadow:
+    0 0 0 6px rgba(201,149,77,.10),
+    0 14px 30px rgba(28,23,16,.30),
+    inset 0 1.5px 0 rgba(255,255,255,.18),
+    inset 0 -2px 0 rgba(0,0,0,.35)!important;
+}
+.af-root .ty-check svg{
+  stroke:var(--brand-light,#C9954D)!important;
+  fill:none!important;
+  stroke-width:3!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));
+}
+
+/* Appointment card icon */
+.af-root .ty-appt-icon{
+  background:linear-gradient(150deg,#33291D 0%,#1A140D 55%,#100C07 100%)!important;
+  border:1.5px solid rgba(201,149,77,.42)!important;
+  box-shadow:
+    0 0 0 5px rgba(201,149,77,.09),
+    0 10px 22px rgba(28,23,16,.26),
+    inset 0 1.5px 0 rgba(255,255,255,.16),
+    inset 0 -2px 0 rgba(0,0,0,.35)!important;
+}
+.af-root .ty-appt-icon svg{
+  stroke:var(--brand-light,#C9954D)!important;
+  fill:none!important;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));
+}
+
+/* Hover lift stays, but on the dark plaque the halo has to be gold rather
+   than the pale wash used by the light chips. */
+.af-root .ty-appt-card:hover .ty-appt-icon{
+  transform:translateY(-2px) scale(1.06);
+  box-shadow:
+    0 0 0 8px rgba(201,149,77,.15),
+    0 16px 32px rgba(28,23,16,.34),
+    inset 0 1.5px 0 rgba(255,255,255,.16)!important;
+}
+
