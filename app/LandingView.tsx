@@ -78,58 +78,125 @@ const TESTIMONIALS = [
   },
 ];
 
-// ── Performance Review ledger rows ──────────────────────────────────────────
-const REVIEW_WIN = [
-  "Handles pressure, deadlines, people",
-  "Solves problems others can't",
-  "Income growing year on year",
-  "Follows through on commitments",
-  "Respected in his field",
-];
-const REVIEW_FAIL = [
-  "Gym plan survives a bad week",
-  "Diet survives travel and dinners",
-  "Shirt off at the pool, no hesitation",
-  "Energy steady past 4 PM",
-  "Body matches the position",
+// ── Hero: health markers the programme moves ────────────────────────────────
+const HEALTH_MARKERS = [
+  "Diabetes",
+  "Cholesterol Levels",
+  "Blood Pressure",
+  "Testosterone Levels",
+  "Fatty Liver",
 ];
 
-// ── Qualification lists ─────────────────────────────────────────────────────
-const APPLY = [
-  "You earn ₹25+ lakhs per annum",
-  "You're a senior professional or business owner who knows quality costs money",
-  "You've done well in every area of life except this one",
-  "You've tried coaches, apps, or plans before and the result didn't stick",
-  "Your weeks are unpredictable: travel, dinners, late calls",
-  "You're ready to follow a structured system built around your real life",
-  "You want this handled in the next 6 to 12 months, not someday",
-];
-const NOT_APPLY = [
-  "You earn less than ₹25 lakhs per annum",
-  "You're looking for a ₹4,000 to ₹5,000 plan to fix a 10-year pattern",
-  "You want a PDF and zero accountability",
-  "You're expecting a quick fix, a fat burner, or a shortcut",
-  "You blame time, age, or genetics and want a coach who agrees with you",
-  "You're not financially ready to invest in coaching beyond this call",
+// ── Qualification — "This Is For You if" ────────────────────────────────────
+const FOR_YOU: { lead?: string; bold: string; tail?: string }[] = [
+  {
+    bold: "You’ve started getting fit more times than you can count",
+    tail:
+      ", only to lose momentum the moment work gets busy, travel kicks in, or life gets in the way.",
+  },
+  {
+    bold:
+      "You’re a corporate professional with long workdays, client meetings, travel, or unpredictable schedules",
+    tail: " that make generic fitness plans impossible to follow consistently.",
+  },
+  {
+    lead: "You’re frustrated that despite trying diets, gyms or online coaches, ",
+    bold:
+      "you’re still carrying stubborn belly fat and don’t have the lean, athletic physique you want.",
+  },
+  {
+    lead:
+      "You’re beginning to see the cost of years spent putting work before your health. The belly fat won’t budge. Energy isn’t what it used to be. ",
+    bold:
+      "Blood sugar, cholesterol, blood pressure, testosterone or fatty liver indicators are moving in the wrong direction.",
+  },
+  {
+    bold: "You’re looking for a personalised coaching system that fits your schedule",
+    tail:
+      ", food preferences and lifestyle, so this becomes the last time you have to start over.",
+  },
 ];
 
-// ── Blueprint call breakdown ────────────────────────────────────────────────
-const CALL_STEPS = [
+/* Icons for "What's Included" — one per item, stroked on a 24px box so they
+   inherit the gold and sit inside the raised .af-incl-ic chip. */
+const INCL_ICONS: Record<string, React.ReactNode> = {
+  diagnosis: (
+    <>
+      <path d="M9 3H6.6A1.6 1.6 0 005 4.6v14.8A1.6 1.6 0 006.6 21h10.8a1.6 1.6 0 001.6-1.6V4.6A1.6 1.6 0 0017.4 3H15" />
+      <rect x="9" y="1.9" width="6" height="3.2" rx="1.1" />
+      <path d="M8.6 12.4h2l1.2-2.4 1.6 4.4 1.2-2h2" />
+    </>
+  ),
+  blueprint: (
+    <>
+      <path d="M2.9 6.6l6.3-2.7 5.6 2.7 5.3-2.7v13.5l-5.3 2.7-5.6-2.7-6.3 2.7V6.6z" />
+      <path d="M9.2 3.9v13.5M14.8 6.6v13.5" />
+    </>
+  ),
+  nutrition: (
+    <>
+      <path d="M12 8.3c1.1-2.6 3.6-3.6 5.6-2.9 2.3.8 3.3 3.6 2.2 6.7-1 3-3.8 6.4-5.9 7.6-1.2.7-2.6.7-3.8 0-2.1-1.2-4.9-4.6-5.9-7.6-1.1-3.1-.1-5.9 2.2-6.7 2-.7 4.5.3 5.6 2.9z" />
+      <path d="M12 8.3V5.1a2.4 2.4 0 012.4-2.4" />
+    </>
+  ),
+  training: (
+    <>
+      <path d="M2.6 9.6v4.8M6.2 7.2v9.6M17.8 7.2v9.6M21.4 9.6v4.8M6.2 12h11.6" />
+    </>
+  ),
+  support: (
+    <>
+      <path d="M20.6 14.4a2.2 2.2 0 01-2.2 2.2H7.2L3.4 20.4V5.6a2.2 2.2 0 012.2-2.2h12.8a2.2 2.2 0 012.2 2.2v8.8z" />
+      <path d="M8.4 8.6h7.2M8.4 12h4.8" />
+    </>
+  ),
+  progress: (
+    <>
+      <path d="M3.2 20.4V13M9.1 20.4V8.6M14.9 20.4v-6.6M20.8 20.4V4.4" />
+      <path d="M3.2 10.2l5.9-4.4 5.8 3.3 5.9-5.5" />
+    </>
+  ),
+};
+
+// ── What's included in the 90-day programme ─────────────────────────────────
+const INCLUDED = [
   {
-    time: "0–10 min",
-    title: "Diagnosis",
-    desc: "Arjun maps your history: what you've tried, where each attempt broke, and what your actual weeks look like. You'll probably hear your own pattern named more precisely than you ever have.",
+    icon: "diagnosis",
+    title: "Lifestyle & Constraint Diagnosis",
+    desc: "Before we recommend a single meal or workout, we understand your work schedule, travel, food preferences, available equipment, injuries, recovery capacity and non-negotiables. Because a plan only works when it fits your real life.",
   },
   {
-    time: "10–22 min",
-    title: "Your Custom Execution Blueprint",
-    desc: "He builds the outline of a plan around your reality: your travel, your work hours, your food environment. You leave knowing exactly what your version of this looks like.",
+    icon: "blueprint",
+    title: "Your Custom Execution Blueprint™",
+    desc: "A completely personalised nutrition, training and lifestyle roadmap built around your schedule, food preferences and goals. Indian food, restaurant meals, travel days or weekend plans, everything is mapped so you never have to guess what to do next.",
   },
   {
-    time: "22–30 min",
-    title: "Fit decision, both ways",
-    desc: "If Arjun believes coaching will get you the result, he'll tell you what working together looks like and what it costs. If he doesn't, he'll tell you that too. No pressure tactics, ever.",
+    icon: "nutrition",
+    title: "Adaptive Nutrition System",
+    desc: "No rigid meal plans or fancy recipes. Your nutrition evolves with your routine, whether you’re travelling, eating out, fasting, working late or managing back-to-back meetings, so staying on track feels effortless.",
   },
+  {
+    icon: "training",
+    title: "Context-Based Training Protocol",
+    desc: "Your workouts are designed around the equipment you actually have access to, your injury history, recovery and schedule. Whether you’re training at home, in a commercial gym or a hotel gym, your plan adapts with you.",
+  },
+  {
+    icon: "support",
+    title: "Real-Time Accountability & Coach Support",
+    desc: "No waiting 24-48 hours for a reply. Get direct access, fast responses, weekly reviews, form checks and personalised guidance whenever you need it, so small setbacks never become complete restarts.",
+  },
+  {
+    icon: "progress",
+    title: "Progressive Conditioning Framework",
+    desc: "The goal isn’t just losing weight. Every phase is designed to reduce body fat, build visible muscle and improve conditioning while creating habits and systems that keep you progressing long after the programme ends.",
+  },
+];
+
+// ── Results guarantee — what we ask in return ───────────────────────────────
+const GUARANTEE_ASKS = [
+  "You complete the programme. Workouts followed. Nutrition plan implemented. Weekly check-ins attended. Progress photos and measurements submitted on schedule.",
+  "You actively communicate with your coach whenever work, travel or life disrupts your routine, so your plan can be adjusted accordingly.",
+  "The guarantee applies when you’ve consistently followed your personalised plan and completed the full programme.",
 ];
 
 const FAQS = [
@@ -157,10 +224,9 @@ const FAQS = [
 
 export function LandingView() {
   const [openFaq, setOpenFaq] = useState(0);
-  const [stickyOn, setStickyOn] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [lightbox, setLightbox] = useState<{ slides: Slide[]; index: number } | null>(null);
-  const [timerLabel, setTimerLabel] = useState("15:00");
+  const [timeLeft, setTimeLeft] = useState({ h: "06", m: "00", s: "00" });
   const [checkoutHref, setCheckoutHref] = useState("/checkout");
 
   useEffect(() => {
@@ -170,15 +236,10 @@ export function LandingView() {
     const qs = utmToQueryString(utm);
     setCheckoutHref(`/checkout?from=landing${qs}`);
 
-    const hero = document.querySelector<HTMLElement>(".af-hero");
-    const onScroll = () => {
-      if (hero) setStickyOn(hero.getBoundingClientRect().bottom < 0);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-
-    const DURATION = 15 * 60 * 1000;
-    const STORAGE_KEY = "arjun_countdown_started";
+    // 6-hour offer window. Key is versioned so sessions anchored to the old
+    // 15-minute countdown don't start mid-cycle after this change ships.
+    const DURATION = 6 * 60 * 60 * 1000;
+    const STORAGE_KEY = "arjun_countdown_started_v2";
     let started: number;
     try {
       const raw = window.sessionStorage.getItem(STORAGE_KEY);
@@ -201,15 +262,19 @@ export function LandingView() {
         remaining = started + DURATION - Date.now();
       }
       const totalSec = Math.floor(remaining / 1000);
-      const m = Math.floor(totalSec / 60);
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
       const s = totalSec % 60;
-      setTimerLabel(`${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`);
+      setTimeLeft({
+        h: String(h).padStart(2, "0"),
+        m: String(m).padStart(2, "0"),
+        s: String(s).padStart(2, "0"),
+      });
     }
     tick();
     const tickId = window.setInterval(tick, 1000);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
       window.clearInterval(tickId);
     };
   }, []);
@@ -246,55 +311,79 @@ export function LandingView() {
       style={{
         display: "block",
         width: "100%",
-        background: "#0E0C09",
-        color: "#F1E5D0",
+        background: "#FFFFFF",
+        color: "#1C1710",
         fontFamily: "Inter, sans-serif",
       }}
     >
-      {/* Announcement marquee */}
-      <div className="af-announce" style={{ background: "#000", overflow: "hidden" }}>
+      {/* Announcement bar — static (no marquee), two claims only */}
+      <div className="af-announce af-announce-static">
         <div className="af-announce-track">
-          {Array.from({ length: 2 }).map((_, dup) => (
-            <span key={dup} style={{ display: "contents" }}>
-              <span><b>1,500+</b> Clients Coached In 5 Years</span><span className="dot" />
-              <span><b>₹25L+ / year</b> Minimum Income</span><span className="dot" />
-              <span>Featured: Aaj Tak · Zee News · HealthXP</span><span className="dot" />
-              <span>India · UK · Canada · Australia · UAE</span><span className="dot" />
-            </span>
-          ))}
+          <span><b>5+ Years</b> Of Coaching</span>
+          <span className="dot" />
+          <span><b>1400+</b> Success Stories Globally</span>
         </div>
       </div>
 
-      {/* Header */}
-      <header className="af-header">
-        <div className="af-wrap">
-          <Link href="/" className="af-logo" aria-label="Team Fit Arjun — home">
-            <span id="af-logo-mark" className="af-logo-mark">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/Site%20main%20logo.png" alt="TFA" className="af-logo-img" />
-            </span>
-          </Link>
-        </div>
-      </header>
-
       {/* A · Hero */}
-      <section className="af-hero" style={{ background: "#0E0C09" }}>
+      <section className="af-hero" style={{ background: "var(--bg)" }}>
         <div className="af-wrap af-hero-inner">
+          {/* Social-proof row: avatars + rating */}
+          <div className="af-proofrow" data-af-reveal>
+            <div className="af-avatars" aria-hidden="true">
+              {TESTIMONIALS.map((t) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={t.name} src={t.after} alt="" loading="eager" decoding="async" />
+              ))}
+            </div>
+            <div className="af-proofrow-text">
+              <span className="af-stars"><span className="sbox">★★★★★</span></span>
+              <span className="af-proofrow-div" />
+              <span><b>5.0</b> Review</span>
+              <span className="af-proofrow-div" />
+              <span>100% Guaranteed Results</span>
+            </div>
+          </div>
+
           <div className="af-callout" data-af-reveal>
-            For Men Earning ₹25L+ a Year Who&rsquo;ve Tried Diets, &amp; Random Workouts
+            For Corporate Professionals 30+ Who Are Tired Of Starting Over Every Time Work Gets Busy
           </div>
 
           <h1 className="af-h1" data-af-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-            Lose the Belly Fat You&rsquo;ve Fought for Years, achieve a healthy body with a{" "}
-            <span className="af-accent">camera confident look</span>
+            Lose 10&ndash;15 Kilos,<br />
+            Build <span className="af-accent">Visible Muscle</span>,<br />
+            &amp; Never Start Over Again
           </h1>
 
-          <p className="af-sub" data-af-reveal style={{ "--d": ".14s" } as React.CSSProperties}>
-            You&rsquo;ve tried before, but work always gets in the way. Watch the video to discover the
-            shift that finally makes lasting fat loss fit your lifestyle.
+          <p className="af-sub af-sub-strong" data-af-reveal style={{ "--d": ".12s" } as React.CSSProperties}>
+            Using a Custom Execution Blueprint, a personalised roadmap designed for demanding careers,
+            frequent travel and unpredictable schedules.
           </p>
 
-          <div className="af-video-frame" data-af-reveal style={{ "--d": ".22s" } as React.CSSProperties}>
+          <p className="af-sub af-sub-markers" data-af-reveal style={{ "--d": ".16s" } as React.CSSProperties}>
+            <b>1400+ Corporate Professionals</b> Across{" "}
+            <span className="af-hl">India, UK, Canada, Australia &amp; UAE</span> Have{" "}
+            <span className="af-hl-pill">Lost 10+ Kilos</span>, Built Visible Muscle and Improved Key
+            Health Markers Linked To:
+          </p>
+
+          <ul className="af-markers" data-af-reveal style={{ "--d": ".2s" } as React.CSSProperties}>
+            {HEALTH_MARKERS.map((m, i) => (
+              <li key={m} style={{ "--pd": `${i * 0.22}s` } as React.CSSProperties}>
+                <span className="af-marker-dot" aria-hidden="true" />
+                {m}
+              </li>
+            ))}
+          </ul>
+
+          <div className="af-watch" data-af-reveal style={{ "--d": ".24s" } as React.CSSProperties}>
+            <span className="af-watch-box">
+              Watch The Short Video Below
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7" /></svg>
+            </span>
+          </div>
+
+          <div className="af-video-frame" data-af-reveal style={{ "--d": ".26s" } as React.CSSProperties}>
             <div
               className={`af-video ${videoPlaying ? "playing" : ""}`}
               id="af-vsl"
@@ -336,48 +425,75 @@ export function LandingView() {
             </div>
           </div>
 
-          <CtaBlock checkoutHref={checkoutHref} timerLabel={timerLabel} delay=".3s" extraStyle={{ marginTop: 8 }} />
+          <CtaBlock checkoutHref={checkoutHref} time={timeLeft} delay=".3s" extraStyle={{ marginTop: 8 }} />
         </div>
       </section>
 
-      {/* E · Qualification */}
-      <section className="af-two nf-qual" style={{ background: "#1A1611" }}>
+      {/* Credibility strip */}
+      <section className="af-creds" style={{ background: "var(--bg-alt)" }}>
         <div className="af-wrap">
-          <h2 data-af-reveal>
-            This Call Is <span className="af-accent">Not For Everyone</span>
-          </h2>
-          <div className="nf-qual-grid" data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
-            <div className="nf-qual-col nf-qual-yes">
-              <div className="nf-qual-h">Apply if this is you</div>
-              <ul>{APPLY.map((item) => <li key={item}>{item}</li>)}</ul>
-            </div>
-            <div className="nf-qual-col nf-qual-no">
-              <div className="nf-qual-h">Do not apply if this is you</div>
-              <ul>{NOT_APPLY.map((item) => <li key={item}>{item}</li>)}</ul>
-            </div>
+          <div className="af-creds-grid" data-af-reveal>
+            {[
+              { num: "1400+", label: "Success Stories", sub: "Globally" },
+              { num: "On Air", label: "Aaj Tak · Zee News", sub: "HealthXP Featured", wide: true },
+              { num: "5.0 ★", label: "Client Rating", sub: "Verified Reviews" },
+              { num: `₹${price}`, label: "To Start", sub: "Fully Refundable" },
+            ].map((c) => (
+              <div className="af-cred-item" key={c.label}>
+                <div className="af-cred-num">{c.num}</div>
+                <div className={`af-cred-label${c.wide ? " af-cred-text" : ""}`}>{c.label}</div>
+                <div className="af-cred-sub">{c.sub}</div>
+              </div>
+            ))}
           </div>
-          <p className="nf-income-note" data-af-reveal style={{ "--d": ".12s" } as React.CSSProperties}>
-            If you earn less than ₹25 lakhs per annum, respectfully, this call is not built for you yet.
-            Keep following the free content &mdash; it will get you moving. Arjun takes every Blueprint
-            Call personally, which caps his calendar each week, and those slots are held for men ready to
-            invest in premium coaching.
+
+        </div>
+      </section>
+
+      {/* B · Qualification — This Is For You If */}
+      <section className="af-two af-foryou" style={{ background: "var(--bg)" }}>
+        <div className="af-wrap">
+          <p className="af-eyebrow" data-af-reveal>
+            For Corporate Professionals Across India &amp; Abroad
           </p>
+          <h2 data-af-reveal style={{ "--d": ".04s" } as React.CSSProperties}>
+            This Is <span className="af-accent">For You If</span>
+          </h2>
+          <ul className="af-foryou-list" data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
+            {FOR_YOU.map((item, i) => (
+              <li key={i}>
+                <span className="af-foryou-tick" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" /></svg>
+                </span>
+                <p>
+                  {item.lead}
+                  <strong>{item.bold}</strong>
+                  {item.tail}
+                </p>
+              </li>
+            ))}
+          </ul>
           <CtaBlock
             checkoutHref={checkoutHref}
-            timerLabel={timerLabel}
-            shortLabel
+            time={timeLeft}
             wrapperClass="af-cta-block af-two-cta"
-            extraStyle={{ marginTop: 36 }}
+            extraStyle={{ marginTop: 40 }}
           />
         </div>
       </section>
 
-      {/* D · Proof */}
-      <section className="af-proof" style={{ background: "#0E0C09" }}>
+      {/* C · Proof — testimonials */}
+      <section className="af-proof" style={{ background: "var(--bg-alt)" }}>
         <div className="af-wrap">
-          <h2 data-af-reveal>
-            Men Like You. Same Calendar. <em>Different Body.</em>
+          <p className="af-eyebrow" data-af-reveal>Real Professionals. Real Schedules. Real Results.</p>
+          <h2 data-af-reveal style={{ "--d": ".04s" } as React.CSSProperties}>
+            Corporate Professionals Who Proved <em>&ldquo;Busy&rdquo;</em>
+            <br className="af-br-desk" /> Doesn&rsquo;t Have To Mean <em>&ldquo;Unfit&rdquo;</em>
           </h2>
+          <p className="af-section-lede" data-af-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
+            From IT professionals and bankers to founders and senior executives, these are men who
+            transformed with the Custom Execution Blueprint.
+          </p>
           <div className="af-tcards">
             {TESTIMONIALS.map((t) => (
               <article
@@ -413,71 +529,12 @@ export function LandingView() {
         </div>
       </section>
 
-      {/* Credibility strip */}
-      <section className="af-creds" style={{ background: "#0E0C09" }}>
-        <div className="af-wrap">
-          <div className="af-creds-grid" data-af-reveal>
-            <div className="af-cred-item">
-              <div className="af-cred-num">1,500+</div>
-              <div className="af-cred-label">Clients Coached</div>
-              <div className="af-cred-sub">Globally in 5 Years</div>
-            </div>
-            <div className="af-cred-item">
-              <div className="af-cred-num">₹25L+</div>
-              <div className="af-cred-label">Minimum Income</div>
-              <div className="af-cred-sub">Per Year, Per Client</div>
-            </div>
-            <div className="af-cred-item">
-              <div className="af-cred-num">On Air</div>
-              <div className="af-cred-label af-cred-text">Aaj Tak · Zee News</div>
-              <div className="af-cred-sub">HealthXP Featured Coach</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* B · Performance Review ledger — HIDDEN per request. Uses `false &&` so
-          the JSX (and REVIEW_WIN/REVIEW_FAIL) stays valid; flip to re-enable. */}
-      {false && (
-        <section className="af-proof nf-review" style={{ background: "#0E0C09" }}>
-          <div className="af-wrap">
-            <h2 data-af-reveal>
-              If Your Body Got The Same Review <span className="af-accent">Your Work Gets</span>
-            </h2>
-            <p className="nf-lede" data-af-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-              Run the audit you run on everything else. Be honest &mdash; nobody sees this except you.
-            </p>
-            <div className="nf-review-grid" data-af-reveal style={{ "--d": ".1s" } as React.CSSProperties}>
-              <div className="nf-col nf-col-win">
-                <div className="nf-col-h">Career &amp; Life</div>
-                {REVIEW_WIN.map((row) => (
-                  <div className="nf-row" key={row}>
-                    <span>{row}</span>
-                    <span className="nf-verdict nf-pass">Exceeds</span>
-                  </div>
-                ))}
-              </div>
-              <div className="nf-col nf-col-fail">
-                <div className="nf-col-h">Body &amp; Health</div>
-                {REVIEW_FAIL.map((row) => (
-                  <div className="nf-row" key={row}>
-                    <span>{row}</span>
-                    <span className="nf-verdict nf-fail">Fails</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <p className="nf-verdict-line" data-af-reveal style={{ "--d": ".14s" } as React.CSSProperties}>
-              Same man. Same discipline. Same brain. So the problem was never you. It&rsquo;s the one
-              moment your plan never accounted for.
-            </p>
-          </div>
-        </section>
-      )}
-
       {/* Carousel gallery */}
-      <section className="af-gallery" style={{ background: "#1A1611", overflow: "hidden" }}>
+      <section className="af-gallery" style={{ background: "var(--bg)", overflow: "hidden" }}>
         <div className="af-wrap">
+          <p className="af-eyebrow" data-af-reveal>
+            Real Men. Real Timelines. No Filters.
+          </p>
           <h2 data-af-reveal style={{ marginBottom: 36 }}>
             Before &amp; After <span>Transformations</span>
           </h2>
@@ -502,97 +559,8 @@ export function LandingView() {
         <div className="af-wrap" />
       </section>
 
-      {/* C · Mechanism — the Chhod Yaar moment */}
-      <section className="af-final nf-mech" style={{ background: "#0E0C09" }}>
-        <div className="af-wrap af-final-inner">
-          <h2 data-af-reveal>Every Plan You&rsquo;ve Followed Worked In A Calm Week.</h2>
-          <p data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
-            Then came the client escalation, the late flight, the wedding weekend. And in one tired
-            moment, a voice you know very well said:
-          </p>
-          <p className="nf-quote" data-af-reveal style={{ "--d": ".14s" } as React.CSSProperties}>
-            <em>&ldquo;Chhod yaar, kal karunga.&rdquo; And tomorrow never came. Again.</em>
-          </p>
-          <p data-af-reveal style={{ "--d": ".2s" } as React.CSSProperties}>
-            That moment is the actual problem. Not your effort. Not your knowledge. You already know
-            more about protein and calories than most trainers. What you&rsquo;ve never had is a system
-            built for the weeks when your life gets loud.
-          </p>
-          <p data-af-reveal style={{ "--d": ".26s" } as React.CSSProperties}>
-            Arjun&rsquo;s methodology is built on <strong>Decision Removal</strong>. The plan is designed
-            around your travel, your dinners, your worst weeks &mdash; so when the Chhod Yaar moment
-            arrives, there is no decision left to break. That&rsquo;s what 1,500 men before you actually
-            paid for. Not a diet &mdash; the removal of the moment that kills the diet. How that works for
-            your specific life is what the Blueprint Call maps out.
-          </p>
-          <CtaBlock checkoutHref={checkoutHref} timerLabel={timerLabel} shortLabel delay=".3s" />
-        </div>
-      </section>
-
-      {/* F · What happens on the Blueprint Call */}
-      <section className="af-skim nf-call" style={{ background: "#1A1611" }}>
-        <div className="af-wrap">
-          <div className="af-skim-head">
-            <h2 data-af-reveal>
-              What Happens On The <span className="af-accent">Blueprint Call</span>
-            </h2>
-            <p data-af-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-              30 minutes. 1 on 1 with Arjun. Not his team, not an assistant. Him.
-            </p>
-          </div>
-          <div className="nf-timeline">
-            {CALL_STEPS.map((s, i) => (
-              <div
-                className="nf-step"
-                key={s.time}
-                data-af-reveal
-                style={{ "--d": `${0.08 + i * 0.06}s` } as React.CSSProperties}
-              >
-                <div className="nf-step-time">{s.time}</div>
-                <div className="nf-step-body">
-                  <h4>{s.title}</h4>
-                  <p>{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="af-skim-cta">
-            <CtaBlock checkoutHref={checkoutHref} timerLabel={timerLabel} shortLabel />
-          </div>
-        </div>
-      </section>
-
-      {/* Read this before you pay */}
-      <section className="af-money nf-read" style={{ background: "#0E0C09" }}>
-        <div className="af-wrap">
-          <h2 data-af-reveal style={{ textAlign: "center" }}>
-            Read This Before You Pay. <span className="af-accent">It Matters.</span>
-          </h2>
-          <div className="nf-read-grid" data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
-            <div className="nf-read-item">
-              <strong>This call is not a free diet and workout plan.</strong>
-              <p>
-                Nobody can give you a serious plan in 30 minutes without knowing your life first.
-                That&rsquo;s exactly the generic-coach behaviour that failed you before.
-              </p>
-            </div>
-            <div className="nf-read-item">
-              <strong>₹{price} covers the consultation only.</strong>
-              <p>
-                The coaching program is a separate investment, discussed on the call based on your goals
-                and your starting point.
-              </p>
-            </div>
-            <div className="nf-read-item">
-              <strong>The call is honest in both directions.</strong>
-              <p>Arjun turns people away when the fit isn&rsquo;t right. Your money back applies either way.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* G · About Arjun */}
-      <section className="af-about" style={{ background: "#0E0C09" }}>
+      {/* D · About Arjun */}
+      <section className="af-about" style={{ background: "var(--bg-alt)" }}>
         <div className="af-wrap">
           <div className="af-about-grid">
             <div className="af-about-photo" data-af-reveal style={{ position: "relative" }}>
@@ -608,74 +576,115 @@ export function LandingView() {
               />
               <div className="count">
                 <div><b>104→65</b><span>His Own Kg</span></div>
-                <div><b>1,500+</b><span>Clients</span></div>
+                <div><b>1,400+</b><span>Clients</span></div>
               </div>
             </div>
             <div className="af-about-text" data-af-reveal style={{ "--d": ".12s" } as React.CSSProperties}>
-              <h2>The Coach Who&rsquo;s <span>Lived Both Sides</span></h2>
+              <p className="af-eyebrow af-eyebrow-left">Meet Your Coach</p>
+              <h2>
+                The Coach Who&rsquo;s<br className="af-br-mob" />{" "}
+                <span>Lived Both Sides</span>
+              </h2>
               <p>
-                Arjun Shah spent years at <strong>104 kg</strong> before engineering himself down to{" "}
-                <strong>65</strong>. Not with motivation &mdash; with a system that survived his own bad weeks.
+                Arjun Shah spent years at <span className="af-hl-pill">104 kg</span> before engineering
+                himself down to <span className="af-hl-pill">65</span>. Not with motivation, with{" "}
+                <span className="af-hl">a system that survived his own bad weeks</span>.
               </p>
               <p>
-                Over the last <strong>5 years</strong> he&rsquo;s coached more than <strong>1,500 clients</strong>{" "}
-                across India, the US, UK, Canada, Australia and the UAE &mdash; the bulk of them men like you:
-                professionals with real careers, real families, and no time for a plan that only works in theory.
-              </p>
-              <p>
-                He still takes every Blueprint Call himself. That&rsquo;s deliberate. It limits how many people
-                he can speak to each week, and it&rsquo;s the reason his clients don&rsquo;t get handed to an
-                assistant on day two. As featured on <strong>Aaj Tak, Zee News, HealthXP</strong>.
+                Over the last <span className="af-hl">5 years</span> he&rsquo;s coached more than{" "}
+                <span className="af-hl-pill">1,400 clients</span> across{" "}
+                <span className="af-hl">India, the US, UK, Canada, Australia and the UAE</span>, the bulk
+                of them men like you: corporate professionals with real careers, real families, and{" "}
+                <strong>no time for a plan that only works in theory</strong>.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* H · The terms, in plain language */}
-      <section className="af-money nf-terms" style={{ background: "#1A1611" }}>
+      {/* E · What's included in the 90-day programme */}
+      <section className="af-incl" style={{ background: "var(--bg)" }}>
         <div className="af-wrap">
-          <h2 data-af-reveal style={{ textAlign: "center" }}>
-            The Terms, <span className="af-accent">In Plain Language</span>
+          <p className="af-eyebrow" data-af-reveal>
+            Everything You Get. Nothing You Don&rsquo;t Need.
+          </p>
+          <h2 data-af-reveal style={{ textAlign: "center", "--d": ".04s" } as React.CSSProperties}>
+            What&rsquo;s Included In Your<br className="af-br-mob" />{" "}
+            <span className="af-accent">90-Day Programme</span>
           </h2>
-          <div className="nf-terms-grid" data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
-            <div className="nf-term">
-              <h4>Money Back, Your Judgement</h4>
-              <p>
-                If you finish the call and feel it wasn&rsquo;t useful, say so on the spot. Full refund of
-                your ₹{price}, no conditions, no justification needed. You are the only judge.
-              </p>
-            </div>
-            <div className="nf-term">
-              <h4>No-Show Forfeits The Fee</h4>
-              <p>
-                If you book and don&rsquo;t show up, the ₹{price} is not refunded. Arjun blocks that slot
-                personally for you. Treat it the way you&rsquo;d want your own time treated.
-              </p>
-            </div>
-            <div className="nf-term">
-              <h4>Reschedule Window</h4>
-              <p>
-                Need to move the call? Message us on WhatsApp at least 4 hours before your slot and
-                we&rsquo;ll reschedule once, no questions. Inside 4 hours, we can&rsquo;t.
-              </p>
-            </div>
-            <div className="nf-term">
-              <h4>Secure Payment</h4>
-              <p>
-                Payment via Razorpay &mdash; UPI, cards, and net banking. You&rsquo;re redirected to book
-                your slot immediately after payment, with a confirmation email and prep checklist.
-              </p>
-            </div>
+          <p className="af-section-lede" data-af-reveal style={{ "--d": ".05s" } as React.CSSProperties}>
+            Everything working together to make this the last fitness programme you ever need.
+          </p>
+          <div className="af-incl-grid" data-af-reveal style={{ "--d": ".08s" } as React.CSSProperties}>
+            {INCLUDED.map((item) => (
+              <article className="af-incl-card" key={item.title}>
+                <span className="af-incl-ic" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                    {INCL_ICONS[item.icon]}
+                  </svg>
+                </span>
+                <h4>{item.title}</h4>
+                <p>{item.desc}</p>
+              </article>
+            ))}
           </div>
-          <CtaBlock checkoutHref={checkoutHref} timerLabel={timerLabel} shortLabel extraStyle={{ marginTop: 36 }} />
+          <CtaBlock
+            checkoutHref={checkoutHref}
+            time={timeLeft}
+            extraStyle={{ marginTop: 44 }}
+          />
         </div>
       </section>
 
-      {/* I · FAQ */}
-      <section className="af-faq" style={{ background: "#0E0C09" }}>
+      {/* F · Results guarantee */}
+      <section className="af-money af-guar" style={{ background: "var(--bg-alt)" }}>
         <div className="af-wrap">
-          <h2 data-af-reveal>Questions Serious Men <span>Actually Ask.</span></h2>
+          <div className="af-guar-badge" data-af-reveal>
+            <span className="af-guar-ring" aria-hidden="true" />
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.4l7.6 2.9v6.4c0 4.7-3.2 8.8-7.6 9.6-4.4-.8-7.6-4.9-7.6-9.6V5.3L12 2.4z" />
+              <path d="M8.7 12.2l2.3 2.3 4.3-4.5" className="tick" />
+            </svg>
+          </div>
+          <p className="af-eyebrow" data-af-reveal style={{ "--d": ".02s" } as React.CSSProperties}>
+            The Risk Is Ours. Not Yours.
+          </p>
+          <h2 data-af-reveal style={{ textAlign: "center", "--d": ".04s" } as React.CSSProperties}>
+            100% <span className="af-accent">Results Guarantee</span>
+          </h2>
+          <p className="af-section-lede" data-af-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
+            If you don&rsquo;t see visible progress by the end of your programme, despite following your
+            personalised Custom Execution Blueprint, we&rsquo;ll continue coaching you at no additional
+            cost until you do.
+          </p>
+          <div className="af-guar-card" data-af-reveal style={{ "--d": ".1s" } as React.CSSProperties}>
+            <h4>What We Ask In Return</h4>
+            <ul>
+              {GUARANTEE_ASKS.map((a) => (
+                <li key={a}>
+                  <span className="af-guar-tick" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" /></svg>
+                  </span>
+                  {a}
+                </li>
+              ))}
+            </ul>
+            <p className="af-guar-note">
+              The ₹{price} pre-strategy fee is also fully refundable if we are not the right fit.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* G · FAQ */}
+      <section className="af-faq" style={{ background: "var(--bg)" }}>
+        <div className="af-wrap">
+          <p className="af-eyebrow" data-af-reveal>
+            Straight Answers. No Sales Spin.
+          </p>
+          <h2 data-af-reveal style={{ "--d": ".04s" } as React.CSSProperties}>
+            Common Questions from <span>Corporate Professionals</span>
+          </h2>
           <div className="af-faq-list">
             {FAQS.map((f, i) => {
               const isOpen = openFaq === i;
@@ -708,26 +717,17 @@ export function LandingView() {
               );
             })}
           </div>
-        </div>
-      </section>
 
-      {/* J · Final CTA */}
-      <section className="af-final" style={{ background: "#1A1611" }} id="book">
-        <div className="af-wrap af-final-inner">
-          <h2 data-af-reveal>
-            You&rsquo;ve Never Needed More Discipline.<br />
-            You&rsquo;ve Needed A <em>System That Survives Your Life.</em>
-          </h2>
-          <p data-af-reveal style={{ "--d": ".1s" } as React.CSSProperties}>
-            30 minutes with Arjun. Your pattern named, your Blueprint outlined, your call on whether it
-            was worth ₹{price}. If it wasn&rsquo;t, the money comes back.
-          </p>
-          <CtaBlock checkoutHref={checkoutHref} timerLabel={timerLabel} shortLabel delay=".2s" />
+          {/* Closing CTA — lives inside the FAQ section so it shares the same
+              background and reads as one continuous band. */}
+          <div className="af-faq-cta" id="book">
+            <CtaBlock checkoutHref={checkoutHref} time={timeLeft} delay=".1s" />
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="af-foot" style={{ background: "#0E0C09" }}>
+      <footer className="af-foot">
         <div className="af-wrap">
           <div className="copy">© 2026 Arjun Fitness. All rights reserved.</div>
           <p>
@@ -749,28 +749,22 @@ export function LandingView() {
       </footer>
 
       {/* Sticky CTA */}
-      <div className={`af-stuck ${stickyOn ? "on" : ""}`} id="af-stuck">
-        <div className="af-stuck-timer">
-          <span className="af-timer-dot" />
-          <span className="af-timer-label">Offer expires in</span>
-          <span className="af-timer-val">{timerLabel}</span>
-        </div>
+      <div className="af-stuck on" id="af-stuck">
+        {/* Animated gold sweep along the top edge */}
+        <span className="af-stuck-beam" aria-hidden="true" />
+        <div className="af-stuck-inner">
+        <Countdown time={timeLeft} compact />
         <Link href={checkoutHref} className="af-cta">
           <span className="cta-top">
-            <span>Apply for the Blueprint Call, ₹{price}</span>
+            <CtaLabel />
             <span className="arrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M13 5l7 7-7 7" />
               </svg>
             </span>
           </span>
-          <span className="cta-sub">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="rgba(255,255,255,.7)" style={{ flexShrink: 0 }}>
-              <path d="M12 2l8 3v7c0 4.97-3.35 9.26-8 10-4.65-.74-8-5.03-8-10V5l8-3z" />
-            </svg>
-            &nbsp;Money back on the spot • 1-on-1 with Arjun himself
-          </span>
         </Link>
+        </div>
       </div>
 
       {/* Lightbox */}
@@ -805,24 +799,18 @@ export function LandingView() {
 
 function CtaBlock({
   checkoutHref,
-  timerLabel,
-  shortLabel,
+  time,
   wrapperClass,
   extraStyle,
   delay,
 }: {
   checkoutHref: string;
-  timerLabel: string;
-  shortLabel?: boolean;
+  time: TimeLeft;
   wrapperClass?: string;
   extraStyle?: React.CSSProperties;
   delay?: string;
 }) {
   const price = clientConfig.pricing.price;
-  const desktopLabel = shortLabel
-    ? `Apply for the Blueprint Call, ₹${price}`
-    : `Apply for the Blueprint Call — ₹${price}`;
-  const mobileLabel = `Apply for the Blueprint Call, ₹${price}`;
 
   const style: React.CSSProperties = {
     ...(delay ? ({ "--d": delay } as React.CSSProperties) : {}),
@@ -833,33 +821,114 @@ function CtaBlock({
     <div className={wrapperClass ?? "af-cta-block"} data-af-reveal style={style}>
       <Link href={checkoutHref} className="af-cta">
         <span className="cta-top">
-          <span className="cta-d">{desktopLabel}</span>
-          <span className="cta-m">{mobileLabel}</span>
+          <CtaLabel />
           <span className="arrow">
             <svg viewBox="0 0 24 24">
               <path d="M5 12h14M13 5l7 7-7 7" />
             </svg>
           </span>
         </span>
-        <span className="cta-sub">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="rgba(255,255,255,.7)" style={{ flexShrink: 0, marginTop: 1 }}>
-            <path d="M12 2l8 3v7c0 4.97-3.35 9.26-8 10-4.65-.74-8-5.03-8-10V5l8-3z" />
-          </svg>
-          {" "}30 min · 1-on-1 with Arjun himself &nbsp;&bull;&nbsp; Money back on the spot
-        </span>
       </Link>
-      <div className="af-timer">
-        <span className="af-timer-dot" />
-        <span className="af-timer-label">Offer expires in</span>
-        <span className="af-timer-val">{timerLabel}</span>
-      </div>
-      <p className="af-cta-note">
-        A diagnostic session, not a sales pitch. If Arjun isn&rsquo;t the right fit for you, he&rsquo;ll tell
-        you directly.
-      </p>
+
+      {/* Trust row under the button */}
+      <ul className="af-trustrow">
+        <li>
+          <span className="af-trust-ic"><IconGuarantee /></span>
+          100% Money-Back Guarantee
+        </li>
+        <li>
+          <span className="af-trust-ic"><IconMedal /></span>
+          1400+ Success Stories
+        </li>
+        <li>
+          <span className="af-trust-ic"><IconGlobe /></span>
+          Trusted by Corporate Professionals Globally
+        </li>
+      </ul>
+
+      <Countdown time={time} />
     </div>
   );
 }
+
+/**
+ * Shared CTA label. One line on desktop; the <br> is enabled below 640px so
+ * the label breaks after "Diagnosis" instead of wrapping wherever it lands.
+ */
+function CtaLabel() {
+  return (
+    <span className="cta-lbl">
+      Click Here To Get Your Personalised Diagnosis{" "}
+      <br className="cta-br" />&amp; Transformation Blueprint
+    </span>
+  );
+}
+
+interface TimeLeft {
+  h: string;
+  m: string;
+  s: string;
+}
+
+/** Segmented countdown — label outside, digits in a raised red capsule. */
+function Countdown({ time, compact }: { time: TimeLeft; compact?: boolean }) {
+  const units: [string, string][] = [
+    [time.h, "Hrs"],
+    [time.m, "Min"],
+    [time.s, "Sec"],
+  ];
+  return (
+    <div className={`af-timer${compact ? " af-timer-compact" : ""}`}>
+      <span className="af-timer-label">
+        <span className="af-timer-dot" />
+        Offer ends in
+      </span>
+      <span className="af-timer-blocks">
+        {units.map(([value, unit], i) => (
+          <span key={unit} style={{ display: "contents" }}>
+            {i > 0 ? <span className="af-tsep">:</span> : null}
+            <span className="af-tblock">
+              <b>{value}</b>
+              <i>{unit}</i>
+            </span>
+          </span>
+        ))}
+      </span>
+    </div>
+  );
+}
+
+/* Trust-row glyphs — drawn on a 24px box, stroked so they inherit the gold
+   and sit inside the raised .af-trust-ic chip. */
+function IconGuarantee() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2.5l7.5 2.8v6.4c0 4.6-3.1 8.6-7.5 9.3-4.4-.7-7.5-4.7-7.5-9.3V5.3L12 2.5z" />
+      <path d="M8.8 12.1l2.2 2.2 4.2-4.4" />
+    </svg>
+  );
+}
+
+function IconMedal() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="14.5" r="6" />
+      <path d="M12 11.8l.9 1.9 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2L9 14l2-.3.9-1.9z" />
+      <path d="M8.4 8.2L6.2 2.8h11.6l-2.2 5.4" />
+    </svg>
+  );
+}
+
+function IconGlobe() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9.2" />
+      <path d="M2.8 12h18.4" />
+      <path d="M12 2.8c2.5 2.7 3.8 5.8 3.8 9.2S14.5 18.5 12 21.2c-2.5-2.7-3.8-5.8-3.8-9.2S9.5 5.5 12 2.8z" />
+    </svg>
+  );
+}
+
 
 function BeforeAfterSvg() {
   return (

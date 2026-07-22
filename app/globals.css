@@ -5,27 +5,27 @@
 
 :root {
   /* Brand — dark gold over near-black, lifted from the source landing CSS. */
-  --brand: #C9954D;
-  --brand-deep: #D8A45C;
-  --brand-light: #E0B370;
-  --brand-soft: #2A1F11;
+  --brand:#9A6614;
+  --brand-deep: #7C5210;
+  --brand-light: #C9954D;
+  --brand-soft: #FBF1DE;
 
-  --ink: #F1E5D0;
-  --ink-soft: #999285;
-  --muted: #66645C;
+  --ink: #1C1710;
+  --ink-soft: #544E45;
+  --muted: #847C6F;
 
-  --bg: #0E0C09;
-  --bg-alt: #1A1611;
-  --bg-grid: #1F1A14;
+  --bg: #FFFFFF;
+  --bg-alt: #FBF6EC;
+  --bg-grid: #F3EADB;
 
-  --border: #2A241C;
-  --border-strong: #3D3429;
+  --border: #EBE2D0;
+  --border-strong: #D9CCB4;
 
-  --success: #22C55E;
+  --success: #15803D;
   --success-soft: rgba(34, 197, 94, 0.13);
   --warn: #F59E0B;
-  --danger: #DC2626;
-  --star: #FBBF24;
+  --danger: #B4231D;
+  --star: #D99413;
 
   --fh: 'Playfair Display', Georgia, serif;
   --fb: 'Inter', 'Helvetica Neue', system-ui, sans-serif;

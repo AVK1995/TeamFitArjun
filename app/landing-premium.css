@@ -10,7 +10,7 @@
   text-align: center;
   max-width: 640px;
   margin: 0 auto 34px !important;
-  color: var(--ink-soft, #999285) !important;
+  color: var(--ink-soft, #544E45) !important;
   font-size: 16px !important;
   line-height: 1.6 !important;
 }
@@ -27,7 +27,7 @@
   margin: 0 auto;
 }
 .af-root .nf-col {
-  border: 1px solid var(--border, #2A241C);
+  border: 1px solid var(--border, #EBE2D0);
   border-radius: var(--radius-lg, 16px);
   background: rgba(255, 255, 255, 0.015);
   overflow: hidden;
@@ -39,8 +39,8 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border, #2A241C);
-  color: var(--ink, #F1E5D0);
+  border-bottom: 1px solid var(--border, #EBE2D0);
+  color: var(--ink, #1C1710);
 }
 .af-root .nf-col-win .nf-col-h {
   background: linear-gradient(90deg, rgba(201, 149, 77, 0.14), transparent);
@@ -56,7 +56,7 @@
   padding: 14px 20px;
   border-bottom: 1px solid rgba(42, 36, 28, 0.6);
   font-size: 14.5px;
-  color: var(--ink-soft, #999285);
+  color: var(--ink-soft, #544E45);
 }
 .af-root .nf-row:last-child { border-bottom: 0; }
 .af-root .nf-verdict {
@@ -68,7 +68,7 @@
   padding: 4px 10px;
   border-radius: var(--radius-pill, 999px);
 }
-.af-root .nf-pass { color: #22C55E; background: rgba(34, 197, 94, 0.12); }
+.af-root .nf-pass { color: #15803D; background: rgba(34, 197, 94, 0.12); }
 .af-root .nf-fail { color: #F0644B; background: rgba(220, 38, 38, 0.14); }
 .af-root .nf-verdict-line {
   text-align: center;
@@ -77,7 +77,7 @@
   font-style: italic;
   font-size: 16px !important;
   line-height: 1.6 !important;
-  color: var(--ink, #F1E5D0) !important;
+  color: var(--ink, #1C1710) !important;
 }
 
 /* ── C · Mechanism (Chhod Yaar) ─────────────────────────────────────────── */
@@ -85,7 +85,7 @@
   font-family: var(--fh, "Playfair Display", serif);
   font-size: clamp(20px, 3vw, 30px) !important;
   line-height: 1.3 !important;
-  color: var(--brand, #C9954D) !important;
+  color: var(--brand, #9A6614) !important;
   max-width: 760px;
   margin: 26px auto !important;
 }
@@ -100,7 +100,7 @@
   margin: 0 auto;
 }
 .af-root .nf-qual-col {
-  border: 1px solid var(--border, #2A241C);
+  border: 1px solid var(--border, #EBE2D0);
   border-radius: var(--radius-lg, 16px);
   padding: 26px 24px;
   background: rgba(255, 255, 255, 0.015);
@@ -112,7 +112,7 @@
   font-size: 17px;
   font-weight: 800;
   margin-bottom: 18px;
-  color: var(--ink, #F1E5D0);
+  color: var(--ink, #1C1710);
 }
 .af-root .nf-qual-col ul { list-style: none; margin: 0; padding: 0; }
 .af-root .nf-qual-col li {
@@ -120,7 +120,7 @@
   padding: 10px 0 10px 30px;
   font-size: 14.5px;
   line-height: 1.55;
-  color: var(--ink-soft, #999285);
+  color: var(--ink-soft, #544E45);
   border-bottom: 1px solid rgba(42, 36, 28, 0.5);
 }
 .af-root .nf-qual-col li:last-child { border-bottom: 0; }
@@ -136,7 +136,7 @@
   font-size: 12px;
   font-weight: 800;
 }
-.af-root .nf-qual-yes li::before { content: "✓"; color: #22C55E; background: rgba(34, 197, 94, 0.14); }
+.af-root .nf-qual-yes li::before { content: "✓"; color: #15803D; background: rgba(34, 197, 94, 0.14); }
 .af-root .nf-qual-no li::before { content: "✕"; color: #F0644B; background: rgba(220, 38, 38, 0.16); }
 .af-root .nf-income-note {
   max-width: 820px;
@@ -144,8 +144,8 @@
   text-align: center;
   font-size: 14.5px !important;
   line-height: 1.65 !important;
-  color: var(--ink-soft, #999285) !important;
-  border: 1px dashed var(--border-strong, #3D3429);
+  color: var(--ink-soft, #544E45) !important;
+  border: 1px dashed var(--border-strong, #D9CCB4);
   border-radius: var(--radius-md, 10px);
   padding: 18px 22px;
 }
@@ -163,7 +163,7 @@
   grid-template-columns: 120px 1fr;
   gap: 20px;
   align-items: start;
-  border: 1px solid var(--border, #2A241C);
+  border: 1px solid var(--border, #EBE2D0);
   border-radius: var(--radius-lg, 16px);
   padding: 22px 24px;
   background: rgba(255, 255, 255, 0.015);
@@ -172,18 +172,18 @@
   font-family: var(--fh, "Playfair Display", serif);
   font-weight: 800;
   font-size: 15px;
-  color: var(--brand, #C9954D);
+  color: var(--brand, #9A6614);
   padding-top: 2px;
 }
 .af-root .nf-step-body h4 {
   font-size: 17px !important;
   margin: 0 0 6px !important;
-  color: var(--ink, #F1E5D0) !important;
+  color: var(--ink, #1C1710) !important;
 }
 .af-root .nf-step-body p {
   font-size: 14.5px !important;
   line-height: 1.6 !important;
-  color: var(--ink-soft, #999285) !important;
+  color: var(--ink-soft, #544E45) !important;
   margin: 0 !important;
 }
 
@@ -196,8 +196,8 @@
   margin: 0 auto;
 }
 .af-root .nf-read-item {
-  border: 1px solid var(--border, #2A241C);
-  border-left: 3px solid var(--brand, #C9954D);
+  border: 1px solid var(--border, #EBE2D0);
+  border-left: 3px solid var(--brand, #9A6614);
   border-radius: var(--radius-md, 10px);
   padding: 22px 22px;
   background: rgba(255, 255, 255, 0.015);
@@ -206,12 +206,12 @@
   display: block;
   font-size: 15.5px;
   margin-bottom: 8px;
-  color: var(--ink, #F1E5D0) !important;
+  color: var(--ink, #1C1710) !important;
 }
 .af-root .nf-read-item p {
   font-size: 14px !important;
   line-height: 1.6 !important;
-  color: var(--ink-soft, #999285) !important;
+  color: var(--ink-soft, #544E45) !important;
   margin: 0 !important;
 }
 
@@ -224,7 +224,7 @@
   margin: 0 auto;
 }
 .af-root .nf-term {
-  border: 1px solid var(--border, #2A241C);
+  border: 1px solid var(--border, #EBE2D0);
   border-radius: var(--radius-lg, 16px);
   padding: 24px 24px;
   background: rgba(255, 255, 255, 0.015);
@@ -233,13 +233,13 @@
   font-size: 13px !important;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--brand, #C9954D) !important;
+  color: var(--brand, #9A6614) !important;
   margin: 0 0 10px !important;
 }
 .af-root .nf-term p {
   font-size: 14.5px !important;
   line-height: 1.6 !important;
-  color: var(--ink-soft, #999285) !important;
+  color: var(--ink-soft, #544E45) !important;
   margin: 0 !important;
 }
 
@@ -263,7 +263,7 @@
     box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5);
     background-color: rgba(201, 149, 77, 0.05);
   }
-  .af-root .nf-read-item:hover { border-left-color: var(--brand-light, #E0B370); }
+  .af-root .nf-read-item:hover { border-left-color: var(--brand-light, #C9954D); }
 
   .af-root .nf-qual-yes:hover {
     transform: translateY(-6px);
@@ -282,15 +282,15 @@
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
     background-color: rgba(201, 149, 77, 0.05);
   }
-  .af-root .nf-step:hover .nf-step-time { color: var(--brand-light, #E0B370); }
+  .af-root .nf-step:hover .nf-step-time { color: var(--brand-light, #C9954D); }
 
   /* Ledger rows highlight individually */
   .af-root .nf-row { transition: background-color 0.2s ease, color 0.2s ease; }
-  .af-root .nf-row:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--ink, #F1E5D0); }
+  .af-root .nf-row:hover { background-color: rgba(154, 102, 20, 0.05); color: var(--ink, #1C1710); }
 
   /* Qualification list items nudge on hover */
   .af-root .nf-qual-col li { transition: color 0.2s ease, padding-left 0.2s ease; }
-  .af-root .nf-qual-col li:hover { color: var(--ink, #F1E5D0); padding-left: 34px; }
+  .af-root .nf-qual-col li:hover { color: var(--ink, #1C1710); padding-left: 34px; }
 }
 
 /* Press / tap feedback — works on touch AND mouse (so mobile gets a response too) */
@@ -328,3 +328,1399 @@
   .af-root .nf-step { grid-template-columns: 84px 1fr; gap: 14px; padding: 18px; }
   .af-root .nf-row { padding: 12px 16px; font-size: 13.5px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LIGHT-THEME REVAMP — new landing sections
+   ───────────────────────────────────────────────────────────────────────────
+   Loaded after landing.css. Two base rules there fight everything below and
+   are the reason `!important` appears so often in this file:
+
+     .af-root ul,.af-root ol { margin:0 !important }      (landing.css:60)
+     .af-root p              { margin:0 0 1em !important } (landing.css:56)
+     .af-root h1..h5         { margin:0 0 .6em !important }(landing.css:51)
+
+   Any `margin:X auto` here therefore MUST carry !important or the block hugs
+   the left edge instead of centring. Same story for `.af-root img` which sets
+   `height:auto!important` — avatars need their height forced back.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Shared: eyebrow + section lede ─────────────────────────────────────── */
+.af-root .af-eyebrow{
+  text-align:center!important; margin:0 auto 14px!important; max-width:760px;
+  font-family:var(--fb); font-size:11px; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--brand)!important;
+}
+.af-root .af-section-lede{
+  text-align:center!important; max-width:720px; margin:0 auto 40px!important;
+  font-size:clamp(14px,1.1vw,16px); line-height:1.6; color:var(--ink-soft)!important;
+}
+
+/* ── Header logo ────────────────────────────────────────────────────────── */
+/* .af-logo-mark was styled for a gradient-filled *text* wordmark. We render an
+   <img>, so the pill border + padding just drew a stray box around it. */
+.af-root .af-logo-mark{
+  border:0!important; padding:0!important; background:none!important;
+}
+
+/* ── Announcement marquee ───────────────────────────────────────────────── */
+/* The track is a nowrap flex row whose content overflows, so every flex item
+   is a shrink candidate. The separator dots have no content and were being
+   shrunk to zero width — hence "separator missing". */
+.af-root .af-announce-track .dot{
+  flex:0 0 5px!important; width:5px!important; height:5px!important;
+  align-self:center; border-radius:50%;
+  background:var(--brand,#9A6614)!important;
+}
+
+/* ── Hero: social-proof row (avatars + rating) ──────────────────────────── */
+.af-root .af-proofrow{
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+  gap:14px; margin:0 auto 20px!important;
+}
+.af-root .af-avatars{ display:flex; align-items:center; flex-shrink:0; }
+/* Force width AND height: `.af-root img{height:auto!important}` would otherwise
+   let the source aspect ratio through, and flex-shrink squashed them sideways
+   — together that produced the egg shape. */
+.af-root .af-avatars img{
+  flex:0 0 38px!important;
+  width:38px!important; height:38px!important;
+  aspect-ratio:1/1; border-radius:50%!important;
+  object-fit:cover; object-position:50% 18%;
+  border:2px solid #fff; box-shadow:0 2px 6px rgba(28,23,16,.16);
+}
+.af-root .af-avatars img+img{ margin-left:-12px; }
+.af-root .af-proofrow-text{
+  display:flex; align-items:center; flex-wrap:wrap; justify-content:center;
+  gap:10px; font-size:13px; font-weight:600; color:var(--ink-soft);
+}
+.af-root .af-proofrow-text b{ color:var(--ink); }
+.af-root .af-proofrow-div{ flex:0 0 1px; width:1px; height:14px; background:var(--border-strong); }
+
+/* ── Hero: sub-headline emphasis + health markers ───────────────────────── */
+.af-root .af-sub-strong{
+  font-size:clamp(15px,1.25vw,18px)!important; font-weight:600!important;
+  color:var(--ink)!important; max-width:760px!important; margin:0 auto 14px!important;
+}
+.af-root .af-sub-markers{ max-width:760px!important; margin:0 auto 16px!important; }
+.af-root .af-sub-markers b{ color:var(--brand); }
+
+.af-root .af-markers{
+  list-style:none; margin:0 auto 26px!important; padding:0!important; max-width:820px;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+}
+.af-root .af-markers li{
+  flex:0 0 auto;
+  display:inline-flex; align-items:center; gap:7px;
+  padding:7px 14px; border-radius:999px;
+  background:var(--brand-soft); border:1px solid rgba(154,102,20,.22);
+  font-size:12.5px; font-weight:600; color:var(--brand-deep);
+}
+.af-root .af-markers svg{ width:14px; height:14px; color:var(--brand); flex:0 0 14px; }
+
+/* ── Hero: "watch the video below" pointer ──────────────────────────────── */
+.af-root .af-watch{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin:0 auto 16px!important; font-family:var(--fb);
+  font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink);
+}
+.af-root .af-watch svg{
+  width:16px; height:16px; flex:0 0 16px;
+  fill:none; stroke:var(--brand); stroke-width:2.4;
+  stroke-linecap:round; stroke-linejoin:round;
+  animation:afWatchBob 1.6s ease-in-out infinite;
+}
+@keyframes afWatchBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(4px); } }
+@media (prefers-reduced-motion:reduce){ .af-root .af-watch svg{ animation:none; } }
+
+/* ── CTA trust row (under every button) ─────────────────────────────────── */
+.af-root .af-trustrow{
+  list-style:none; margin:16px auto 0!important; padding:0!important; max-width:760px;
+  display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px 20px;
+}
+.af-root .af-trustrow li{
+  flex:0 0 auto;
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:12px; font-weight:600; color:var(--ink-soft);
+}
+.af-root .af-trustrow svg{ width:14px; height:14px; flex:0 0 14px; fill:var(--brand); color:var(--brand); }
+
+/* ── Countdown timer — red, lit, raised ─────────────────────────────────── */
+/* Was pale pink text on a pale pink pill (≈1.7:1). Now a high-contrast red
+   capsule with an outer glow and an inset top-light/bottom-shade for depth. */
+.af-root .af-timer{
+  background:linear-gradient(180deg,#FFF5F5 0%,#FFE4E4 100%)!important;
+  border:1.5px solid rgba(185,28,28,.42)!important;
+  box-shadow:
+    0 0 0 4px rgba(220,38,38,.07),
+    0 8px 18px rgba(185,28,28,.26),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(185,28,28,.14)!important;
+  color:#B91C1C!important;
+  margin:16px auto 0!important;
+  width:fit-content!important;
+}
+.af-root .af-timer-label{ white-space:nowrap; color:#B91C1C!important; }
+.af-root .af-timer-val{
+  color:#DC2626!important;
+  font-variant-numeric:tabular-nums;
+  font-size:14.5px!important; font-weight:900!important;
+  letter-spacing:.06em!important;
+  min-width:76px; text-align:center;
+  text-shadow:
+    0 0 5px rgba(220,38,38,.55),
+    0 0 12px rgba(220,38,38,.35),
+    0 1px 0 rgba(255,255,255,.85);
+  animation:afTimerGlow 1.9s ease-in-out infinite;
+}
+@keyframes afTimerGlow{
+  0%,100%{ text-shadow:0 0 5px rgba(220,38,38,.50), 0 0 12px rgba(220,38,38,.30), 0 1px 0 rgba(255,255,255,.85); }
+  50%    { text-shadow:0 0 8px rgba(220,38,38,.75), 0 0 20px rgba(220,38,38,.50), 0 1px 0 rgba(255,255,255,.85); }
+}
+@media (prefers-reduced-motion:reduce){ .af-root .af-timer-val{ animation:none; } }
+.af-root .af-timer-dot{
+  flex:0 0 7px!important; width:7px!important; height:7px!important;
+  background:#DC2626!important;
+}
+
+/* ── Credibility strip ──────────────────────────────────────────────────── */
+/* Four items were being laid into a three-column grid, so the fourth wrapped
+   onto its own row and the whole strip read as off-centre. */
+.af-root .af-creds-grid{
+  grid-template-columns:repeat(4,1fr)!important;
+  max-width:1000px!important; margin:0 auto!important;
+}
+
+/* ── B · "This Is For You If" ───────────────────────────────────────────── */
+.af-root .af-foryou{ background:var(--bg)!important; }
+.af-root .af-foryou-list{
+  list-style:none; margin:0 auto!important; padding:0!important; max-width:880px;
+  display:grid; gap:14px;
+}
+.af-root .af-foryou-list li{
+  display:grid; grid-template-columns:32px 1fr; gap:14px; align-items:start;
+  padding:20px 22px; border-radius:var(--r);
+  background:#fff; border:1px solid var(--border); box-shadow:var(--sh);
+  transition:transform .25s, box-shadow .25s, border-color .25s;
+}
+.af-root .af-foryou-list li:hover{
+  transform:translateY(-3px); box-shadow:var(--sh-lg); border-color:var(--border-strong);
+}
+.af-root .af-foryou-tick{
+  width:32px; height:32px; border-radius:50%; display:grid; place-items:center;
+  background:var(--brand-soft); border:1px solid rgba(154,102,20,.24);
+}
+.af-root .af-foryou-tick svg{
+  width:16px; height:16px; fill:none; stroke:var(--brand);
+  stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;
+}
+.af-root .af-foryou-list p{
+  margin:0!important; text-align:left;
+  font-size:14.5px; line-height:1.62; color:var(--ink-soft);
+}
+.af-root .af-foryou-list strong{ color:var(--ink); font-weight:700; }
+.af-root .af-two-cta{ text-align:center; }
+
+/* ── E · What's included in the 90-day programme ────────────────────────── */
+.af-root .af-incl{ padding:80px 0; background:var(--bg); }
+.af-root .af-incl h2{
+  text-align:center!important;
+  font-size:clamp(24px,3.6vw,36px); max-width:820px; margin:0 auto 14px!important;
+}
+.af-root .af-incl-grid{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:18px; max-width:1080px; margin:0 auto!important;
+}
+.af-root .af-incl-card{
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+  padding:26px 24px 24px; border-radius:var(--r-lg);
+  background:#fff; border:1px solid var(--border); box-shadow:var(--sh);
+  transition:transform .28s, box-shadow .28s, border-color .28s;
+}
+/* Top accent instead of the old left bar, which rendered as a stray stripe
+   floating in the gutter between cards. */
+.af-root .af-incl-card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--brand),var(--brand-light));
+  transform:scaleX(0); transform-origin:left; transition:transform .3s;
+}
+.af-root .af-incl-card:hover{
+  transform:translateY(-4px); box-shadow:var(--sh-lg); border-color:var(--border-strong);
+}
+.af-root .af-incl-card:hover::before{ transform:scaleX(1); }
+.af-root .af-incl-num{
+  font-family:var(--fh); font-size:13px; font-weight:700; letter-spacing:.14em;
+  color:var(--brand); margin-bottom:10px;
+}
+.af-root .af-incl-card h4{
+  margin:0 0 10px!important; font-family:var(--fh);
+  font-size:19px; line-height:1.3; color:var(--ink);
+}
+.af-root .af-incl-card p{
+  margin:0!important; font-size:14px; line-height:1.62; color:var(--ink-soft);
+}
+
+/* ── F · 100% Results Guarantee ─────────────────────────────────────────── */
+.af-root .af-guar{ background:var(--bg-alt)!important; }
+.af-root .af-guar h2{ text-align:center!important; margin:0 auto 14px!important; }
+.af-root .af-guar-badge{
+  width:76px; height:76px; margin:0 auto 20px!important; border-radius:50%;
+  display:grid; place-items:center;
+  background:#fff; border:1px solid rgba(21,128,61,.25);
+  box-shadow:0 8px 24px rgba(21,128,61,.14);
+}
+.af-root .af-guar-badge svg{
+  width:38px; height:38px; fill:none; stroke:var(--success);
+  stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;
+}
+.af-root .af-guar-badge svg .tick{ stroke-width:2.4; }
+.af-root .af-guar-card{
+  max-width:780px; margin:0 auto!important; padding:30px 30px 26px;
+  border-radius:var(--r-lg); background:#fff;
+  border:1px solid var(--border); box-shadow:var(--sh-lg);
+}
+.af-root .af-guar-card h4{
+  margin:0 0 18px!important; text-align:center; font-family:var(--fh);
+  font-size:20px; color:var(--ink);
+}
+.af-root .af-guar-card ul{ list-style:none; margin:0!important; padding:0!important; display:grid; gap:13px; }
+.af-root .af-guar-card li{
+  display:grid; grid-template-columns:24px 1fr; gap:12px; align-items:start;
+  text-align:left; font-size:14px; line-height:1.6; color:var(--ink-soft);
+}
+.af-root .af-guar-tick{
+  width:24px; height:24px; border-radius:50%; display:grid; place-items:center;
+  background:rgba(21,128,61,.10); border:1px solid rgba(21,128,61,.22);
+}
+.af-root .af-guar-tick svg{
+  width:13px; height:13px; fill:none; stroke:var(--success);
+  stroke-width:3; stroke-linecap:round; stroke-linejoin:round;
+}
+.af-root .af-guar-note{
+  margin:20px 0 0!important; padding-top:18px; border-top:1px solid var(--border);
+  text-align:center; font-size:13px; color:var(--muted)!important;
+}
+
+/* ═══ Sticky CTA — desktop ══════════════════════════════════════════════ */
+/* landing.css only switches .af-stuck on inside the mobile media query. On
+   desktop there's room for a horizontal bar, so lay it out as a row. */
+@media (min-width:901px){
+  .af-root .af-stuck{
+    display:flex!important;
+    align-items:center!important; justify-content:center!important;
+    gap:22px!important;
+    padding:12px 26px calc(12px + env(safe-area-inset-bottom))!important;
+    box-shadow:0 -8px 28px rgba(28,23,16,.10)!important;
+  }
+  .af-root .af-stuck .af-stuck-timer{
+    margin:0!important; flex:0 0 auto;
+    font-size:11px!important; padding:7px 14px 6px!important;
+  }
+  .af-root .af-stuck .af-cta{
+    width:auto!important; min-width:440px; max-width:620px;
+    padding:11px 26px 10px!important;
+  }
+  /* Keep the bar from covering the last of the footer. */
+  .af-root .af-foot{ padding-bottom:118px!important; }
+}
+
+/* ═══ Responsive ═══════════════════════════════════════════════════════ */
+
+/* Tablet */
+@media (max-width:1000px){
+  .af-root .af-incl-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:900px){
+  .af-root .af-incl{ padding:56px 0; }
+  .af-root .af-creds-grid{ grid-template-columns:repeat(2,1fr)!important; gap:0 1px!important; }
+  /* landing.css hides the divider on the first column only; with two columns
+     every third item also starts a row and needs its rule dropped. */
+  .af-root .af-cred-item:nth-child(odd)::before{ display:none!important; }
+  .af-root .af-cred-item{ padding:14px 16px!important; }
+}
+
+/* Phone */
+@media (max-width:640px){
+  .af-root .af-proofrow{ gap:10px; margin-bottom:16px!important; }
+  .af-root .af-avatars img{
+    flex:0 0 32px!important; width:32px!important; height:32px!important;
+  }
+  .af-root .af-avatars img+img{ margin-left:-10px; }
+  .af-root .af-proofrow-text{ font-size:11.5px; gap:8px; }
+
+  .af-root .af-sub-strong{ font-size:14.5px!important; }
+  .af-root .af-markers{ gap:6px; margin-bottom:20px!important; }
+  .af-root .af-markers li{ padding:6px 11px; font-size:11.5px; gap:5px; }
+  .af-root .af-markers svg{ width:12px; height:12px; flex:0 0 12px; }
+
+  .af-root .af-watch{ font-size:10.5px; letter-spacing:.12em; gap:6px; }
+  .af-root .af-watch svg{ width:14px; height:14px; flex:0 0 14px; }
+
+  .af-root .af-trustrow{ gap:6px 14px; margin-top:14px!important; }
+  .af-root .af-trustrow li{ font-size:11px; gap:5px; }
+  .af-root .af-trustrow svg{ width:12px; height:12px; flex:0 0 12px; }
+
+  .af-root .af-timer{ margin-top:14px!important; padding:6px 14px 5px!important; }
+  .af-root .af-timer-val{ font-size:13px!important; min-width:68px; }
+
+  .af-root .af-eyebrow{ font-size:10px; letter-spacing:.14em; margin-bottom:10px!important; }
+  .af-root .af-section-lede{ font-size:13.5px; margin-bottom:28px!important; }
+
+  .af-root .af-foryou-list{ gap:12px; }
+  .af-root .af-foryou-list li{ padding:16px; grid-template-columns:26px 1fr; gap:12px; }
+  .af-root .af-foryou-tick{ width:26px; height:26px; }
+  .af-root .af-foryou-tick svg{ width:13px; height:13px; }
+  .af-root .af-foryou-list p{ font-size:13.5px; line-height:1.6; }
+
+  .af-root .af-incl{ padding:48px 0; }
+  .af-root .af-incl-grid{ grid-template-columns:1fr; gap:14px; }
+  .af-root .af-incl-card{ padding:22px 18px 20px; }
+  .af-root .af-incl-card h4{ font-size:17px; }
+  .af-root .af-incl-card p{ font-size:13.5px; }
+
+  .af-root .af-guar-badge{ width:64px; height:64px; margin-bottom:16px!important; }
+  .af-root .af-guar-badge svg{ width:32px; height:32px; }
+  .af-root .af-guar-card{ padding:24px 18px 20px; }
+  .af-root .af-guar-card h4{ font-size:18px; }
+  .af-root .af-guar-card li{ font-size:13.5px; grid-template-columns:22px 1fr; gap:10px; }
+  .af-root .af-guar-tick{ width:22px; height:22px; }
+  .af-root .af-guar-note{ font-size:12px; margin-top:16px!important; padding-top:14px; }
+}
+
+/* Small phone */
+@media (max-width:400px){
+  .af-root .af-proofrow-text{ font-size:10.5px; gap:6px; }
+  .af-root .af-avatars img{ flex:0 0 28px!important; width:28px!important; height:28px!important; }
+  .af-root .af-markers li{ padding:5px 9px; font-size:10.5px; }
+  .af-root .af-trustrow li{ font-size:10px; }
+  .af-root .af-foryou-list li{ padding:14px; }
+  .af-root .af-incl-card{ padding:20px 16px 18px; }
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   POLISH PASS â€” depth, gold glow, motion
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   Appended last so it wins on equal specificity. Neutral/black drop shadows
+   are replaced with warm gold-tinted ones throughout: on a cream page a grey
+   shadow reads as dirt, a gold one reads as light.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€ Warm shadow tokens (global swap) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root{
+  --sh:0 1px 2px rgba(154,102,20,.06), 0 2px 10px rgba(154,102,20,.07);
+  --sh-lg:0 14px 32px rgba(154,102,20,.17), 0 3px 10px rgba(154,102,20,.08);
+  --glow:0 14px 34px rgba(154,102,20,.22), 0 0 0 4px rgba(201,149,77,.11);
+}
+
+/* â”€â”€ Header logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* The wordmark's "TF" is near-white and vanished on the light header. Seat it
+   on a dark plaque so both the white letters and the gold "A" read cleanly. */
+.af-root .af-logo-mark{
+  display:inline-grid!important; place-items:center;
+  padding:7px 15px!important; border-radius:13px!important;
+  background:linear-gradient(145deg,#2B2219 0%,#15110C 100%)!important;
+  border:1px solid rgba(201,149,77,.38)!important;
+  box-shadow:
+    0 6px 18px rgba(28,23,16,.24),
+    0 0 0 3px rgba(201,149,77,.09),
+    inset 0 1px 0 rgba(255,255,255,.15)!important;
+  transition:transform .28s, box-shadow .28s;
+}
+.af-root .af-logo:hover .af-logo-mark{
+  transform:translateY(-2px);
+  box-shadow:
+    0 10px 26px rgba(28,23,16,.30),
+    0 0 0 5px rgba(201,149,77,.16),
+    inset 0 1px 0 rgba(255,255,255,.18)!important;
+}
+
+/* â”€â”€ Hero copy highlights â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-hl{
+  color:var(--brand-deep)!important; font-weight:700;
+  background:linear-gradient(180deg,transparent 62%,rgba(201,149,77,.34) 62%);
+  padding:0 2px;
+}
+.af-root .af-hl-pill{
+  display:inline-block; padding:2px 13px 3px; border-radius:999px;
+  background:rgba(201,149,77,.17);
+  border:1px solid rgba(154,102,20,.34);
+  color:#6E4A0E!important; font-weight:800; white-space:nowrap;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 2px 7px rgba(154,102,20,.15);
+}
+
+/* â”€â”€ Health-marker pills: live gold dot â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-marker-dot{
+  flex:0 0 8px; width:8px; height:8px; border-radius:50%;
+  background:radial-gradient(circle at 32% 30%,#E9C489 0%,var(--brand) 72%);
+  box-shadow:0 0 0 0 rgba(154,102,20,.55);
+  animation:afDotPulse 2s ease-out infinite; animation-delay:var(--pd,0s);
+}
+@keyframes afDotPulse{
+  0%  { box-shadow:0 0 0 0 rgba(154,102,20,.55); }
+  70% { box-shadow:0 0 0 7px rgba(154,102,20,0); }
+  100%{ box-shadow:0 0 0 0 rgba(154,102,20,0); }
+}
+.af-root .af-markers li{
+  transition:transform .25s, box-shadow .25s, border-color .25s, background .25s;
+}
+.af-root .af-markers li:hover{
+  transform:translateY(-2px);
+  background:#FFF7E9;
+  border-color:rgba(154,102,20,.42);
+  box-shadow:0 8px 18px rgba(154,102,20,.20), 0 0 0 3px rgba(201,149,77,.12);
+}
+
+/* â”€â”€ "Watch the short video below" â€” raised plaque â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-watch{ margin:0 auto 18px!important; }
+.af-root .af-watch-box{
+  display:inline-flex; align-items:center; gap:10px;
+  padding:11px 22px 10px; border-radius:14px;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FBF1DE 100%);
+  border:1.5px solid rgba(154,102,20,.34);
+  color:var(--ink)!important;
+  box-shadow:
+    0 0 0 4px rgba(201,149,77,.10),
+    0 10px 22px rgba(154,102,20,.20),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -3px 0 rgba(154,102,20,.16);
+  animation:afWatchGlow 2.6s ease-in-out infinite;
+}
+@keyframes afWatchGlow{
+  0%,100%{ box-shadow:0 0 0 4px rgba(201,149,77,.10), 0 10px 22px rgba(154,102,20,.20), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -3px 0 rgba(154,102,20,.16); }
+  50%    { box-shadow:0 0 0 8px rgba(201,149,77,.17), 0 15px 32px rgba(154,102,20,.32), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -3px 0 rgba(154,102,20,.16); }
+}
+
+/* â”€â”€ Countdown â€” segmented, raised red capsule â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-timer{
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  gap:14px!important;
+  background:none!important; border:0!important; box-shadow:none!important;
+  padding:0!important; border-radius:0!important;
+  margin:18px auto 0!important; width:fit-content!important;
+}
+.af-root .af-timer-label{
+  display:inline-flex; align-items:center; gap:7px; white-space:nowrap;
+  font-size:11.5px!important; font-weight:800!important;
+  letter-spacing:.14em!important; text-transform:uppercase!important;
+  color:var(--ink-soft)!important;
+}
+.af-root .af-timer-blocks{
+  display:inline-flex; align-items:flex-start; gap:5px;
+  padding:8px 13px 7px; border-radius:14px;
+  background:linear-gradient(180deg,#EF4444 0%,#DC2626 55%,#B91C1C 100%);
+  box-shadow:
+    0 0 0 1px rgba(153,27,27,.45),
+    0 10px 22px rgba(220,38,38,.36),
+    0 2px 5px rgba(153,27,27,.30),
+    inset 0 1px 0 rgba(255,255,255,.45),
+    inset 0 -3px 0 rgba(127,29,29,.45);
+}
+.af-root .af-tblock{ display:flex; flex-direction:column; align-items:center; min-width:36px; }
+.af-root .af-tblock b{
+  font-family:var(--fb)!important; font-size:19px; font-weight:900; line-height:1;
+  color:#fff!important; font-variant-numeric:tabular-nums;
+  text-shadow:0 1px 2px rgba(127,29,29,.75);
+}
+.af-root .af-tblock i{
+  font-style:normal; font-size:8.5px; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; color:rgba(255,255,255,.85); margin-top:4px;
+}
+.af-root .af-tsep{
+  color:rgba(255,255,255,.65); font-size:17px; font-weight:800; line-height:1;
+  margin-top:1px; animation:afBlink 1s steps(1) infinite;
+}
+@keyframes afBlink{ 0%,49%{ opacity:1; } 50%,100%{ opacity:.28; } }
+.af-root .af-timer-dot{
+  flex:0 0 7px!important; width:7px!important; height:7px!important;
+  border-radius:50%; background:#DC2626!important;
+  box-shadow:0 0 0 0 rgba(220,38,38,.6);
+  animation:afTimerPulse 1.4s infinite;
+}
+/* Compact variant for the sticky bar */
+.af-root .af-timer-compact{ gap:10px!important; margin:0 auto 6px!important; }
+.af-root .af-timer-compact .af-timer-label{ font-size:9.5px!important; letter-spacing:.1em!important; }
+.af-root .af-timer-compact .af-timer-blocks{ padding:5px 10px 4px; border-radius:11px; gap:4px; }
+.af-root .af-timer-compact .af-tblock{ min-width:27px; }
+.af-root .af-timer-compact .af-tblock b{ font-size:14px; }
+.af-root .af-timer-compact .af-tblock i{ font-size:7px; margin-top:2px; }
+.af-root .af-timer-compact .af-tsep{ font-size:13px; }
+
+/* â”€â”€ CTA trust row â€” raised gold icon chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-trustrow li{ gap:9px; }
+.af-root .af-trustrow svg{
+  width:14px!important; height:14px!important; flex:0 0 14px;
+  fill:none!important; stroke:currentColor!important;
+}
+.af-root .af-trust-ic{
+  flex:0 0 27px; width:27px; height:27px; border-radius:50%;
+  display:grid; place-items:center; color:var(--brand);
+  background:linear-gradient(180deg,#FFF9EC 0%,#F4E3C3 100%);
+  border:1px solid rgba(154,102,20,.30);
+  box-shadow:
+    0 3px 8px rgba(154,102,20,.20),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(154,102,20,.14);
+  transition:transform .26s, box-shadow .26s;
+}
+.af-root .af-trustrow li:hover .af-trust-ic{
+  transform:translateY(-2px) scale(1.07);
+  box-shadow:
+    0 7px 16px rgba(154,102,20,.32),
+    0 0 0 4px rgba(201,149,77,.15),
+    inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+/* â”€â”€ Credibility strip â€” cards + feature chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-creds{ padding:34px 0 32px!important; }
+.af-root .af-creds-grid{
+  grid-template-columns:repeat(4,1fr)!important;
+  gap:16px!important; max-width:1060px!important; margin:0 auto!important;
+}
+.af-root .af-cred-item{
+  padding:22px 16px 18px!important; border-radius:var(--r);
+  background:#fff; border:1px solid var(--border);
+  box-shadow:0 2px 10px rgba(154,102,20,.07);
+  overflow:hidden;
+  transition:transform .28s, box-shadow .28s, border-color .28s;
+}
+/* The old 1px separators belong to the divider layout, not the card layout. */
+.af-root .af-cred-item+.af-cred-item::before{ display:none!important; }
+.af-root .af-cred-item::after{
+  content:""; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--brand),var(--brand-light),var(--brand));
+}
+.af-root .af-cred-item:hover{
+  transform:translateY(-4px);
+  border-color:rgba(154,102,20,.32);
+  box-shadow:var(--glow);
+}
+.af-root .af-credchips{
+  list-style:none; margin:20px auto 0!important; padding:0!important;
+  max-width:1060px; display:flex; flex-wrap:wrap;
+  justify-content:center; align-items:center; gap:10px 26px;
+}
+.af-root .af-credchips li{
+  flex:0 0 auto; display:inline-flex; align-items:center; gap:9px;
+  font-size:12.5px; font-weight:600; color:var(--ink-soft);
+}
+.af-root .af-credchip-ic{
+  flex:0 0 28px; width:28px; height:28px; border-radius:50%;
+  display:grid; place-items:center; color:var(--brand);
+  background:linear-gradient(180deg,#FFF9EC 0%,#F3E2C4 100%);
+  border:1px solid rgba(154,102,20,.28);
+  animation:afChipPulse 3.2s ease-in-out infinite; animation-delay:var(--pd,0s);
+}
+.af-root .af-credchip-ic svg{ width:14px; height:14px; flex:0 0 14px; }
+@keyframes afChipPulse{
+  0%,100%{ box-shadow:0 3px 8px rgba(154,102,20,.16), 0 0 0 0 rgba(201,149,77,.40), inset 0 1px 0 rgba(255,255,255,.95); }
+  55%    { box-shadow:0 3px 8px rgba(154,102,20,.16), 0 0 0 7px rgba(201,149,77,0),  inset 0 1px 0 rgba(255,255,255,.95); }
+}
+
+/* â”€â”€ Guarantee badge â€” 3D, haloed, interactive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-guar-badge{
+  position:relative;
+  background:linear-gradient(180deg,#FFFFFF 0%,#E9F7EE 100%)!important;
+  border:1.5px solid rgba(21,128,61,.32)!important;
+  box-shadow:
+    0 0 0 6px rgba(21,128,61,.07),
+    0 14px 30px rgba(21,128,61,.22),
+    inset 0 2px 0 rgba(255,255,255,.95),
+    inset 0 -3px 0 rgba(21,128,61,.15)!important;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s;
+}
+.af-root .af-guar-badge:hover{
+  transform:translateY(-4px) scale(1.05);
+  box-shadow:
+    0 0 0 10px rgba(21,128,61,.11),
+    0 22px 44px rgba(21,128,61,.30),
+    inset 0 2px 0 rgba(255,255,255,.95),
+    inset 0 -3px 0 rgba(21,128,61,.15)!important;
+}
+.af-root .af-guar-ring{
+  position:absolute; inset:-7px; border-radius:50%;
+  border:1.5px solid rgba(21,128,61,.32); pointer-events:none;
+  animation:afRing 2.8s ease-out infinite;
+}
+@keyframes afRing{
+  0%  { transform:scale(.92); opacity:.7; }
+  70% { transform:scale(1.2);  opacity:0; }
+  100%{ transform:scale(1.2);  opacity:0; }
+}
+.af-root .af-guar-card{ transition:transform .28s, box-shadow .28s, border-color .28s; }
+.af-root .af-guar-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(154,102,20,.26);
+  box-shadow:var(--glow);
+}
+.af-root .af-guar-tick{ transition:transform .22s, box-shadow .22s; }
+.af-root .af-guar-card li:hover .af-guar-tick{
+  transform:scale(1.12);
+  box-shadow:0 0 0 4px rgba(21,128,61,.12);
+}
+
+/* â”€â”€ Gold glow on every raised surface (replaces neutral drop shadows) â”€â”€â”€â”€ */
+.af-root .af-foryou-list li:hover,
+.af-root .af-incl-card:hover,
+.af-root .af-photo:hover,
+.af-root .af-tcard:hover{
+  border-color:rgba(154,102,20,.30)!important;
+  box-shadow:var(--glow)!important;
+}
+.af-root .af-foryou-tick{ transition:transform .22s, box-shadow .22s; }
+.af-root .af-foryou-list li:hover .af-foryou-tick{
+  transform:scale(1.12);
+  box-shadow:0 0 0 4px rgba(201,149,77,.16);
+}
+.af-root .af-q{ transition:border-color .25s, box-shadow .25s; }
+.af-root .af-q:hover{
+  border-color:rgba(154,102,20,.28)!important;
+  box-shadow:0 6px 18px rgba(154,102,20,.13)!important;
+}
+
+/* â”€â”€ Primary CTA â€” soft breathing halo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-cta-block .af-cta{ animation:afCtaPulse 3s ease-in-out infinite; }
+@keyframes afCtaPulse{
+  0%,100%{ box-shadow:var(--sh-brand), 0 0 0 0  rgba(201,149,77,.36)!important; }
+  60%    { box-shadow:var(--sh-brand), 0 0 0 12px rgba(201,149,77,0)!important; }
+}
+
+/* â”€â”€ Sticky bar â€” travelling gold beam on the top edge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-stuck{ overflow:hidden!important; }
+.af-root .af-stuck-beam{
+  position:absolute; top:0; left:0; height:2px; width:34%;
+  background:linear-gradient(90deg,transparent,rgba(201,149,77,.75),#F5E2BC,rgba(201,149,77,.75),transparent);
+  filter:drop-shadow(0 0 6px rgba(201,149,77,.9));
+  animation:afBeam 3.4s linear infinite; pointer-events:none; z-index:2;
+}
+@keyframes afBeam{ 0%{ transform:translateX(-105%); } 100%{ transform:translateX(400%); } }
+
+/* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (max-width:900px){
+  .af-root .af-creds-grid{ grid-template-columns:repeat(2,1fr)!important; gap:12px!important; }
+  .af-root .af-credchips{ gap:10px 18px; }
+}
+@media (max-width:640px){
+  .af-root .af-hl-pill{ padding:1px 10px 2px; }
+  .af-root .af-watch-box{ padding:9px 15px 8px; gap:8px; border-radius:12px; }
+  .af-root .af-timer{ gap:10px!important; flex-wrap:wrap; }
+  .af-root .af-timer-label{ font-size:10px!important; letter-spacing:.1em!important; }
+  .af-root .af-timer-blocks{ padding:6px 10px 5px; gap:4px; }
+  .af-root .af-tblock{ min-width:30px; }
+  .af-root .af-tblock b{ font-size:16px; }
+  .af-root .af-tblock i{ font-size:7.5px; }
+  .af-root .af-trust-ic{ flex:0 0 23px; width:23px; height:23px; }
+  .af-root .af-trustrow svg{ width:12px!important; height:12px!important; flex:0 0 12px; }
+  .af-root .af-cred-item{ padding:16px 10px 14px!important; }
+  .af-root .af-credchips{ gap:9px 14px; margin-top:16px!important; }
+  .af-root .af-credchips li{ font-size:11.5px; gap:7px; }
+  .af-root .af-credchip-ic{ flex:0 0 24px; width:24px; height:24px; }
+  .af-root .af-credchip-ic svg{ width:12px; height:12px; flex:0 0 12px; }
+  .af-root .af-logo-mark{ padding:6px 12px!important; border-radius:11px!important; }
+}
+@media (max-width:400px){
+  .af-root .af-credchips li{ font-size:10.5px; }
+  .af-root .af-tblock b{ font-size:15px; }
+}
+
+/* â”€â”€ Motion safety â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (prefers-reduced-motion:reduce){
+  .af-root .af-marker-dot,
+  .af-root .af-watch-box,
+  .af-root .af-credchip-ic,
+  .af-root .af-guar-ring,
+  .af-root .af-stuck-beam,
+  .af-root .af-tsep,
+  .af-root .af-timer-dot,
+  .af-root .af-cta-block .af-cta{ animation:none!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   POLISH PASS 2 â€” gold frames, 3D ticks, always-on boxed sticky bar
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€ Hero callout: the "live" dot was gold-on-gold, i.e. invisible â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-callout{
+  border-radius:999px!important;
+  background:linear-gradient(180deg,#B58225 0%,#9A6614 55%,#7C5210 100%)!important;
+  box-shadow:
+    0 8px 20px rgba(154,102,20,.32),
+    0 0 0 4px rgba(201,149,77,.13),
+    inset 0 1px 0 rgba(255,255,255,.34),
+    inset 0 -2px 0 rgba(90,58,10,.42)!important;
+}
+/* NOTE: the .af-callout::before dot is styled further down (the gold-radial
+   version). It deliberately sets box-shadow WITHOUT !important so the afLiveDot
+   keyframes below can animate the ring — an !important box-shadow here would
+   freeze the pulse, which is exactly the bug this block used to cause. */
+@keyframes afLiveDot{
+  0%  { box-shadow:0 0 0 0 rgba(255,246,228,.85); }
+  70% { box-shadow:0 0 0 8px rgba(255,246,228,0); }
+  100%{ box-shadow:0 0 0 8px rgba(255,246,228,0); }
+}
+
+/* â”€â”€ CTAs: fully round, raised, with a constant travelling shine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-cta{
+  border-radius:999px!important;
+  background:linear-gradient(180deg,#B98A2C 0%,#9A6614 52%,#7A5010 100%)!important;
+  box-shadow:
+    0 12px 26px rgba(154,102,20,.32),
+    0 2px 5px rgba(90,58,10,.28),
+    inset 0 1px 0 rgba(255,255,255,.36),
+    inset 0 -3px 0 rgba(90,58,10,.40)!important;
+}
+/* Was hover-only (transition on `left`). Now runs continuously.
+   NOTE: `left` must NOT carry !important here — an !important declaration
+   outranks animation keyframes, which would freeze the sweep at -60% and the
+   shine would never travel. Same trap as the hero live-dot pulse. */
+.af-root .af-cta::after{
+  transition:none!important;
+  animation:afCtaShine 3.4s ease-in-out infinite;
+}
+/* Quick sweep, then a long pause before repeating — a constant sweep reads as
+   noise, a periodic one draws the eye back. */
+@keyframes afCtaShine{
+  0%   { left:-60%; }
+  30%  { left:120%; }
+  100% { left:120%; }
+}
+.af-root .af-cta:hover{
+  transform:translateY(-2px); filter:brightness(1.07);
+  box-shadow:
+    0 18px 36px rgba(154,102,20,.40),
+    0 2px 5px rgba(90,58,10,.30),
+    inset 0 1px 0 rgba(255,255,255,.40),
+    inset 0 -3px 0 rgba(90,58,10,.40)!important;
+}
+.af-root .af-cta .arrow{
+  border-radius:50%!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 2px 5px rgba(90,58,10,.28);
+}
+
+/* â”€â”€ 3D tick marks (used site-wide) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-foryou-tick,
+.af-root .af-guar-tick,
+.af-root .af-trust-ic{
+  box-shadow:
+    0 4px 9px rgba(154,102,20,.22),
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(154,102,20,.20)!important;
+}
+.af-root .af-foryou-tick{
+  background:linear-gradient(180deg,#FFF9EC 0%,#F3E2C4 100%)!important;
+  border:1px solid rgba(154,102,20,.30)!important;
+}
+.af-root .af-guar-tick{
+  background:linear-gradient(180deg,#F1FBF4 0%,#D8F0E1 100%)!important;
+  border:1px solid rgba(21,128,61,.30)!important;
+  box-shadow:
+    0 4px 9px rgba(21,128,61,.20),
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(21,128,61,.18)!important;
+}
+.af-root .af-foryou-tick svg,
+.af-root .af-guar-tick svg{ filter:drop-shadow(0 1px 0 rgba(255,255,255,.85)); }
+
+/* â”€â”€ Gallery slides: gold frame with a travelling sheen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* The old frame carried `inset 0 0 0 5px rgba(14,12,9,.95)` â€” a 5px near-black
+   ring left over from the dark theme. Replaced with layered gold rings; the
+   moving sheen lives on the background, which is what shows in the 14px
+   gutter around the (object-fit:contain) image. */
+.af-root .af-gslide{
+  background:linear-gradient(115deg,
+    #F0E4CC 0%, #FBF1DE 18%, #F6DFB6 32%, #FFFBF2 44%,
+    #F6DFB6 56%, #FBF1DE 74%, #F0E4CC 100%)!important;
+  background-size:300% 100%!important;
+  border:1px solid rgba(154,102,20,.45)!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.85),
+    inset 0 0 0 5px rgba(201,149,77,.32),
+    inset 0 0 0 6px rgba(154,102,20,.50),
+    0 10px 26px rgba(154,102,20,.20)!important;
+  animation:afSlideSheen 7s linear infinite;
+}
+@keyframes afSlideSheen{
+  0%  { background-position:200% 0; }
+  100%{ background-position:-100% 0; }
+}
+.af-root .af-gslide:hover{
+  border-color:rgba(154,102,20,.75)!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.9),
+    inset 0 0 0 5px rgba(201,149,77,.45),
+    inset 0 0 0 6px rgba(154,102,20,.75),
+    0 20px 44px rgba(154,102,20,.30),
+    0 0 34px rgba(201,149,77,.30)!important;
+}
+.af-root .af-gslide::before,
+.af-root .af-gslide::after{ border-color:var(--brand,#9A6614)!important; }
+
+/* â”€â”€ About photo: one gold frame, not two â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* `.frame` drew a white inset rectangle on top of the container's own border,
+   which read as a double frame. It becomes the single gold inner rule. */
+.af-root .af-about-photo{
+  border:1px solid rgba(154,102,20,.42)!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.85),
+    0 16px 38px rgba(154,102,20,.22),
+    0 0 0 5px rgba(201,149,77,.10)!important;
+  background:linear-gradient(115deg,
+    #F0E4CC 0%, #FBF1DE 20%, #F6DFB6 34%, #FFFBF2 46%,
+    #F6DFB6 58%, #FBF1DE 76%, #F0E4CC 100%)!important;
+  background-size:300% 100%!important;
+  animation:afSlideSheen 9s linear infinite;
+  transition:box-shadow .35s, transform .35s;
+}
+.af-root .af-about-photo:hover{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.9),
+    0 22px 50px rgba(154,102,20,.30),
+    0 0 0 7px rgba(201,149,77,.16)!important;
+}
+.af-root .af-about-photo .frame{
+  inset:0!important; border:0!important; border-radius:inherit!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.55), inset 0 0 0 2px rgba(154,102,20,.28)!important;
+}
+/* Badge + stat row sit above the photo */
+.af-root .af-about-photo .badge{ z-index:4; }
+.af-root .af-about-photo .count{
+  z-index:4;
+  background:linear-gradient(180deg,transparent,rgba(20,16,11,.82) 45%)!important;
+  border:0!important;
+}
+
+/* â”€â”€ Credibility cards: keep the column layout on phones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* landing.css switches .af-cred-item to a horizontal row under 640px, which
+   clipped the labels inside the new card. Force the stacked layout back. */
+@media (max-width:640px){
+  .af-root .af-cred-item{
+    display:flex!important; flex-direction:column!important;
+    align-items:center!important; text-align:center!important;
+    gap:0!important; padding:16px 10px 14px!important;
+  }
+  .af-root .af-cred-item::before{ display:none!important; }
+  .af-root .af-cred-num{ font-size:24px!important; margin-bottom:5px!important; }
+  .af-root .af-cred-label{
+    font-size:10.5px!important; line-height:1.3!important;
+    white-space:normal!important; text-align:center!important;
+  }
+  .af-root .af-cred-sub{ font-size:9.5px!important; text-align:center!important; }
+}
+
+/* â”€â”€ Sticky bar: boxed, always visible â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-stuck{ transform:translateY(0)!important; }
+.af-root.hide-sticky .af-stuck{ transform:translateY(0)!important; }
+.af-root .af-stuck-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:22px; width:100%; max-width:1180px; margin:0 auto; padding:0 22px;
+}
+@media (min-width:901px){
+  /* The bar itself is just the surface; the inner box does the centring. */
+  .af-root .af-stuck{
+    display:block!important;
+    padding:12px 0 calc(12px + env(safe-area-inset-bottom))!important;
+  }
+  .af-root .af-stuck .af-cta{
+    width:auto!important; min-width:400px; max-width:560px; flex:0 0 auto;
+  }
+  .af-root .af-stuck .af-timer-compact{ margin:0!important; flex:0 0 auto; }
+}
+@media (max-width:900px){
+  .af-root .af-stuck-inner{
+    flex-direction:column; gap:6px; padding:0 4px;
+  }
+  .af-root .af-stuck .af-cta{ width:100%!important; }
+}
+
+/* â”€â”€ Desktop-only line break in the testimonial heading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-br-desk{ display:inline; }
+@media (max-width:900px){ .af-root .af-br-desk{ display:none; } }
+
+/* â”€â”€ Motion safety â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (prefers-reduced-motion:reduce){
+  .af-root .af-gslide,
+  .af-root .af-about-photo,
+  .af-root .af-callout::before,
+  .af-root .af-cta::after{ animation:none!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   FIX â€” coach photo invisible
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   `.af-about-photo` carries `data-af-reveal`, and landing.css:80 fades that in
+   with `opacity:0` + `animation:afRevealIn ... forwards`. `animation` is a
+   single-slot property, so declaring the sheen on its own REPLACED the reveal
+   and the element stayed at opacity:0 forever.
+
+   Both animations must therefore be listed together â€” and the reduced-motion
+   branch must restore opacity directly rather than just killing the animation,
+   which would re-create the same invisible state.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.af-root .af-about-photo{
+  animation:
+    afRevealIn .7s cubic-bezier(.2,.8,.2,1) forwards,
+    afSlideSheen 9s linear infinite !important;
+  animation-delay:var(--d,0s), 0s !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .af-root .af-about-photo{
+    animation:none !important;
+    opacity:1 !important;
+    transform:none !important;
+  }
+}
+
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3D + HOVER PASS — landing
+   Shared treatment: gold chips for icons, filled chips for numbered steps,
+   lift + gold halo for cards. Warm shadows only — no neutral drops.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Hero eyebrow "live" dot ---------------------------------------------------
+   The pulse never rendered because the box-shadow carried !important, and an
+   !important declaration outranks an animation's own value. Dropping it lets
+   the afLiveDot keyframes drive the ring again. Colour now matches the
+   health-marker pill dots (same gold radial), lightened just enough to stay
+   legible on the dark-gold callout, with a hairline ring for definition. */
+.af-root .af-callout::before{
+  background:radial-gradient(circle at 32% 30%,#FFF6E4 0%,#E9C489 70%)!important;
+  border:1px solid rgba(255,255,255,.45);
+  box-shadow:0 0 0 0 rgba(255,246,228,.85);
+  animation:afLiveDot 1.8s ease-out infinite!important;
+}
+
+/* FAQ toggle ---------------------------------------------------------------- */
+.af-root .af-q-head .ic{
+  background:linear-gradient(180deg,#FFF9EC 0%,#F3E2C4 100%)!important;
+  border:1px solid rgba(154,102,20,.30)!important;
+  box-shadow:
+    0 4px 9px rgba(154,102,20,.22),
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(154,102,20,.20)!important;
+  transition:transform .3s, background .3s, color .3s, box-shadow .3s!important;
+}
+.af-root .af-q-head:hover .ic{
+  transform:scale(1.09);
+  box-shadow:
+    0 7px 16px rgba(154,102,20,.32),
+    0 0 0 4px rgba(201,149,77,.14),
+    inset 0 1.5px 0 rgba(255,255,255,.95)!important;
+}
+.af-root .af-q.open .af-q-head .ic{
+  background:linear-gradient(180deg,#B98A2C 0%,#9A6614 52%,#7A5010 100%)!important;
+  color:#fff!important;
+  box-shadow:
+    0 6px 14px rgba(154,102,20,.32),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -2px 0 rgba(90,58,10,.45)!important;
+  border-color:rgba(90,58,10,.45)!important;
+  transform:rotate(45deg);
+}
+.af-root .af-q.open .af-q-head:hover .ic{ transform:rotate(45deg) scale(1.09); }
+.af-root .af-q.open .af-q-head .ic svg{ stroke:#fff!important; }
+
+/* Remaining landing chips + cards ------------------------------------------- */
+.af-root .af-opt .opt-num,
+.af-root .af-mpt-ic{
+  background:linear-gradient(180deg,#FFF9EC 0%,#F3E2C4 100%)!important;
+  border:1px solid rgba(154,102,20,.30)!important;
+  box-shadow:
+    0 4px 9px rgba(154,102,20,.22),
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(154,102,20,.20)!important; }
+.af-root .af-opt-2 .opt-num{
+  background:linear-gradient(180deg,#B98A2C 0%,#9A6614 52%,#7A5010 100%)!important;
+  color:#fff!important;
+  box-shadow:
+    0 6px 14px rgba(154,102,20,.32),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -2px 0 rgba(90,58,10,.45)!important; }
+.af-root .af-money-icon{
+  background:linear-gradient(180deg,#FFF9EC 0%,#F3E2C4 100%)!important;
+  border:1px solid rgba(154,102,20,.30)!important;
+  box-shadow:
+    0 4px 9px rgba(154,102,20,.22),
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(154,102,20,.20)!important;
+  transition:transform .3s, box-shadow .3s!important;
+}
+.af-root .af-money-card:hover .af-money-icon{
+  transform:translateY(-3px) scale(1.05);
+  box-shadow:0 10px 22px rgba(154,102,20,.30), 0 0 0 5px rgba(201,149,77,.12)!important;
+}
+.af-root .af-tcard{ transition:transform .28s, box-shadow .28s, border-color .28s; }
+.af-root .af-tcard:hover{
+  transform:translateY(-4px);
+  border-color:rgba(154,102,20,.28)!important;
+  box-shadow:0 14px 32px rgba(154,102,20,.20), 0 0 0 4px rgba(201,149,77,.10)!important; }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   COPY / LAYOUT PASS â€” static bar, 3-line H1, one-line CTA, FAQ-band CTA
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€ Announcement bar: static, centred, no scroll â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-announce-static .af-announce-track{
+  animation:none!important;
+  justify-content:center!important;
+  gap:28px!important;
+  white-space:normal!important;
+  flex-wrap:wrap;
+}
+
+/* â”€â”€ Hero H1: explicit 3-line break â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* The base rule keeps .af-accent on one line; with hard breaks the phrase is
+   already isolated, so allow it to wrap on narrow phones rather than overflow. */
+.af-root .af-h1{ text-wrap:balance; }
+@media (max-width:420px){
+  .af-root .af-h1 .af-accent{ white-space:normal!important; }
+}
+
+/* Hero starts the page now that the header is gone â€” restore the top breathing
+   room the header used to provide. */
+.af-root .af-hero{ padding-top:26px!important; }
+@media (max-width:640px){ .af-root .af-hero{ padding-top:18px!important; } }
+
+/* â”€â”€ CTA label: one line on desktop, two on mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* .cta-d / .cta-m are gone â€” every CTA now renders the same <CtaLabel>. The
+   old rules toggled those classes, so they simply no longer match. */
+.af-root .af-cta .cta-lbl{ display:inline; }
+.af-root .af-cta .cta-br{ display:none; }
+
+/* Fluid down-scale so the full sentence holds one line across desktop widths. */
+.af-root .af-cta, .af-root a.af-cta{
+  font-size:clamp(13px,1.15vw,16px)!important;
+  padding:14px 26px 12px!important;
+}
+.af-root .af-cta .cta-top{ flex-wrap:nowrap!important; }
+
+@media (max-width:900px){
+  .af-root .af-cta, .af-root a.af-cta{ font-size:clamp(12.5px,1.7vw,15px)!important; }
+}
+
+/* Phones: break after "Diagnosis". */
+@media (max-width:640px){
+  .af-root .af-cta .cta-br{ display:inline!important; }
+  .af-root .af-cta, .af-root a.af-cta{
+    font-size:13px!important; padding:12px 18px 11px!important;
+  }
+  .af-root .af-cta .cta-lbl{ line-height:1.35!important; }
+  .af-root .af-cta .cta-top{ align-items:center!important; gap:10px!important; }
+}
+@media (max-width:380px){
+  .af-root .af-cta, .af-root a.af-cta{ font-size:12px!important; padding:11px 14px 10px!important; }
+}
+
+/* Sticky bar CTA â€” same label, so it needs the same two-line behaviour. */
+.af-root .af-stuck .af-cta .cta-top{ font-size:inherit!important; }
+@media (min-width:901px){
+  .af-root .af-stuck .af-cta{
+    min-width:0!important; max-width:640px;
+    font-size:clamp(12.5px,1vw,15px)!important;
+    padding:12px 24px 11px!important;
+  }
+}
+@media (max-width:900px){
+  .af-root .af-stuck .af-cta{ font-size:12.5px!important; padding:11px 16px 10px!important; }
+}
+
+/* â”€â”€ Meet-your-coach: highlights inside body copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* .af-hl-pill is inline-block; inside a paragraph it must not disturb leading. */
+.af-root .af-about-text .af-hl-pill{
+  padding:1px 10px 2px; font-size:.95em; line-height:1.3; vertical-align:baseline;
+}
+.af-root .af-about-text p{ line-height:1.75!important; }
+
+/* â”€â”€ Closing CTA inside the FAQ section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Replaces the old .af-final band so there's no background seam. */
+.af-root .af-faq-cta{
+  max-width:820px; margin:8px auto 0!important; text-align:center;
+  padding-top:36px; border-top:1px solid var(--border,#EBE2D0);
+}
+.af-root .af-faq{ padding-bottom:88px!important; }
+@media (max-width:640px){
+  .af-root .af-faq-cta{ padding-top:28px; }
+  .af-root .af-faq{ padding-bottom:56px!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HERO EMPHASIS â€” 1.7Ã— headline, quieter grid, section eyebrows
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€ Hero H1 at 1.7Ã— â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   Every stop scaled from the original clamp values:
+     base    clamp(22px, 2.1vw, 32px) â†’ clamp(37px, 3.57vw, 54px)
+     â‰¤1199   clamp(20px, 2.5vw, 28px) â†’ clamp(34px, 4.25vw, 48px)
+     â‰¤767    clamp(22px, 5.4vw, 28px) â†’ clamp(37px, 9.2vw, 48px)
+   Tracking tightens as size grows (large display type needs less), and long
+   lines may wrap past the hard <br> on very narrow phones â€” that's intended,
+   it degrades to four lines rather than overflowing. */
+.af-root .af-h1{
+  font-size:clamp(37px, 3.57vw, 54px)!important;
+  line-height:1.14!important;
+  letter-spacing:-.025em!important;
+  overflow-wrap:break-word;
+}
+@media (max-width:1199px){
+  .af-root .af-h1{ font-size:clamp(34px, 4.25vw, 48px)!important; }
+}
+@media (max-width:767px){
+  .af-root .af-h1{
+    font-size:clamp(37px, 9.2vw, 48px)!important;
+    line-height:1.16!important;
+    letter-spacing:-.03em!important;
+  }
+}
+@media (max-width:380px){
+  /* Below ~380px the third line would break awkwardly mid-phrase. */
+  .af-root .af-h1{ font-size:33px!important; }
+}
+
+/* The headline is now the loudest element â€” give it room and let the
+   sub-heading settle back a step so the hierarchy stays clean. */
+.af-root .af-h1{ margin:0 auto 16px!important; }
+
+/* â”€â”€ Hero grid: quieter so it doesn't compete with the headline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-hero::before{
+  opacity:.34!important;
+  background-size:56px 56px!important;
+  /* Tighter mask keeps the texture at the edges and clears the centre where
+     the headline sits. */
+  mask-image:radial-gradient(ellipse at 50% 42%,transparent 22%,#000 62%,transparent 88%)!important;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 42%,transparent 22%,#000 62%,transparent 88%)!important;
+}
+/* The warm glow behind the headline also softens. */
+.af-root .af-hero::after{ opacity:.7; }
+
+@media (max-width:640px){
+  .af-root .af-hero::before{ opacity:.26!important; background-size:44px 44px!important; }
+}
+
+/* â”€â”€ Section eyebrows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* The About section's eyebrow sits in a left-aligned text column, so it opts
+   out of the centred default. */
+.af-root .af-eyebrow-left{
+  text-align:left!important; margin:0 0 10px!important; max-width:none;
+}
+@media (max-width:900px){
+  /* About switches to a stacked, centred layout at this width. */
+  .af-root .af-eyebrow-left{ text-align:center!important; margin:0 auto 10px!important; }
+}
+
+/* Gallery + FAQ eyebrows need their heading gap tightened, since those
+   headings previously carried the full top margin themselves. */
+.af-root .af-gallery .af-eyebrow{ margin-bottom:10px!important; }
+.af-root .af-faq .af-eyebrow{ margin-bottom:12px!important; }
+.af-root .af-guar .af-eyebrow{ margin-bottom:12px!important; }
+.af-root .af-incl .af-eyebrow{ margin-bottom:12px!important; }
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MOBILE â€” compact credibility cards, About heading line-break
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* Mobile-only line break (inverse of .af-br-desk). */
+.af-root .af-br-mob{ display:none; }
+@media (max-width:900px){
+  .af-root .af-br-mob{ display:inline; }
+}
+
+/* â”€â”€ Credibility cards: compact 2-up on mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Previously these kept desktop's tall padding and type, so four cards ate
+   most of a phone screen. Tightened to short, dense tiles. */
+@media (max-width:640px){
+  .af-root .af-creds{ padding:22px 0 20px!important; }
+  .af-root .af-creds-grid{
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:10px!important;
+    max-width:420px!important;
+  }
+  .af-root .af-cred-item{
+    padding:13px 8px 12px!important;
+    border-radius:12px!important;
+    justify-content:center!important;
+  }
+  .af-root .af-cred-item::after{ height:2.5px; }
+  .af-root .af-cred-num{
+    font-size:22px!important;
+    line-height:1!important;
+    margin-bottom:6px!important;
+  }
+  .af-root .af-cred-label{
+    font-size:9.5px!important;
+    letter-spacing:.06em!important;
+    line-height:1.25!important;
+    margin-bottom:2px!important;
+  }
+  .af-root .af-cred-sub{
+    font-size:8.5px!important;
+    line-height:1.25!important;
+    margin-top:0!important;
+  }
+}
+
+@media (max-width:380px){
+  .af-root .af-creds-grid{ gap:8px!important; }
+  .af-root .af-cred-item{ padding:11px 6px 10px!important; }
+  .af-root .af-cred-num{ font-size:20px!important; }
+  .af-root .af-cred-label{ font-size:9px!important; }
+}
+
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PASS 6 â€” marquee fit, round dot, gold guarantee, mobile heading fits,
+            About mobile order, Included icons
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€ Announcement bar: one line on mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (max-width:640px){
+  .af-root .af-announce-static .af-announce-track{
+    flex-wrap:nowrap!important;
+    gap:12px!important;
+    font-size:9.5px!important;
+    letter-spacing:.05em!important;
+    padding:9px 10px!important;
+    white-space:nowrap!important;
+  }
+  .af-root .af-announce-static .af-announce-track span{ white-space:nowrap!important; }
+  .af-root .af-announce-static .dot{ flex:0 0 4px!important; width:4px!important; height:4px!important; }
+}
+@media (max-width:380px){
+  .af-root .af-announce-static .af-announce-track{ font-size:8.5px!important; gap:9px!important; }
+}
+
+/* â”€â”€ Hero eyebrow dot: perfect circle on mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   landing.css:1619 shrinks it to 6px via width/height only â€” inside a flex row
+   the box could still be squashed, giving the ellipse. Lock the flex basis and
+   aspect ratio so it can never deform. */
+.af-root .af-callout::before{
+  flex:0 0 8px!important; aspect-ratio:1/1!important;
+}
+@media (max-width:640px){
+  .af-root .af-callout::before{
+    flex:0 0 7px!important;
+    width:7px!important; height:7px!important;
+    min-width:7px!important; min-height:7px!important;
+  }
+}
+
+/* â”€â”€ CTA: sub-line removed, so tighten the button box â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-cta .cta-top{ margin:0!important; }
+
+/* â”€â”€ Hero H1 on mobile: must hold 3 lines â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   The longest line is "& Never Start Over Again" (24 chars). At the previous
+   37px floor it wrapped to a 4th line on a 375px screen. These values are
+   sized so that line fits the available width at each step, scaling down
+   smoothly as the viewport narrows instead of breaking. */
+@media (max-width:767px){
+  .af-root .af-h1{
+    font-size:clamp(26px, 7.4vw, 44px)!important;
+    line-height:1.18!important;
+    letter-spacing:-.028em!important;
+    text-wrap:initial!important;
+  }
+  /* Hard breaks already control the 3 lines; stop any extra wrapping. */
+  .af-root .af-h1 .af-accent{ white-space:nowrap!important; }
+}
+@media (max-width:420px){
+  .af-root .af-h1{ font-size:7.1vw!important; }
+}
+@media (max-width:340px){
+  .af-root .af-h1{ font-size:6.9vw!important; letter-spacing:-.032em!important; }
+}
+
+/* â”€â”€ Guarantee section: match other section headings, and go gold â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-guar h2{
+  font-size:clamp(24px,3.6vw,36px)!important;
+}
+.af-root .af-guar .af-eyebrow{
+  font-size:11px!important; letter-spacing:.18em!important;
+}
+@media (max-width:640px){
+  .af-root .af-guar .af-eyebrow{ font-size:10px!important; letter-spacing:.14em!important; }
+}
+
+/* Badge: green â†’ brand gold, including its halo ring and hover. */
+.af-root .af-guar-badge{
+  background:linear-gradient(180deg,#FFFFFF 0%,#FBF1DE 100%)!important;
+  border:1.5px solid rgba(154,102,20,.32)!important;
+  box-shadow:
+    0 0 0 6px rgba(201,149,77,.09),
+    0 14px 30px rgba(154,102,20,.24),
+    inset 0 2px 0 rgba(255,255,255,.95),
+    inset 0 -3px 0 rgba(154,102,20,.16)!important;
+}
+.af-root .af-guar-badge:hover{
+  box-shadow:
+    0 0 0 10px rgba(201,149,77,.14),
+    0 22px 44px rgba(154,102,20,.32),
+    inset 0 2px 0 rgba(255,255,255,.95),
+    inset 0 -3px 0 rgba(154,102,20,.16)!important;
+}
+.af-root .af-guar-badge svg{ stroke:var(--brand,#9A6614)!important; }
+.af-root .af-guar-ring{ border-color:rgba(154,102,20,.34)!important; }
+
+/* The "What We Ask In Return" ticks follow the same shift. */
+.af-root .af-guar-tick{
+  background:linear-gradient(180deg,#FFF9EC 0%,#F3E2C4 100%)!important;
+  border:1px solid rgba(154,102,20,.30)!important;
+  box-shadow:
+    0 4px 9px rgba(154,102,20,.22),
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(154,102,20,.20)!important;
+}
+.af-root .af-guar-tick svg{ stroke:var(--brand,#9A6614)!important; }
+.af-root .af-guar-card li:hover .af-guar-tick{
+  box-shadow:0 0 0 4px rgba(201,149,77,.16)!important;
+}
+
+/* â”€â”€ About on mobile: eyebrow â†’ title â†’ image â†’ description â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   `display:contents` promotes the text block's children to flex items of the
+   grid, so the photo can be ordered between the title and the copy.
+   Note: a display:contents box generates no box, so the parent's
+   data-af-reveal opacity:0 simply doesn't apply â€” children stay visible. */
+@media (max-width:900px){
+  .af-root .af-about-grid{
+    display:flex!important; flex-direction:column!important; gap:0!important;
+  }
+  .af-root .af-about-text{ display:contents!important; }
+  .af-root .af-about-text .af-eyebrow{ order:1; margin:0 auto 8px!important; }
+  .af-root .af-about-text h2{ order:2; margin:0 0 18px!important; text-align:center!important; }
+  .af-root .af-about-photo{ order:3; margin:0 0 20px!important; width:100%; }
+  .af-root .af-about-text p{ order:4; }
+}
+
+/* â”€â”€ "What's Included": icon chips replace the 01/02 numbers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.af-root .af-incl-ic{
+  width:44px; height:44px; border-radius:13px;
+  display:grid; place-items:center; margin-bottom:14px;
+  color:var(--brand,#9A6614);
+  background:linear-gradient(180deg,#FFF9EC 0%,#F3E2C4 100%);
+  border:1px solid rgba(154,102,20,.30);
+  box-shadow:
+    0 5px 12px rgba(154,102,20,.22),
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(154,102,20,.20);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s;
+}
+.af-root .af-incl-ic svg{
+  width:22px; height:22px;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.9));
+}
+.af-root .af-incl-card:hover .af-incl-ic{
+  transform:translateY(-3px) scale(1.06);
+  box-shadow:
+    0 10px 22px rgba(154,102,20,.32),
+    0 0 0 5px rgba(201,149,77,.14),
+    inset 0 1.5px 0 rgba(255,255,255,.95);
+}
+@media (max-width:640px){
+  .af-root .af-incl-ic{ width:38px; height:38px; border-radius:11px; margin-bottom:12px; }
+  .af-root .af-incl-ic svg{ width:19px; height:19px; }
+}
+

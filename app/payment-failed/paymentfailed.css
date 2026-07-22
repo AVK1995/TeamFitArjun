@@ -4,13 +4,13 @@
 .af-root, .af-root *, .af-root *::before, .af-root *::after { box-sizing:border-box!important; }
 .af-root {
   /* Arjun brand palette — dark bronze theme (matches landing.css) */
-  --brand:#C9954D; --brand-deep:#D8A45C; --brand-light:#E0B370; --brand-soft:#2A1F11;
-  --ink:#F1E5D0; --ink-soft:#999285; --muted:#66645C;
-  --bg:#0E0C09; --bg-alt:#1A1611; --bg-grid:#1F1A14;
-  --border:#2A241C; --border-strong:#3D3429;
+  --brand:#9A6614; --brand-deep:#7C5210; --brand-light:#C9954D; --brand-soft:#FBF1DE;
+  --ink:#1C1710; --ink-soft:#544E45; --muted:#847C6F;
+  --bg:#FFFFFF; --bg-alt:#FBF6EC; --bg-grid:#F3EADB;
+  --border:#EBE2D0; --border-strong:#D9CCB4;
   --success:#16A34A; --success-bg:rgba(22,163,74,.14);
-  --warn:#E0B370; --warn-bg:rgba(224,179,112,.12); --warn-deep:#F1E5D0;
-  --danger:#DC2626; --danger-bg:rgba(220,38,38,.12); --danger-deep:#FCA5A5;
+  --warn:#C9954D; --warn-bg:rgba(224,179,112,.12); --warn-deep:#1C1710;
+  --danger:#B4231D; --danger-bg:rgba(220,38,38,.12); --danger-deep:#FCA5A5;
   --fh:'Playfair Display','Georgia',serif;
   --fb:'Inter','Helvetica Neue',sans-serif;
   --r:14px; --r-lg:20px; --r-xl:28px;
@@ -96,7 +96,7 @@
   50%     { transform:translate(2px,-3px) rotate(-9deg); }
 }
 .af-root .pf-icon .card-stripe{
-  fill:#0E0C09; opacity:.85;
+  fill:#FFFFFF; opacity:.85;
 }
 .af-root .pf-icon .card-chip{
   fill:#FCD34D; stroke:#92400E; stroke-width:.6;
@@ -106,7 +106,7 @@
 }
 /* Cancel/X badge in corner */
 .af-root .pf-icon .badge-bg{
-  fill:#DC2626;
+  fill:#B4231D;
   filter:drop-shadow(0 4px 8px rgba(220,38,38,.4));
   animation:pfPulseBadge 2s ease-in-out infinite;
   transform-origin:80px 22px;
@@ -617,7 +617,7 @@
 .af-root .pf-ticket-btn-ghost svg{ stroke:#86EFAC; }
 .af-root .pf-ticket-btn-ghost:hover{ background:rgba(22,163,74,.28)!important; transform:translateY(-1px); color:#BBF7D0!important; }
 .af-root .pf-ticket-btn-ghost.closed{
-  background:rgba(255,255,255,.06)!important;
+  background:var(--bg-grid,#F3EADB)!important;
   color:var(--muted)!important;
   cursor:default;
   pointer-events:none;
@@ -637,22 +637,22 @@
 
 /* FOOTER (matches site) */
 .af-root .pf-foot{
-  padding:28px 0!important; background:#0E0C09!important;
-  color:rgba(255,255,255,.55)!important;
-  border-top:1px solid rgba(255,255,255,.06);
+  padding:28px 0!important; background:var(--bg-grid,#F3EADB)!important;
+  color:var(--ink-soft,#544E45)!important;
+  border-top:1px solid var(--border,#EBE2D0);
 }
 .af-root .pf-foot .af-wrap{ text-align:center; max-width:920px; }
 .af-root .pf-foot p{
-  color:rgba(255,255,255,.55)!important; font-size:11.5px!important;
+  color:var(--muted,#847C6F)!important; font-size:11.5px!important;
   line-height:1.6!important; margin:0 0 8px!important;
 }
 .af-root .pf-foot p.big{
-  color:rgba(255,255,255,.85)!important;
+  color:var(--ink,#1C1710)!important;
   font-size:13px!important; font-weight:700!important;
 }
 .af-root .pf-foot .links{ margin-top:12px; font-size:12px; }
-.af-root .pf-foot .links a{ color:rgba(255,255,255,.7)!important; }
-.af-root .pf-foot .links a:hover{ color:#fff!important; }
+.af-root .pf-foot .links a{ color:var(--brand,#9A6614)!important; }
+.af-root .pf-foot .links a:hover{ color:var(--brand-deep,#7C5210)!important; }
 .af-root .pf-foot .links a + a::before{ content:" · "; margin:0 6px; opacity:.5; }
 
 /* DESKTOP-NARROW — collapse the 2-col layout when right col gets cramped */
@@ -720,3 +720,39 @@
 
   .af-root .pf-help{ font-size:12.5px!important; padding:14px 0 0; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3D + HOVER PASS — payment-failed
+   Shared treatment: gold chips for icons, filled chips for numbered steps,
+   lift + gold halo for cards. Warm shadows only — no neutral drops.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.af-root .pf-num{
+  background:linear-gradient(180deg,#B98A2C 0%,#9A6614 52%,#7A5010 100%)!important;
+  color:#fff!important;
+  box-shadow:
+    0 6px 14px rgba(154,102,20,.32),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -2px 0 rgba(90,58,10,.45)!important; }
+.af-root .pf-icon{
+  transition:transform .3s, box-shadow .3s;
+  filter:drop-shadow(0 8px 16px rgba(154,102,20,.24));
+}
+.af-root .pf-icon:hover{ transform:translateY(-3px) scale(1.03); }
+.af-root .pf-block{ transition:transform .28s, box-shadow .28s, border-color .28s; }
+.af-root .pf-block:hover{
+  transform:translateY(-4px);
+  border-color:rgba(154,102,20,.28)!important;
+  box-shadow:0 14px 32px rgba(154,102,20,.20), 0 0 0 4px rgba(201,149,77,.10)!important; }
+.af-root .pf-ticket-btn{ transition:transform .22s, box-shadow .22s, filter .22s; }
+.af-root .pf-ticket-btn-primary{
+  background:linear-gradient(180deg,#B98A2C 0%,#9A6614 52%,#7A5010 100%)!important;
+  color:#fff!important;
+  box-shadow:
+    0 6px 14px rgba(154,102,20,.32),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -2px 0 rgba(90,58,10,.45)!important;
+  border-radius:999px!important;
+}
+.af-root .pf-ticket-btn:hover{ transform:translateY(-2px); }
