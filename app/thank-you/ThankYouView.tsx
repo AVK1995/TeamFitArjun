@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { clientConfig } from "@/client.config";
 import { reapplyMamFromCookie } from "@/lib/analytics";
+import { buildVimeoSrc, forceUnmute } from "@/lib/video";
 import { QUIZ_QUESTIONS } from "./quizQuestions";
 
 // Vimeo player embed (NOT a self-hosted mp4) — plays are only recorded in Vimeo
@@ -29,7 +30,7 @@ type AnswerMap = Record<string, string | string[]>;
  */
 const QUIZ_SUBMITTED_KEY = "arjun_quiz_submitted";
 
-export function ThankYouView() {
+export function ThankYouView({ posterUrl = HERO_THUMB_URL }: { posterUrl?: string }) {
   const [quizOpen, setQuizOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<AnswerMap>({});
@@ -206,10 +207,20 @@ export function ThankYouView() {
   const progress = ((currentStep + 1) / total) * 100;
 
   const heroVidRef = useRef<HTMLDivElement>(null);
+  const heroFrameRef = useRef<HTMLIFrameElement>(null);
+
+  /** Plays inline in its own frame — this page has no fullscreen trigger. */
   function playVideo() {
     if (videoPlaying) return;
     setVideoPlaying(true);
   }
+
+  // Vimeo falls back to muted playback when the browser blocks unmuted
+  // autoplay; tell the player to unmute once it reports ready.
+  useEffect(() => {
+    if (!videoPlaying) return;
+    return forceUnmute(heroFrameRef.current);
+  }, [videoPlaying]);
 
   return (
     <div className="af-root">
@@ -268,7 +279,7 @@ export function ThankYouView() {
                 className={`ty-vthumb ${videoPlaying ? "" : "on"}`}
                 id="ty-vthumb"
                 style={{
-                  backgroundImage: `url("${HERO_THUMB_URL}")`,
+                  backgroundImage: `url("${posterUrl}")`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
@@ -280,7 +291,8 @@ export function ThankYouView() {
                 </div>
               ) : (
                 <iframe
-                  src={`${HERO_VIDEO_URL}?autoplay=1&title=0&byline=0&portrait=0&playsinline=1&color=C9954D`}
+                  ref={heroFrameRef}
+                  src={buildVimeoSrc(HERO_VIDEO_URL)}
                   title="Your Blueprint Call — Arjun Shah"
                   allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                   allowFullScreen

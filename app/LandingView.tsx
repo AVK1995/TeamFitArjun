@@ -5,6 +5,7 @@ import Link from "next/link";
 import { clientConfig } from "@/client.config";
 import { readUtmFromStorage, utmToQueryString } from "@/lib/utm";
 import { trackGa4EventOnce } from "@/lib/ga4";
+import { buildVimeoSrc, forceUnmute, requestFullscreen } from "@/lib/video";
 
 /**
  * Shared handler for every landing CTA. Fires two independent events:
@@ -257,10 +258,41 @@ const FAQS = [
   },
 ];
 
-export function LandingView() {
+export function LandingView({ posterUrl = HERO_THUMB_URL }: { posterUrl?: string }) {
   const [openFaq, setOpenFaq] = useState(0);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  /** Which control started playback — only the button opens fullscreen. */
+  const [wantsFullscreen, setWantsFullscreen] = useState(false);
+  const videoBoxRef = useRef<HTMLDivElement>(null);
+  const videoFrameRef = useRef<HTMLIFrameElement>(null);
   const [lightbox, setLightbox] = useState<{ slides: Slide[]; index: number } | null>(null);
+
+  /**
+   * Start the VSL.
+   *
+   * `fullscreen` is only true for the "Watch The Short Video Below" button;
+   * clicking the poster plays inline in its own frame.
+   *
+   * When fullscreen is wanted, the request is issued SYNCHRONOUSLY here —
+   * before the state update that mounts the iframe — because browsers only
+   * grant it while the click gesture is still being processed. On iOS the
+   * request is a no-op and buildVimeoSrc drops `playsinline` instead, letting
+   * the system player take over fullscreen.
+   */
+  function playVideo(fullscreen = false) {
+    if (videoPlaying) return;
+    if (fullscreen) requestFullscreen(videoBoxRef.current);
+    setWantsFullscreen(fullscreen);
+    setVideoPlaying(true);
+    trackGa4EventOnce("video_play");
+  }
+
+  // Vimeo silently falls back to muted playback whenever the browser blocks
+  // unmuted autoplay, so tell the player to unmute once it reports ready.
+  useEffect(() => {
+    if (!videoPlaying) return;
+    return forceUnmute(videoFrameRef.current);
+  }, [videoPlaying]);
   const [timeLeft, setTimeLeft] = useState({ h: "06", m: "00", s: "00" });
   const [checkoutHref, setCheckoutHref] = useState("/checkout");
 
@@ -414,29 +446,26 @@ export function LandingView() {
           </ul>
 
           <div className="af-watch" data-af-reveal style={{ "--d": ".24s" } as React.CSSProperties}>
-            <span className="af-watch-box">
+            <button type="button" className="af-watch-box" onClick={() => playVideo(true)}>
               Watch The Short Video Below
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7" /></svg>
-            </span>
+            </button>
           </div>
 
           <div className="af-video-frame" data-af-reveal style={{ "--d": ".26s" } as React.CSSProperties}>
             <div
+              ref={videoBoxRef}
               className={`af-video ${videoPlaying ? "playing" : ""}`}
               id="af-vsl"
               role="button"
               aria-label="Play video"
-              onClick={() => {
-                if (videoPlaying) return;
-                setVideoPlaying(true);
-                trackGa4EventOnce("video_play");
-              }}
+              onClick={() => playVideo(false)}
             >
               <div
                 className={`af-video-thumb ${videoPlaying ? "" : "on"}`}
                 id="af-vthumb"
                 style={{
-                  backgroundImage: `url("${HERO_THUMB_URL}")`,
+                  backgroundImage: `url("${posterUrl}")`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
@@ -448,7 +477,8 @@ export function LandingView() {
                 </div>
               ) : (
                 <iframe
-                  src={`${HERO_VIDEO_URL}?autoplay=1&title=0&byline=0&portrait=0&playsinline=1&color=C9954D`}
+                  ref={videoFrameRef}
+                  src={buildVimeoSrc(HERO_VIDEO_URL, { fullscreen: wantsFullscreen })}
                   title="Custom Execution Blueprint Call — Arjun Shah"
                   allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                   allowFullScreen

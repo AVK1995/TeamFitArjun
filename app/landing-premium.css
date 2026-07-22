@@ -2329,3 +2329,78 @@
   }
 }
 
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   VSL â€” "Watch The Short Video Below" button + fullscreen playback
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* .af-watch-box is a <button> now (it has to be, to open fullscreen from a
+   real user gesture and to be keyboard-reachable). Buttons don't inherit font
+   properties, so pull them back from .af-watch and strip the UA chrome. */
+.af-root .af-watch-box{
+  font:inherit!important;
+  font-family:var(--fb)!important;
+  font-size:inherit!important;
+  font-weight:inherit!important;
+  letter-spacing:inherit!important;
+  text-transform:inherit!important;
+  -webkit-appearance:none; appearance:none;
+  cursor:pointer;
+  text-align:center;
+}
+.af-root .af-watch-box:focus-visible{
+  outline:3px solid rgba(154,102,20,.55);
+  outline-offset:3px;
+}
+
+/* â”€â”€ Fullscreen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   In fullscreen the wrapper becomes the whole viewport, so the 16:9 box and
+   the rounded/gold framing have to stand down or the player letterboxes
+   inside its own decoration. Both the standard and -webkit- selectors are
+   needed; they cannot be combined into one rule because a browser drops the
+   entire selector list if it doesn't recognise one entry. */
+.af-root .af-video:fullscreen,
+.af-root .ty-vid:fullscreen{
+  width:100vw!important; height:100vh!important;
+  max-width:none!important; aspect-ratio:auto!important;
+  border-radius:0!important; border:0!important;
+  box-shadow:none!important; background:#000!important;
+  animation:none!important;
+}
+.af-root .af-video:-webkit-full-screen,
+.af-root .ty-vid:-webkit-full-screen{
+  width:100vw!important; height:100vh!important;
+  max-width:none!important; aspect-ratio:auto!important;
+  border-radius:0!important; border:0!important;
+  box-shadow:none!important; background:#000!important;
+  animation:none!important;
+}
+
+/* The iframe already sits at inset:0; make sure nothing clips it and that the
+   decorative overlays (texture, corner brackets) don't paint over the video. */
+.af-root .af-video:fullscreen iframe,
+.af-root .ty-vid:fullscreen iframe{
+  border-radius:0!important;
+}
+.af-root .af-video:-webkit-full-screen iframe,
+.af-root .ty-vid:-webkit-full-screen iframe{
+  border-radius:0!important;
+}
+.af-root .af-video:fullscreen::before,
+.af-root .af-video:fullscreen::after,
+.af-root .ty-vid:fullscreen::before,
+.af-root .ty-vid:fullscreen::after{
+  display:none!important;
+}
+.af-root .af-video:-webkit-full-screen::before,
+.af-root .af-video:-webkit-full-screen::after,
+.af-root .ty-vid:-webkit-full-screen::before,
+.af-root .ty-vid:-webkit-full-screen::after{
+  display:none!important;
+}
+
+/* Chrome paints a black backdrop behind the fullscreen element by default;
+   make it explicit so there's no flash of page background on entry. */
+.af-root .af-video::backdrop,
+.af-root .ty-vid::backdrop{ background:#000; }
+
