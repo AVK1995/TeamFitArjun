@@ -35,9 +35,9 @@ const PAGE_OVERRIDES = `
   height: 88px !important;
   background: radial-gradient(
     circle at 30% 30%,
-    var(--brand-light, #E0B370) 0%,
-    var(--brand, #C9954D) 60%,
-    var(--brand-deep, #D8A45C) 100%
+    var(--brand-light, #C9954D) 0%,
+    var(--brand, #9A6614) 60%,
+    var(--brand-deep, #7C5210) 100%
   ) !important;
   animation: tyPlayPulseGold 2.2s infinite ease-out !important;
   transition: transform .25s cubic-bezier(.4, 0, .2, 1) !important;

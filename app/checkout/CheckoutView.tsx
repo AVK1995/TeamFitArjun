@@ -86,6 +86,7 @@ export function CheckoutView() {
   const [flagOpen, setFlagOpen] = useState(false);
   const [flagSearch, setFlagSearch] = useState("");
   const [couponOpen, setCouponOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
   const [couponInput, setCouponInput] = useState("");
   const [couponMsg, setCouponMsg] = useState<{ text: string; tone: "error" | "success" } | null>(null);
@@ -440,17 +441,16 @@ export function CheckoutView() {
               <path d="M12 2l8 3v7c0 4.97-3.35 9.26-8 10-4.65-.74-8-5.03-8-10V5l8-3z" />
               <path d="M9 12l2 2 4-4" />
             </svg>
-            256-Bit SSL
+            100% Refundable
           </span>
           <span className="sep" />
           <span className="itm">
             <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-              <line x1="9" y1="9" x2="9.01" y2="9" />
-              <line x1="15" y1="9" x2="15.01" y2="9" />
+              <rect x="2" y="5" width="20" height="14" rx="2" />
+              <path d="M2 10h20" />
+              <path d="M6 15h4" />
             </svg>
-            100% Money-Back
+            Razorpay Verified · 256-bit SSL
           </span>
         </div>
       </div>
@@ -532,8 +532,14 @@ export function CheckoutView() {
 
               <div className="co-card" data-af-reveal>
                 <div className="co-step-head">
-                  <div className="co-step-num">1</div>
+                  <div className="co-step-num">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 12.4a4.2 4.2 0 100-8.4 4.2 4.2 0 000 8.4z" />
+                      <path d="M4.4 20.4a7.8 7.8 0 0115.2 0" />
+                    </svg>
+                  </div>
                   <div>
+                    <p className="co-step-eyebrow">Secure Checkout</p>
                     <h2>Your Details</h2>
                     <p className="hint">We&apos;ll send your call link to these details.</p>
                   </div>
@@ -666,7 +672,7 @@ export function CheckoutView() {
                               style={{
                                 padding: 16,
                                 textAlign: "center",
-                                color: "#999285",
+                                color: "#847C6F",
                                 fontSize: 13,
                               }}
                             >
@@ -823,11 +829,43 @@ export function CheckoutView() {
                     />
                   </div>
                   <div className="co-prod-info">
-                    <h4 id="co-prod-name">{clientConfig.brand.productName}</h4>
-                    <p id="co-prod-tagline">
-                      30-min 1:1 diagnostic session with Arjun — personalised
-                      roadmap.
-                    </p>
+                    <div className="co-prod-title">
+                      <h4 id="co-prod-name">1:1 Blueprint Call with Arjun</h4>
+                      <span className="co-prod-price">{formatINR(basePrice)}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className={`co-more-toggle ${detailsOpen ? "is-open" : ""}`}
+                      aria-expanded={detailsOpen}
+                      aria-controls="co-prod-more"
+                      onClick={() => setDetailsOpen((v) => !v)}
+                    >
+                      {detailsOpen ? "Hide details" : "Tap for more details"}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Everything from here to the pay button collapses on mobile.
+                    Forced open on desktop via CSS, so the state is mobile-only. */}
+                <div className={`co-sum-collapse ${detailsOpen ? "on" : ""}`}>
+                <div className="co-sum-collapse-inner">
+
+                <div className={`co-prod-more ${detailsOpen ? "on" : ""}`} id="co-prod-more">
+                  <div className="co-prod-more-inner">
+                    <p className="co-more-eyebrow">Personalised Consultation · Refundable</p>
+                    <ul className="co-more-list">
+                      <li>Personalised Diagnosis &amp; Transformation Roadmap</li>
+                      <li>
+                        Honest fit check, we&rsquo;ll tell you if this programme isn&rsquo;t the right
+                        fit for your goals
+                      </li>
+                      <li>
+                        Walk-through of your Custom Execution Blueprint and 90-Day Transformation Plan
+                      </li>
+                    </ul>
                   </div>
                 </div>
 
@@ -1049,6 +1087,10 @@ export function CheckoutView() {
                   </span>
                 </div>
 
+                </div>
+                </div>
+                {/* ↑ end .co-sum-collapse — pay button and below stay visible */}
+
                 <button
                   type="submit"
                   form="co-form"
@@ -1057,7 +1099,7 @@ export function CheckoutView() {
                 >
                   <span className="spinner" />
                   <span className="pay-lbl">
-                    Pay <span id="co-btn-amt">{formattedTotal}</span> &amp; Book Your Slot
+                    Pay <span id="co-btn-amt">{formattedTotal}</span> and Book My Call
                   </span>
                   <span className="arrow">
                     <svg
@@ -1072,6 +1114,31 @@ export function CheckoutView() {
                     </svg>
                   </span>
                 </button>
+
+                {/* Payment-security strip directly under the pay button */}
+                <ul className="co-paytrust">
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    256-bit SSL
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2.5l7.5 2.8v6.4c0 4.6-3.1 8.6-7.5 9.3-4.4-.7-7.5-4.7-7.5-9.3V5.3L12 2.5z" />
+                      <path d="M8.8 12.1l2.2 2.2 4.2-4.4" />
+                    </svg>
+                    PCI Compliant
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 12a9 9 0 1 0 3-6.7" />
+                      <path d="M3 4v4.5h4.5" />
+                    </svg>
+                    100% Refundable
+                  </li>
+                </ul>
 
                 <p
                   className="co-guarantee"

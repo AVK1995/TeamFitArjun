@@ -61,7 +61,7 @@ export const clientConfig = {
   },
 
   razorpayModal: {
-    themeColor: "#C9954D",
+    themeColor: "#9A6614",
     description: "Custom Execution Blueprint Call",
   },
 

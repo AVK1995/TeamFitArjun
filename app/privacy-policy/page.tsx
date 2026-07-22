@@ -20,8 +20,8 @@ const BODY = `<div class="af-root">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="shGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#E0B370"/>
-              <stop offset="100%" stop-color="#C9954D"/>
+              <stop offset="0%" stop-color="#C9954D"/>
+              <stop offset="100%" stop-color="#9A6614"/>
             </linearGradient>
           </defs>
           
