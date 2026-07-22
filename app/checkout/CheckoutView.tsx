@@ -15,15 +15,13 @@ import {
   readUtmFromSearch,
   utmToQueryString,
   readCookie,
-  buildFbcFromFbclid,
 } from "@/lib/utm";
 import { setMetaAdvancedMatching } from "@/lib/analytics";
+import { trackGa4EventOnce } from "@/lib/ga4";
 import type {
   CreateOrderResponse,
   CustomerPayload,
   UtmPayload,
-  VerifyPaymentRequest,
-  VerifyPaymentResponse,
 } from "@/lib/types";
 import type {
   RazorpayOptions,
@@ -32,6 +30,15 @@ import type {
 import { COUNTRIES, type Country } from "./countries";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/** Web Crypto SHA-256 (hex) — used to dedup Meta CAPI InitiateCheckout by email. */
+async function sha256Hex(value: string): Promise<string> {
+  if (typeof crypto === "undefined" || !crypto.subtle) return value;
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 interface FormState {
   fname: string;
@@ -238,6 +245,10 @@ export function CheckoutView() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // GA4 fires FIRST — before validation. Per GA4 brief v2.0, the signal
+    // is "user attempted to pay", not "user submitted a valid form".
+    // A half-filled bounce still counts. Deduped once-per-browser.
+    trackGa4EventOnce("initiate_checkout");
     if (!validateAll()) {
       const firstBad = (Object.keys(form) as FieldKey[]).find(
         (k) => !validateField(k, form[k]),
@@ -258,6 +269,39 @@ export function CheckoutView() {
     }
     setLoading(true);
     const customer = collectCustomer();
+    // Meta CAPI InitiateCheckout — fires ONCE per email per browser, right
+    // before create-order + Razorpay open. Deduped by localStorage keyed on
+    // sha256(email) so a different email in the same browser re-fires.
+    // Failures never block payment; every step is best-effort.
+    void (async () => {
+      try {
+        const emailNorm = customer.email.trim().toLowerCase();
+        const emailHash = await sha256Hex(emailNorm);
+        if (typeof window !== "undefined") {
+          if (window.localStorage.getItem("arjun_ic_fired") === emailHash) {
+            return;
+          }
+          const res = await fetch("/api/meta/initiate-checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              customer,
+              eventSourceUrl: window.location.href,
+            }),
+            keepalive: true,
+          });
+          if (res.ok) {
+            try {
+              window.localStorage.setItem("arjun_ic_fired", emailHash);
+            } catch {
+              // private mode — non-fatal
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("[ic] client-side fire failed", err);
+      }
+    })();
     try {
       const orderRes = await fetch("/api/razorpay/create-order", {
         method: "POST",
@@ -322,43 +366,12 @@ export function CheckoutView() {
             country: customer.countryCode,
           });
 
-          const fbc = readCookie("_fbc") || buildFbcFromFbclid(utm.fbclid);
-          const fbp = readCookie("_fbp");
-          const verifyBody: VerifyPaymentRequest = {
-            orderId: response.razorpay_order_id,
-            paymentId: response.razorpay_payment_id,
-            signature: response.razorpay_signature,
-            customer,
-            utm,
-            fbc,
-            fbp,
-            eventSourceUrl:
-              typeof window !== "undefined" ? window.location.href : undefined,
-          };
-
-          // Fire verify-payment with `keepalive: true` so the request commits
-          // to the network stack before the page unload, and Vercel keeps
-          // executing the function even if the mobile browser kills the tab
-          // mid-redirect. This is what brings reliability from ~30% on mobile
-          // to ~99%+. The webhook fallback (with full Razorpay-notes payload)
-          // covers the last ~1%.
-          //
-          // We intentionally do NOT await — the redirect must happen
-          // immediately so iOS/Android don't background-kill us first.
-          try {
-            void fetch("/api/razorpay/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(verifyBody),
-              keepalive: true,
-            }).catch((err) => {
-              // Sync network errors only — server-side completion still
-              // happens via the Razorpay webhook fallback path.
-              console.warn("[checkout] verify-payment dispatch failed", err);
-            });
-          } catch (err) {
-            console.warn("[checkout] verify-payment fetch threw synchronously", err);
-          }
+          // The Razorpay-signed webhook (app/api/razorpay/webhook/route.ts)
+          // is the SOLE tracking authority — it fires Pabbly + Meta CAPI
+          // server-to-server on payment.captured and covers UPI-app payers
+          // who never return to this tab. The browser no longer POSTs to a
+          // verify-payment route; we just persist the customer/order for
+          // /thank-you and redirect.
 
           try {
             window.sessionStorage.setItem(

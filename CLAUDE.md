@@ -26,7 +26,8 @@ Landing (/)
    ↓ click CTA → fires ViewContent / InitiateCheckout (browser + CAPI)
 Checkout (/checkout)
    ↓ fills name/email/phone/country → Razorpay modal opens
-   ↓ payment success → handler verifies signature server-side
+   ↓ payment success (Razorpay handler) → browser redirects to /book-a-call
+   ↓ (Razorpay POSTs payment.captured → /api/razorpay/webhook: HMAC verify, funnel gate, fires Pabbly + CAPI)
 Book-a-call (/book-a-call)
    ↓ Calendly inline widget → user picks slot → postMessage event
 Thank-you (/thank-you)
@@ -46,7 +47,7 @@ Fired automatically from the inline script in [app/layout.tsx](app/layout.tsx) o
 **No other browser events fire from this codebase.** No `Purchase`, `InitiateCheckout`, `Lead`, `ViewContent`. Auto Event Detection and Automatic Advanced Matching must be **OFF** in Events Manager.
 
 ### 3b. Server fires TWO events per paid order: `Purchase` + `sales`
-Both in a single POST from [app/api/razorpay/verify-payment/route.ts](app/api/razorpay/verify-payment/route.ts) (primary) or [app/api/razorpay/webhook/route.ts](app/api/razorpay/webhook/route.ts) (fallback). Shared `event_id = Razorpay payment_id`. `Purchase` is the standard event campaigns optimise against; `sales` is the custom event used as the internal source-of-truth count. `claimEventId()` in [lib/dedup.ts](lib/dedup.ts) prevents double-fire when verify-payment and webhook race.
+Both in a single POST from [app/api/razorpay/webhook/route.ts](app/api/razorpay/webhook/route.ts) — the SOLE tracking authority. Razorpay POSTs `payment.captured` server-to-server, the webhook HMAC-verifies, gates on `notes.funnel === "arjun-blueprint"`, then fires. Shared `event_id = Razorpay payment_id`. `Purchase` is the standard event campaigns optimise against; `sales` is the custom event used as the internal source-of-truth count. `claimEventId()` in [lib/dedup.ts](lib/dedup.ts) + persistent `pabbly_fired`/`capi_fired` markers on Razorpay payment notes guard against Razorpay's own webhook retries. The browser NEVER fires Pabbly or CAPI; there is no verify-payment route.
 
 Free orders (`clientConfig.pricing.price === 0`) **skip CAPI** — we never report zero-revenue conversions.
 
@@ -92,8 +93,7 @@ Every server event ships:
 
 ### API — `app/api/`
 - [app/api/razorpay/create-order/route.ts](app/api/razorpay/create-order/route.ts) — creates Razorpay order; validates amount against `clientConfig.pricing.price`.
-- [app/api/razorpay/verify-payment/route.ts](app/api/razorpay/verify-payment/route.ts) — verifies `razorpay_signature`, claims `event_id = payment_id`, fires CAPI `[Purchase, sales]` (dual) + Pabbly purchase webhook. Skips CAPI when price is 0.
-- [app/api/razorpay/webhook/route.ts](app/api/razorpay/webhook/route.ts) — Razorpay-signed webhook (`payment.captured`); fallback CAPI dual-fire if browser handler died. Same `event_id = payment_id`.
+- [app/api/razorpay/webhook/route.ts](app/api/razorpay/webhook/route.ts) — Razorpay-signed webhook (`payment.captured`). The SOLE tracking authority: HMAC-verifies, reads `notes.funnel` to reject payments from other funnels sharing this Razorpay account, deduplicates via `claimEventId(payment_id)` + persistent payment-notes markers, then fires CAPI `[Purchase, sales]` (dual, `event_id = payment_id`) + the Pabbly purchase webhook. Recovers `fbp` from order notes and rebuilds `fbc` from `fbclid`.
 - [app/api/quiz/route.ts](app/api/quiz/route.ts) — forwards Chhod Yaar quiz answers to Pabbly (separate URL via `PABBLY_QUIZ_WEBHOOK_URL`).
 - [app/api/payment-issue/route.ts](app/api/payment-issue/route.ts) — forwards retry / failure reports to Pabbly.
 
@@ -155,10 +155,10 @@ Env vars live in **one file**: `.env.local`. There is no `.env.local.example` �
 
 - Do NOT add browser-side `Purchase` / `InitiateCheckout` / `Lead` / `ViewContent`. The funnel fires exactly ONE browser event: `PageView`, from the layout inline script. Conversion is server-only.
 - Do NOT add additional CAPI events. The server fires exactly TWO per paid order: `Purchase` + `sales`, in a single POST, sharing `event_id = payment_id`.
-- Do NOT change the `event_id` source. It is the Razorpay `payment_id` everywhere (verify-payment + webhook). If you switch it, both routes must change together or dedup breaks.
+- Do NOT change the `event_id` source. It is the Razorpay `payment_id`. Meta's 48h dedup depends on it, and Razorpay's webhook retries (for non-2xx responses) rely on it to collapse duplicates.
 - Do NOT rename the `arjun_mam` cookie without updating the regex in the inline script in [app/layout.tsx](app/layout.tsx) AND the constant in [lib/analytics.ts](lib/analytics.ts).
 - Do NOT hardcode the price — it's read from `NEXT_PUBLIC_PRICE` so server, browser, Razorpay, CAPI and Pabbly all stay in sync.
 - Do NOT change a sessionStorage key without updating `clientConfig.funnel.*` and every reader.
 - If a value belongs to the brand (name, email, Calendly URL, Instagram handle), it goes in [client.config.ts](client.config.ts).
-- The webhook ([app/api/razorpay/webhook/route.ts](app/api/razorpay/webhook/route.ts)) is a **fallback**, not the primary path — the browser-driven verify-payment is. Both must remain idempotent via `claimEventId()`.
+- The webhook ([app/api/razorpay/webhook/route.ts](app/api/razorpay/webhook/route.ts)) is the sole tracking authority. It MUST remain idempotent via `claimEventId()` + the `pabbly_fired`/`capi_fired` markers on Razorpay payment notes — Razorpay retries webhooks on any non-2xx response, so a duplicate delivery is normal, not an error.
 - In Events Manager: **Auto Event Detection OFF**, **Automatic Advanced Matching OFF**. Our code is the only event source and ships its own (manual) advanced matching via the cookie.

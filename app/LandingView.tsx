@@ -4,6 +4,41 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { clientConfig } from "@/client.config";
 import { readUtmFromStorage, utmToQueryString } from "@/lib/utm";
+import { trackGa4EventOnce } from "@/lib/ga4";
+
+/**
+ * Shared handler for every landing CTA. Fires two independent events:
+ *   1. GA4 `add_to_cart` — deduped inside trackGa4EventOnce by localStorage.
+ *   2. Meta CAPI `AddToCart` — fired via sendBeacon so the request survives
+ *      the CTA's navigation to /checkout. Deduped by localStorage.arjun_atc_fired.
+ * Never blocks navigation; every step is best-effort.
+ */
+function handleLandingCtaClick() {
+  trackGa4EventOnce("add_to_cart");
+
+  try {
+    if (typeof window === "undefined") return;
+    if (window.localStorage.getItem("arjun_atc_fired") === "1") return;
+    window.localStorage.setItem("arjun_atc_fired", "1");
+
+    const body = JSON.stringify({ eventSourceUrl: window.location.href });
+    const url = "/api/meta/add-to-cart";
+    if (typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function") {
+      navigator.sendBeacon(url, new Blob([body], { type: "application/json" }));
+    } else {
+      void fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+        keepalive: true,
+      }).catch(() => {
+        // best-effort — never block the CTA
+      });
+    }
+  } catch {
+    // localStorage or sendBeacon threw — never block the CTA
+  }
+}
 
 // Same VSL (cold v3) + thumbnail as the current landing page.
 // Vimeo player embed (NOT a self-hosted mp4) — plays are only recorded in Vimeo
@@ -389,7 +424,11 @@ export function LandingView() {
               id="af-vsl"
               role="button"
               aria-label="Play video"
-              onClick={() => !videoPlaying && setVideoPlaying(true)}
+              onClick={() => {
+                if (videoPlaying) return;
+                setVideoPlaying(true);
+                trackGa4EventOnce("video_play");
+              }}
             >
               <div
                 className={`af-video-thumb ${videoPlaying ? "" : "on"}`}
@@ -754,7 +793,7 @@ export function LandingView() {
         <span className="af-stuck-beam" aria-hidden="true" />
         <div className="af-stuck-inner">
         <Countdown time={timeLeft} compact />
-        <Link href={checkoutHref} className="af-cta">
+        <Link href={checkoutHref} className="af-cta" onClick={handleLandingCtaClick}>
           <span className="cta-top">
             <CtaLabel />
             <span className="arrow">
@@ -819,7 +858,7 @@ function CtaBlock({
 
   return (
     <div className={wrapperClass ?? "af-cta-block"} data-af-reveal style={style}>
-      <Link href={checkoutHref} className="af-cta">
+      <Link href={checkoutHref} className="af-cta" onClick={handleLandingCtaClick}>
         <span className="cta-top">
           <CtaLabel />
           <span className="arrow">
