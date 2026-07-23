@@ -4,7 +4,7 @@
  * Originally mirrored the WordPress build (2026-05-20). Rewritten for the
  * landing revamp: the old copy sold "Indian working men / roti + rice /
  * 40-50% belly fat / 1500+ clients", none of which the page claims any more.
- * Current positioning is corporate professionals 30+, lose 10-15 kilos and
+ * Current positioning is corporate professionals 30+, lose 10-20 kilos and
  * build visible muscle via the Custom Execution Blueprint, 1400+ clients.
  *
  * Keep this in step with app/LandingView.tsx — a share preview that
@@ -27,11 +27,11 @@ const SHARED_DESCRIPTION =
 export const seoMetadata: Record<string, PageSeo> = {
   home: {
     // Search result: leads with the promise, keeps the brand suffix (~55 chars).
-    title: "Lose 10-15 Kilos, Build Visible Muscle | Arjun Fitness",
+    title: "Lose 10-20 Kilos, Build Visible Muscle | Arjun Fitness",
     description:
-      "Corporate professionals 30+: lose 10-15 kilos and build visible muscle in 90 days with a Custom Execution Blueprint built around your schedule. ₹97 to start.",
+      "Corporate professionals 30+: lose 10-20 kilos and build visible muscle in 90 days with a Custom Execution Blueprint built around your schedule. ₹97 to start.",
     // Share preview: mirrors the H1 verbatim so the card matches the page.
-    ogTitle: "Lose 10-15 Kilos, Build Visible Muscle, & Never Start Over Again",
+    ogTitle: "Lose 10-20 Kilos, Build Visible Muscle, & Never Start Over Again",
     ogDescription:
       "A Custom Execution Blueprint for demanding careers, frequent travel and unpredictable schedules. 1400+ corporate professionals transformed. ₹97, fully refundable.",
     ogImage: "/OG Images/Home OG.png",
