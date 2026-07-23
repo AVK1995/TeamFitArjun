@@ -419,7 +419,7 @@ export function LandingView({ posterUrl = HERO_THUMB_URL }: { posterUrl?: string
           </div>
 
           <h1 className="af-h1" data-af-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-            Lose <span className="af-hl-block">10&ndash;15 Kilos</span>,<br />
+            Lose <span className="af-hl-block">10&ndash;20 Kilos</span>,<br />
             Build <span className="af-accent">Visible Muscle</span>,<br />
             &amp; Never Start Over Again
           </h1>
